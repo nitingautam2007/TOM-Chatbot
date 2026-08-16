@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  --color-sage-50: #f4f7f4;
+  --color-sage-100: #e6ede6;
+  --color-sage-200: #cddacd;
+  --color-sage-300: #a8bfa8;
+  --color-sage-400: #7d9e7d;
+  --color-sage-500: #5a7f5a;
+  --color-sage-600: #466446;
+  --color-sage-700: #384f38;
+  --color-sage-800: #2e3f2e;
+  --color-sage-900: #263426;
+
+  --color-mist-50: #f0f5f7;
+  --color-mist-100: #dde9ed;
+  --color-mist-200: #b8d3db;
+  --color-mist-300: #8ab5c2;
+  --color-mist-400: #5c95a6;
+  --color-mist-500: #3d7a8e;
+  --color-mist-600: #2f6175;
+
+  --color-warm-50: #faf8f5;
+  --color-warm-100: #f2ede5;
+  --color-warm-200: #e3d8c8;
+}
+
+html, body {
+  font-family: var(--font-body);
+  background-color: var(--color-warm-50);
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-sage-200); border-radius: 2px; }
+

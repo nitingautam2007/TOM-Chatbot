@@ -1,0 +1,13 @@
+{
+  "description": "This chatbot provides mental health support by offering users personalized coping strategies, resources, and a safe space to express their feelings.",
+  "robots": {
+    "index": false
+  },
+  "icons": {
+    "icon": "/.figma/make/favicon.png"
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

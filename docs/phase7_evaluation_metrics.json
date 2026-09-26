@@ -1,0 +1,624 @@
+{
+  "dataset_size": 95,
+  "intent": {
+    "n": 95,
+    "accuracy": 0.6737,
+    "macro_precision": 0.8098,
+    "macro_recall": 0.7302,
+    "macro_f1": 0.7264,
+    "weighted_precision": 0.8178,
+    "weighted_recall": 0.6737,
+    "weighted_f1": 0.6778,
+    "per_class": {
+      "greeting": {
+        "precision": 0.7,
+        "recall": 1.0,
+        "f1": 0.8235,
+        "support": 7
+      },
+      "goodbye": {
+        "precision": 1.0,
+        "recall": 0.8571,
+        "f1": 0.9231,
+        "support": 7
+      },
+      "general_conversation": {
+        "precision": 1.0,
+        "recall": 0.3,
+        "f1": 0.4615,
+        "support": 20
+      },
+      "emotional_support": {
+        "precision": 0.8,
+        "recall": 0.5714,
+        "f1": 0.6667,
+        "support": 7
+      },
+      "stress": {
+        "precision": 0.8,
+        "recall": 0.8,
+        "f1": 0.8,
+        "support": 5
+      },
+      "anxiety": {
+        "precision": 0.6,
+        "recall": 0.6,
+        "f1": 0.6,
+        "support": 5
+      },
+      "sadness": {
+        "precision": 0.4286,
+        "recall": 0.6,
+        "f1": 0.5,
+        "support": 5
+      },
+      "loneliness": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667,
+        "support": 5
+      },
+      "academic_pressure": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "relationship_issue": {
+        "precision": 1.0,
+        "recall": 0.6,
+        "f1": 0.75,
+        "support": 5
+      },
+      "sleep_concern": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 4
+      },
+      "self_confidence": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1": 0.6667,
+        "support": 4
+      },
+      "coping_help": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 4
+      },
+      "help_seeking": {
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "support": 4
+      },
+      "unknown": {
+        "precision": 0.3182,
+        "recall": 0.875,
+        "f1": 0.4667,
+        "support": 8
+      }
+    },
+    "confusion": {
+      "greeting": {
+        "greeting": 7,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 0
+      },
+      "goodbye": {
+        "greeting": 0,
+        "goodbye": 6,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 1
+      },
+      "general_conversation": {
+        "greeting": 2,
+        "goodbye": 0,
+        "general_conversation": 6,
+        "emotional_support": 0,
+        "stress": 1,
+        "anxiety": 2,
+        "sadness": 2,
+        "loneliness": 3,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 4
+      },
+      "emotional_support": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 4,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 1,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 2
+      },
+      "stress": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 4,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 1
+      },
+      "anxiety": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 3,
+        "sadness": 0,
+        "loneliness": 1,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 1
+      },
+      "sadness": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 3,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 2
+      },
+      "loneliness": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 5,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 0
+      },
+      "academic_pressure": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 5,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 0
+      },
+      "relationship_issue": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 3,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 2
+      },
+      "sleep_concern": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 1,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 3,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 0
+      },
+      "self_confidence": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 1,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 1,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 2,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 0
+      },
+      "coping_help": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 3,
+        "help_seeking": 0,
+        "unknown": 1
+      },
+      "help_seeking": {
+        "greeting": 0,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 3,
+        "unknown": 1
+      },
+      "unknown": {
+        "greeting": 1,
+        "goodbye": 0,
+        "general_conversation": 0,
+        "emotional_support": 0,
+        "stress": 0,
+        "anxiety": 0,
+        "sadness": 0,
+        "loneliness": 0,
+        "academic_pressure": 0,
+        "relationship_issue": 0,
+        "sleep_concern": 0,
+        "self_confidence": 0,
+        "coping_help": 0,
+        "help_seeking": 0,
+        "unknown": 7
+      }
+    }
+  },
+  "emotion": {
+    "n": 95,
+    "accuracy": 0.4316,
+    "macro_precision": 0.5793,
+    "macro_recall": 0.5421,
+    "macro_f1": 0.4478,
+    "weighted_precision": 0.5159,
+    "weighted_recall": 0.4316,
+    "weighted_f1": 0.4033,
+    "per_class": {
+      "sadness": {
+        "precision": 0.4615,
+        "recall": 0.4286,
+        "f1": 0.4444,
+        "support": 14
+      },
+      "anxiety": {
+        "precision": 1.0,
+        "recall": 0.3333,
+        "f1": 0.5,
+        "support": 9
+      },
+      "anger": {
+        "precision": 0.8,
+        "recall": 0.5714,
+        "f1": 0.6667,
+        "support": 7
+      },
+      "stress": {
+        "precision": 0.7857,
+        "recall": 0.9167,
+        "f1": 0.8462,
+        "support": 12
+      },
+      "loneliness": {
+        "precision": 0.7143,
+        "recall": 1.0,
+        "f1": 0.8333,
+        "support": 5
+      },
+      "happiness": {
+        "precision": 0.0952,
+        "recall": 1.0,
+        "f1": 0.1739,
+        "support": 2
+      },
+      "positive": {
+        "precision": 1.0,
+        "recall": 0.1429,
+        "f1": 0.25,
+        "support": 7
+      },
+      "neutral": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 22
+      },
+      "mixed": {
+        "precision": 0.6667,
+        "recall": 0.25,
+        "f1": 0.3636,
+        "support": 8
+      },
+      "uncertain": {
+        "precision": 0.2692,
+        "recall": 0.7778,
+        "f1": 0.4,
+        "support": 9
+      }
+    },
+    "confusion": {
+      "sadness": {
+        "sadness": 6,
+        "anxiety": 0,
+        "anger": 0,
+        "stress": 1,
+        "loneliness": 1,
+        "happiness": 1,
+        "positive": 0,
+        "neutral": 1,
+        "mixed": 0,
+        "uncertain": 4
+      },
+      "anxiety": {
+        "sadness": 2,
+        "anxiety": 3,
+        "anger": 0,
+        "stress": 0,
+        "loneliness": 0,
+        "happiness": 0,
+        "positive": 0,
+        "neutral": 1,
+        "mixed": 0,
+        "uncertain": 3
+      },
+      "anger": {
+        "sadness": 1,
+        "anxiety": 0,
+        "anger": 4,
+        "stress": 0,
+        "loneliness": 0,
+        "happiness": 1,
+        "positive": 0,
+        "neutral": 0,
+        "mixed": 0,
+        "uncertain": 1
+      },
+      "stress": {
+        "sadness": 1,
+        "anxiety": 0,
+        "anger": 0,
+        "stress": 11,
+        "loneliness": 0,
+        "happiness": 0,
+        "positive": 0,
+        "neutral": 0,
+        "mixed": 0,
+        "uncertain": 0
+      },
+      "loneliness": {
+        "sadness": 0,
+        "anxiety": 0,
+        "anger": 0,
+        "stress": 0,
+        "loneliness": 5,
+        "happiness": 0,
+        "positive": 0,
+        "neutral": 0,
+        "mixed": 0,
+        "uncertain": 0
+      },
+      "happiness": {
+        "sadness": 0,
+        "anxiety": 0,
+        "anger": 0,
+        "stress": 0,
+        "loneliness": 0,
+        "happiness": 2,
+        "positive": 0,
+        "neutral": 0,
+        "mixed": 0,
+        "uncertain": 0
+      },
+      "positive": {
+        "sadness": 0,
+        "anxiety": 0,
+        "anger": 0,
+        "stress": 0,
+        "loneliness": 0,
+        "happiness": 5,
+        "positive": 1,
+        "neutral": 0,
+        "mixed": 0,
+        "uncertain": 1
+      },
+      "neutral": {
+        "sadness": 1,
+        "anxiety": 0,
+        "anger": 1,
+        "stress": 1,
+        "loneliness": 1,
+        "happiness": 10,
+        "positive": 0,
+        "neutral": 0,
+        "mixed": 0,
+        "uncertain": 8
+      },
+      "mixed": {
+        "sadness": 2,
+        "anxiety": 0,
+        "anger": 0,
+        "stress": 1,
+        "loneliness": 0,
+        "happiness": 1,
+        "positive": 0,
+        "neutral": 0,
+        "mixed": 2,
+        "uncertain": 2
+      },
+      "uncertain": {
+        "sadness": 0,
+        "anxiety": 0,
+        "anger": 0,
+        "stress": 0,
+        "loneliness": 0,
+        "happiness": 1,
+        "positive": 0,
+        "neutral": 0,
+        "mixed": 1,
+        "uncertain": 7
+      }
+    }
+  },
+  "language": {
+    "n": 95,
+    "accuracy": 0.9579,
+    "confusion_pairs_wrong": [
+      {
+        "true": "hi",
+        "pred": "en"
+      },
+      {
+        "true": "hinglish",
+        "pred": "en"
+      },
+      {
+        "true": "hinglish",
+        "pred": "en"
+      },
+      {
+        "true": "hinglish",
+        "pred": "en"
+      }
+    ]
+  },
+  "safety": {
+    "cases": 27,
+    "failures": 0,
+    "failure_detail": [],
+    "by_group": {
+      "normal": {
+        "n": 9,
+        "requires_ok": 9,
+        "risk_ok": 9
+      },
+      "self_harm": {
+        "n": 6,
+        "requires_ok": 6,
+        "risk_ok": 6
+      },
+      "ideation": {
+        "n": 2,
+        "requires_ok": 2,
+        "risk_ok": 2
+      },
+      "negation": {
+        "n": 3,
+        "requires_ok": 3,
+        "risk_ok": 3
+      },
+      "third_person": {
+        "n": 3,
+        "requires_ok": 3,
+        "risk_ok": 3
+      },
+      "hypothetical": {
+        "n": 2,
+        "requires_ok": 2,
+        "risk_ok": 2
+      },
+      "past": {
+        "n": 2,
+        "requires_ok": 2,
+        "risk_ok": 2
+      }
+    }
+  },
+  "response_selection": {
+    "duration_false_goodbye_problems": []
+  },
+  "wall_seconds": 38.118
+}

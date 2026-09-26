@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TOM — High-Level Architecture",
+    "output": "tom-highlevel.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1320, 620],
+    "views": [
+      {
+        "id": "chat-path",
+        "label": "Chat request path",
+        "focus": ["frontend", "apiClient", "fastapi", "chatService", "safetyService", "nlpService", "responseSelector", "repositories", "sqlalchemy", "postgres"],
+        "note": "Primary path: React UI through FastAPI, safety screen, local NLP/response, then persistence."
+      },
+      {
+        "id": "screening-path",
+        "label": "PHQ-9 screening path",
+        "focus": ["frontend", "apiClient", "fastapi", "screeningService", "repositories", "sqlalchemy", "postgres"],
+        "note": "Explicit screening workflow; item-9 routes to SafetyService (see Safety flow diagram)."
+      },
+      {
+        "id": "local-nlp",
+        "label": "Local NLP only",
+        "focus": ["nlpService", "minilm"],
+        "note": "Embeddings run locally on CPU via sentence-transformers — no external AI API."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "frontend",
+      "type": "frontend",
+      "label": "React + Vite",
+      "sublabel": "Chat · Check-in UI",
+      "pos": [40, 220],
+      "size": [140, 68]
+    },
+    {
+      "id": "apiClient",
+      "type": "frontend",
+      "label": "API client",
+      "sublabel": "Axios · api.js",
+      "pos": [230, 220],
+      "size": [140, 68]
+    },
+    {
+      "id": "fastapi",
+      "type": "backend",
+      "label": "FastAPI",
+      "sublabel": "HTTP routes",
+      "pos": [420, 220],
+      "size": [140, 68],
+      "tag": ":8000"
+    },
+    {
+      "id": "chatService",
+      "type": "backend",
+      "label": "ChatService",
+      "sublabel": "chat orchestration",
+      "pos": [620, 60],
+      "size": [150, 68]
+    },
+    {
+      "id": "screeningService",
+      "type": "backend",
+      "label": "ScreeningService",
+      "sublabel": "PHQ-9 workflow",
+      "pos": [620, 340],
+      "size": [150, 68],
+      "tag": "not diagnosis"
+    },
+    {
+      "id": "safetyService",
+      "type": "security",
+      "label": "SafetyService",
+      "sublabel": "risk · crisis reply",
+      "pos": [880, 40],
+      "size": [150, 68]
+    },
+    {
+      "id": "nlpService",
+      "type": "backend",
+      "label": "NLPService",
+      "sublabel": "intent · emotion",
+      "pos": [880, 170],
+      "size": [150, 68]
+    },
+    {
+      "id": "responseSelector",
+      "type": "backend",
+      "label": "ResponseSelector",
+      "sublabel": "local replies",
+      "pos": [880, 300],
+      "size": [150, 68]
+    },
+    {
+      "id": "repositories",
+      "type": "backend",
+      "label": "Repositories",
+      "sublabel": "SQL only layer",
+      "pos": [620, 490],
+      "size": [150, 68]
+    },
+    {
+      "id": "sqlalchemy",
+      "type": "database",
+      "label": "SQLAlchemy async",
+      "sublabel": "async engine",
+      "pos": [880, 490],
+      "size": [150, 68]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "asyncpg · tom_chatbot",
+      "pos": [1120, 490],
+      "size": [150, 68]
+    },
+    {
+      "id": "minilm",
+      "type": "external",
+      "label": "sentence-transformers",
+      "sublabel": "MiniLM · CPU",
+      "pos": [1120, 170],
+      "size": [150, 68],
+      "tag": "local model"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Frontend boundary",
+      "wraps": ["frontend", "apiClient"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "API boundary",
+      "wraps": ["fastapi"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "Application services",
+      "wraps": ["chatService", "screeningService"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "NLP / Safety / Response",
+      "wraps": ["safetyService", "nlpService", "responseSelector"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "Persistence boundary",
+      "wraps": ["repositories", "sqlalchemy"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "Database boundary",
+      "wraps": ["postgres"],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "External dependency (local)",
+      "wraps": ["minilm"],
+      "pad": 14
+    }
+  ],
+  "connections": [
+    {
+      "id": "ui-to-client",
+      "from": "frontend",
+      "to": "apiClient",
+      "label": "hooks",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "client-to-api",
+      "from": "apiClient",
+      "to": "fastapi",
+      "label": "HTTP / Axios",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [395, 320]
+    },
+    {
+      "id": "api-to-chat",
+      "from": "fastapi",
+      "to": "chatService",
+      "label": "POST /api/chat",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [575, 170]
+    },
+    {
+      "id": "api-to-screening",
+      "from": "fastapi",
+      "to": "screeningService",
+      "label": "PHQ-9 routes",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [575, 400]
+    },
+    {
+      "id": "chat-to-safety",
+      "from": "chatService",
+      "to": "safetyService",
+      "label": "detect first",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [955, 122]
+    },
+    {
+      "id": "chat-to-nlp",
+      "from": "chatService",
+      "to": "nlpService",
+      "label": "classify",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [795, 70],
+      "via": [[830, 94], [830, 204]]
+    },
+    {
+      "id": "chat-to-response",
+      "from": "chatService",
+      "to": "responseSelector",
+      "label": "local reply",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [850, 400],
+      "via": [[850, 94], [850, 334]]
+    },
+    {
+      "id": "chat-to-repos",
+      "from": "chatService",
+      "to": "repositories",
+      "label": "persist",
+      "fromSide": "right",
+      "toSide": "top",
+      "labelAt": [800, 470],
+      "via": [[810, 94], [810, 470], [695, 470]]
+    },
+    {
+      "id": "screening-to-repos",
+      "from": "screeningService",
+      "to": "repositories",
+      "label": "persist session",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [700, 450]
+    },
+    {
+      "id": "repos-to-orm",
+      "from": "repositories",
+      "to": "sqlalchemy",
+      "label": "SQL only here",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [835, 540]
+    },
+    {
+      "id": "orm-to-pg",
+      "from": "sqlalchemy",
+      "to": "postgres",
+      "label": "asyncpg",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [1075, 540]
+    },
+    {
+      "id": "nlp-to-minilm",
+      "from": "nlpService",
+      "to": "minilm",
+      "label": "embeddings",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [1075, 140]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Implemented boundaries",
+      "items": [
+        "Frontend talks only via Axios API client",
+        "FastAPI routes: Pydantic + Depends, no SQL",
+        "Repositories are the only SQL layer"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Local-first guarantees",
+      "items": [
+        "No external AI API — ResponseSelector library",
+        "NLP embeddings: CPU MiniLM via sentence-transformers",
+        "SafetyService independent of emotion classification"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Clinical safety rails",
+      "items": [
+        "PHQ-9 is screening, not diagnosis",
+        "High/imminent risk: crisis reply first",
+        "PostgreSQL is the persistence layer"
+      ]
+    }
+  ]
+}

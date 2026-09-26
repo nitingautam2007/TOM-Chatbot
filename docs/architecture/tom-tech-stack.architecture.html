@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TOM — Tech Stack Architecture</title>
+<style>
+  :root{
+    --paper:#f4f1ea; --ink:#0b0b0c; --panel:#fffdf7;
+    --fe:#1d4ed8; --api:#a16207; --svc:#15803d; --nlp:#6d28d9;
+    --saf:#b91c1c; --data:#0e7490; --db:#1e293b; --tool:#52525b;
+    --shadow:6px 6px 0 var(--ink);
+  }
+  *{box-sizing:border-box;border-radius:0}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:ui-sans-serif,system-ui,"Segoe UI",Arial,sans-serif;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  header{
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    padding:12px 16px; border-bottom:4px solid var(--ink); background:var(--panel);
+  }
+  h1{font-size:20px;font-weight:900;letter-spacing:.06em;margin:0;text-transform:uppercase}
+  h1 span{background:var(--ink);color:var(--paper);padding:2px 8px;margin-left:6px}
+  .sub{font:700 11px/1.4 ui-monospace,Consolas,monospace;opacity:.75;text-transform:uppercase;letter-spacing:.1em}
+  .tools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  button{
+    font:800 12px/1 ui-monospace,Consolas,monospace; text-transform:uppercase;
+    background:var(--paper); color:var(--ink); border:3px solid var(--ink);
+    padding:8px 12px; cursor:pointer; box-shadow:3px 3px 0 var(--ink);
+  }
+  button:hover{background:var(--ink);color:var(--paper)}
+  button:active{transform:translate(3px,3px);box-shadow:none}
+  main{flex:1;display:flex;min-height:0}
+  #stage{flex:1;min-width:0;padding:14px;display:flex;flex-direction:column;gap:10px}
+  #viewport{
+    position:relative;flex:1;min-height:0;border:4px solid var(--ink);
+    background:var(--panel); box-shadow:var(--shadow); overflow:hidden; touch-action:none;
+    cursor:grab;
+  }
+  #viewport.dragging{cursor:grabbing}
+  svg#canvas{display:block;width:100%;height:100%;user-select:none}
+  .hint{
+    display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+    font:700 11px/1.5 ui-monospace,Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;
+  }
+  .key{border:2px solid var(--ink);padding:1px 5px;background:var(--panel)}
+  .flows{
+    border:3px dashed var(--ink);background:var(--panel);padding:8px 10px;
+    font:600 11px/1.7 ui-monospace,Consolas,monospace;white-space:pre;overflow-x:auto;
+  }
+
+  /* ---- detail drawer ---- */
+  #drawer{
+    width:380px;flex:0 0 380px;border-left:4px solid var(--ink);background:var(--panel);
+    display:flex;flex-direction:column;transform:translateX(105%);transition:transform .16s ease-out;
+    box-shadow:-8px 0 0 rgba(11,11,12,.12);
+  }
+  #drawer.open{transform:none}
+  #drawer header{
+    border-bottom:4px solid var(--ink);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;
+    background:var(--ink);color:var(--paper);
+  }
+  #drawer header h2{margin:0;font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;flex:1}
+  #closeDrawer{background:var(--paper);border-color:var(--paper);box-shadow:none;padding:4px 9px}
+  #closeDrawer:hover{background:var(--saf);border-color:var(--saf);color:#fff}
+  #drawerBody{overflow-y:auto;padding:14px;flex:1}
+  .badge{display:inline-block;border:3px solid var(--ink);padding:2px 8px;font:900 10px/1.6 ui-monospace,Consolas,monospace;text-transform:uppercase;letter-spacing:.1em}
+  .dicon{
+    width:56px;height:56px;border:3px solid var(--ink);display:grid;place-items:center;
+    font:900 18px/1 ui-monospace,Consolas,monospace;flex:0 0 56px;background:var(--paper)
+  }
+  .row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+  .row .t{font:900 15px/1.25 sans-serif}
+  .row .c{font:700 11px/1.5 ui-monospace,Consolas,monospace;text-transform:uppercase;letter-spacing:.08em;opacity:.8}
+  .fld{margin-bottom:12px;border-top:3px solid var(--ink);padding-top:8px}
+  .fld:first-child{border-top:0;padding-top:0}
+  .fld h3{
+    margin:0 0 5px;font:900 10px/1 ui-monospace,Consolas,monospace;
+    text-transform:uppercase;letter-spacing:.14em;opacity:.65
+  }
+  .fld p{margin:0;font:600 13px/1.55 sans-serif}
+  .fld ul{margin:0;padding-left:17px;font:600 12.5px/1.6 ui-monospace,Consolas,monospace;word-break:break-word}
+  .chip{
+    display:inline-block;border:2px solid var(--ink);padding:2px 6px;margin:0 5px 5px 0;
+    font:700 11px/1.5 ui-monospace,Consolas,monospace;background:var(--paper)
+  }
+  .chip.rt{background:#dcfce7}
+  .chip.dv{background:#e4e4e7}
+  .empty{font:700 12px/1.6 ui-monospace,Consolas,monospace;opacity:.7;border:3px dashed var(--ink);padding:14px}
+
+  /* svg pieces */
+  .band{fill:none;stroke:var(--ink);stroke-width:3}
+  .band.dashed{stroke-dasharray:10 7}
+  .bandTitle{font:900 15px ui-monospace,Consolas,monospace;letter-spacing:.16em;text-transform:uppercase}
+  .nodeBox{fill:var(--panel);stroke:var(--ink);stroke-width:3}
+  .node:hover .nodeBox,.node.sel .nodeBox{stroke-width:5}
+  .node.sel .nodeBox{fill:#fff8d6}
+  .node{cursor:pointer}
+  .nodeLbl{font:900 15px ui-sans-serif,system-ui,sans-serif;fill:var(--ink);pointer-events:none}
+  .nodeSub{font:700 11px ui-monospace,Consolas,monospace;fill:#3f3f46;pointer-events:none}
+  .edge{fill:none;stroke:var(--ink);stroke-width:2.5}
+  .edge.emph{stroke-width:4}
+  .edge.dash{stroke-dasharray:8 6}
+  .edge.sec{stroke:var(--saf);stroke-width:3.5}
+  .edgeLbl{font:800 11px ui-monospace,Consolas,monospace;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:5;stroke-linejoin:round;pointer-events:none}
+  .cap{font:900 11px ui-monospace,Consolas,monospace;letter-spacing:.1em;text-transform:uppercase;fill:#3f3f46}
+
+  @media (max-width:900px){
+    main{flex-direction:column}
+    #drawer{
+      position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;flex:none;max-height:66vh;
+      border-left:0;border-top:4px solid var(--ink);transform:translateY(105%);z-index:20;box-shadow:0 -8px 0 rgba(11,11,12,.12)
+    }
+    #drawer.open{transform:none}
+    #stage{padding:8px}
+    .flows{display:none}
+    h1{font-size:15px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>TOM Tech Stack <span>★ Main overview</span></h1>
+    <div class="sub">Local-first · no external AI APIs · v0.10.0-phase10</div>
+  </div>
+  <div class="tools">
+    <button id="btnIn" title="Zoom in (+)">＋</button>
+    <button id="btnOut" title="Zoom out (−)">－</button>
+    <button id="btnFit" title="Fit to screen (F)">Fit</button>
+    <button id="btnReset" title="Reset view (0)">Reset</button>
+    <button id="btnCloseAll" title="Close detail panel">Close panel</button>
+  </div>
+</header>
+
+<main>
+  <div id="stage">
+    <div id="viewport"><svg id="canvas" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div class="flows" id="flows"></div>
+    <div class="hint">
+      <span><span class="key">wheel</span> zoom</span>
+      <span><span class="key">drag</span> pan</span>
+      <span><span class="key">click node</span> details</span>
+      <span><span class="key">esc</span> close</span>
+      <span><span class="key">+ − 0 f</span></span>
+      <span id="zoomLbl"></span>
+    </div>
+  </div>
+
+  <aside id="drawer" aria-live="polite">
+    <header>
+      <div class="dicon" id="dIcon" style="border-color:#f4f1ea;background:#0b0b0c;color:#f4f1ea">?</div>
+      <h2 id="dTitle">Select a node</h2>
+      <button id="closeDrawer" title="Close (Esc)">✕</button>
+    </header>
+    <div id="drawerBody"><div class="empty">Click any box in the diagram to inspect what it is, where it lives in this repository, what it connects to, and whether it is runtime or development tooling.</div></div>
+  </aside>
+</main>
+
+<script>
+/* ============================================================
+   DATA — every fact below is read from this repository:
+   backend/requirements.txt, frontend/package.json,
+   docs/architecture.md, README.md, .opencode/
+   ============================================================ */
+
+const BANDS = [
+  {id:'fe',   label:'FRONTEND',            x:48,  y:140, w:536,  h:430, c:'--fe'},
+  {id:'api',  label:'API',                 x:640, y:140, w:1032, h:330, c:'--api'},
+  {id:'svc',  label:'SERVICES / BUSINESS LOGIC', x:640, y:500, w:1032, h:330, c:'--svc'},
+  {id:'per',  label:'PERSISTENCE',         x:640, y:860, w:1032, h:200, c:'--data'},
+  {id:'db',   label:'DATABASE',            x:640, y:1090,w:1032, h:170, c:'--db'},
+  {id:'nlp',  label:'AI / NLP',            x:48,  y:620, w:536,  h:420, c:'--nlp'},
+  {id:'saf',  label:'SAFETY',              x:48,  y:1080,w:536,  h:290, c:'--saf'},
+  {id:'tool', label:'DEVELOPER TOOLING — NOT PART OF THE DEPLOYED RUNTIME',
+            x:48, y:1420, w:1624, h:290, c:'--tool', dashed:true}
+];
+
+const N = (o)=>o;
+const NODES = [
+  N({id:'tom',label:'TOM CHATBOT',sub:'v0.10.0-phase10',x:760,y:32,w:200,h:76,k:'db',mark:'TOM',
+     d:{category:'System / repository root',purpose:'Local-first mental-health support chatbot — one repository, no external AI APIs.',
+        version:'0.10.0-phase10',location:'./',
+        files:['README.md','docs/architecture.md','docs/architecture/','AGENTS.md'],
+        does:'Bundles the React frontend, FastAPI backend, PostgreSQL persistence and local CPU-only NLP.',
+        io:'Inputs: user messages. Outputs: chat replies, PHQ-9 screening results.',
+        deps:['React + Vite frontend','FastAPI backend','PostgreSQL 18','sentence-transformers (CPU)'],
+        runtime:'Runtime'}}),
+
+  /* ---------- FRONTEND ---------- */
+  N({id:'react',label:'React',sub:'UI library',x:72,y:200,w:232,h:86,k:'fe',mark:'⚛',marksvg:'react',
+     d:{category:'Frontend / UI library',purpose:'Renders every screen of the TOM interface.',
+        version:'^18.3.1 (installed 18.3.1)',location:'frontend/',
+        files:['src/App.jsx','src/main.jsx','src/pages/Chat.jsx','src/pages/Screening.jsx','src/pages/Dashboard.jsx','src/pages/Home.jsx','src/components/'],
+        does:'Composes pages, chat window, screening form and layout components.',
+        io:'Input: user events. Output: DOM + calls into the Axios API client.',
+        deps:['react-dom','react-router-dom','lucide-react'],runtime:'Runtime'}}),
+  N({id:'javascript',label:'JavaScript',sub:'JSX · ES modules',x:328,y:200,w:232,h:86,k:'fe',mark:'JS',
+     d:{category:'Frontend / language',purpose:'Language of the whole frontend.',
+        version:'ES2022 modules (Vite)',location:'frontend/src/',
+        files:['src/App.jsx','src/hooks/useChat.js','src/services/api.js','src/main.jsx'],
+        does:'Page logic, hooks, sessionStorage conversation restore.',
+        io:'Input: component state. Output: rendered UI + HTTP requests.',
+        deps:['Vite (transpile + HMR)'],runtime:'Runtime'}}),
+  N({id:'vite',label:'Vite',sub:'build · dev server',x:72,y:306,w:232,h:86,k:'fe',mark:'V',marksvg:'vite',
+     d:{category:'Frontend / build tooling',purpose:'Dev server and production bundler.',
+        version:'^6.0.5 (installed 6.4.3)',location:'frontend/',
+        files:['vite.config.js','package.json'],
+        does:'Serves the app on :5173 in dev, emits the static production bundle via npm run build.',
+        io:'Input: frontend/src/*. Output: dist/ static assets.',
+        deps:['@vitejs/plugin-react','@tailwindcss/vite'],runtime:'Development / build tooling'}}),
+  N({id:'tailwind',label:'Tailwind CSS',sub:'brutalist tokens',x:328,y:306,w:232,h:86,k:'fe',mark:'TW',
+     d:{category:'Frontend / styling',purpose:'Utility CSS behind the TOM brutalist design system.',
+        version:'^4.0.0 (installed 4.3.3)',location:'frontend/',
+        files:['src/index.css'],
+        does:'Central design tokens — square corners, hard shadows, high contrast.',
+        io:'Input: utility classes in JSX. Output: compiled stylesheet.',
+        deps:['@tailwindcss/vite'],runtime:'Runtime (compiled CSS)'}}),
+  N({id:'reactrouter',label:'React Router',sub:'client routes',x:72,y:412,w:232,h:86,k:'fe',mark:'RR',
+     d:{category:'Frontend / routing',purpose:'Maps URLs to Chat, Screening, Dashboard and Home pages.',
+        version:'^6.28.1 (installed 6.30.6)',location:'frontend/src/',
+        files:['src/App.jsx'],
+        does:'Client-side navigation between screens.',
+        io:'Input: location. Output: matched page component.',
+        deps:['react'],runtime:'Runtime'}}),
+  N({id:'axios',label:'Axios',sub:'services/api.js',x:328,y:412,w:232,h:86,k:'fe',mark:'AX',
+     d:{category:'Frontend / HTTP client',purpose:'The single place the UI talks HTTP — no component calls fetch directly.',
+        version:'^1.7.9 (installed 1.20.0)',location:'frontend/src/services/',
+        files:['src/services/api.js','src/hooks/useChat.js'],
+        does:'Base URL, error mapping and conversation_id handling for every request.',
+        io:'Input: JS calls. Output: JSON over HTTP to FastAPI (:5173 → :8000, CORS).',
+        deps:['fastapi backend'],runtime:'Runtime'}}),
+
+  /* ---------- API ---------- */
+  N({id:'fastapi',label:'FastAPI',sub:'HTTP routes',x:664,y:200,w:228,h:86,k:'api',mark:'FA',
+     d:{category:'API / web framework',purpose:'Thin route handlers: validate, call a service, map errors to HTTP.',
+        version:'0.115.6',location:'backend/app/',
+        files:['app/main.py','app/api/deps.py','app/api/routes/chat.py','app/api/routes/screening.py','app/api/routes/conversations.py','app/api/routes/health.py'],
+        does:'Registers routes, CORS (localhost:5173), OpenAPI docs and Depends() service wiring.',
+        io:'Input: JSON HTTP. Output: Pydantic-validated responses; never runs SQL.',
+        deps:['pydantic','uvicorn','python'],runtime:'Runtime'}}),
+  N({id:'python',label:'Python',sub:'backend language',x:916,y:200,w:228,h:86,k:'api',mark:'PY',
+     d:{category:'Backend / language',purpose:'Primary backend and NLP programming language.',
+        version:'3.12.10',location:'backend/',
+        files:['app/','services/','repositories/','evaluation/','tests/'],
+        does:'Hosts FastAPI, services, repositories and the local NLP/safety engines.',
+        io:'Input: HTTP + env config. Output: HTTP + SQL.',
+        deps:['FastAPI','SQLAlchemy','pydantic','sentence-transformers','langdetect'],runtime:'Runtime'}}),
+  N({id:'uvicorn',label:'Uvicorn',sub:'ASGI server :8000',x:1168,y:200,w:228,h:86,k:'api',mark:'UV',
+     d:{category:'API / ASGI server',purpose:'Serves the FastAPI application.',
+        version:'0.34.0',location:'backend/',
+        files:['app/main.py (app.main:app)'],
+        does:'Runs the API on port 8000; --reload in development.',
+        io:'Input: ASGI app. Output: HTTP server.',
+        deps:['fastapi'],runtime:'Runtime'}}),
+  N({id:'pydantic',label:'Pydantic',sub:'schema validation',x:1420,y:200,w:228,h:86,k:'api',mark:'PD',
+     d:{category:'API / validation',purpose:'Request/response schemas and settings.',
+        version:'2.10.4 (pydantic-settings 2.7.1)',location:'backend/app/',
+        files:['app/schemas/chat.py','app/schemas/screening.py','app/schemas/safety.py','app/schemas/nlp.py','app/core/config.py'],
+        does:'Rejects malformed input with 422 and reads TOM_ prefixed env settings.',
+        io:'Input: raw JSON / env. Output: typed objects.',
+        deps:['pydantic-settings'],runtime:'Runtime'}}),
+
+  N({id:'routeSafety',label:'Safety API',sub:'POST /api/safety/detect',x:664,y:330,w:150,h:70,k:'api',mark:'01',
+     d:{category:'API route',purpose:'Development/testing endpoint for crisis-language screening.',
+        location:'backend/app/api/routes/',files:['app/api/routes/safety.py'],
+        does:'Delegates to SafetyService; returns risk level + public signal categories only.',
+        io:'Input: {message, language?}. Output: {risk_level, requires_safety_response, signal_categories}.',
+        deps:['SafetyService'],runtime:'Runtime'}}),
+  N({id:'routeChat',label:'Chat API',sub:'POST /api/chat',x:830,y:330,w:150,h:70,k:'api',mark:'02',
+     d:{category:'API route',purpose:'Main chat entry point.',
+        location:'backend/app/api/routes/',files:['app/api/routes/chat.py','app/schemas/chat.py'],
+        does:'Validates ChatRequest, calls ChatService.send_message, returns conversation_id + reply.',
+        io:'Input: {message, conversation_id?}. Output: {conversation_id, message, response}.',
+        deps:['ChatService'],runtime:'Runtime'}}),
+  N({id:'routeNlp',label:'NLP dev API',sub:'/api/nlp/analyze · classify',x:996,y:330,w:150,h:70,k:'api',mark:'03',
+     d:{category:'API route (development only)',purpose:'Local NLP inspection endpoints — not wired into the UI.',
+        location:'backend/app/api/routes/',files:['app/api/routes/nlp.py'],
+        does:'Returns language, normalization and intent/emotion labels. Never returns an embedding vector.',
+        io:'Input: {text}. Output: labels + processing_time_ms; 503 if the model is unavailable.',
+        deps:['NLPService'],runtime:'Runtime (dev/test surface)'}}),
+  N({id:'routeConv',label:'Conversations',sub:'/api/conversations',x:1162,y:330,w:150,h:70,k:'api',mark:'04',
+     d:{category:'API route',purpose:'Conversation history and persisted messages.',
+        location:'backend/app/api/routes/',files:['app/api/routes/conversations.py'],
+        does:'List/create conversations; fetch messages to restore history after refresh.',
+        io:'Input: conversation id. Output: message lists; 404 when unknown.',
+        deps:['ConversationService'],runtime:'Runtime'}}),
+  N({id:'routeScreen',label:'Screening API',sub:'/api/screening/phq9/*',x:1328,y:330,w:150,h:70,k:'api',mark:'05',
+     d:{category:'API route',purpose:'Explicit PHQ-9 screening workflow — never auto-triggered from chat.',
+        location:'backend/app/api/routes/',files:['app/api/routes/screening.py'],
+        does:'start · answer · get · complete. 409 on duplicate or out-of-order answers.',
+        io:'Input: {question_number, answer 0–3}. Output: score, severity band, non-diagnostic disclaimer.',
+        deps:['ScreeningService'],runtime:'Runtime'}}),
+  N({id:'routeHealth',label:'Health / API',sub:'GET /api/health',x:1494,y:330,w:150,h:70,k:'api',mark:'06',
+     d:{category:'API route',purpose:'Liveness and project metadata.',
+        location:'backend/app/api/routes/',files:['app/api/routes/health.py','app/main.py'],
+        does:'Reports API status and version at / and /api/health.',
+        io:'Input: GET. Output: status JSON.',deps:[],runtime:'Runtime'}}),
+
+  /* ---------- SERVICES ---------- */
+  N({id:'chatService',label:'ChatService',sub:'orchestration',x:664,y:560,w:228,h:86,k:'svc',mark:'CS',
+     d:{category:'Business logic',purpose:'The one place a chat turn is orchestrated.',
+        location:'backend/app/services/',files:['app/services/chat_service.py','app/services/errors.py'],
+        does:'Persist user message → SafetyService.detect → NLP classify → ResponseSelector → persist reply → commit. Safety HIGH/IMMINENT short-circuits generation.',
+        io:'Input: message + conversation id. Output: assistant reply string.',
+        deps:['SafetyService','NLPService','ResponseSelector','repositories'],runtime:'Runtime'}}),
+  N({id:'nlpService',label:'NLPService',sub:'classify',x:916,y:560,w:228,h:86,k:'svc',mark:'NL',
+     d:{category:'Business logic / NLP facade',purpose:'Single entry point for normalization, language detection, embeddings and classification.',
+        location:'backend/app/services/nlp/',files:['app/services/nlp/service.py','app/services/nlp/classifiers.py','app/services/nlp/types.py'],
+        does:'NLPService.process() and .classify(); failures are swallowed so chat still works.',
+        io:'Input: raw text. Output: language, intent, emotion (never the vector).',
+        deps:['langdetect','sentence-transformers'],runtime:'Runtime'}}),
+  N({id:'convService',label:'ConversationService',sub:'threads',x:1168,y:560,w:228,h:86,k:'svc',mark:'CV',
+     d:{category:'Business logic',purpose:'Conversation listing, creation and message history.',
+        location:'backend/app/services/',files:['app/services/conversation_service.py'],
+        does:'Resolves conversations and returns persisted messages for the UI.',
+        io:'Input: conversation id. Output: conversation + message views.',
+        deps:['ConversationRepository'],runtime:'Runtime'}}),
+  N({id:'screeningService',label:'ScreeningService',sub:'PHQ-9 workflow',x:1420,y:560,w:228,h:86,k:'svc',mark:'SC',
+     d:{category:'Business logic / screening',purpose:'Structured PHQ-9 session workflow. Screening, not diagnosis.',
+        location:'backend/app/services/',files:['app/services/screening_service.py'],
+        does:'Creates a session, enforces sequential answers, scores on complete, routes item-9 to SafetyService.',
+        io:'Input: session id + answers 0–3. Output: score, severity, disclaimer.',
+        deps:['phq9.py','SafetyService','ScreeningRepository'],runtime:'Runtime'}}),
+  N({id:'responseSelector',label:'ResponseSelector',sub:'local replies',x:664,y:666,w:228,h:86,k:'svc',mark:'RS',
+     d:{category:'Business logic / response engine',purpose:'Generates every normal chat reply locally — no LLM API, no cloud.',
+        location:'backend/app/services/response/',files:['app/services/response/selector.py','app/services/response/library.py'],
+        does:'Strategy bucket → curated en/hi/hinglish library → lazy MiniLM semantic fallback → safe fallback. Deterministic, context-aware variant rotation.',
+        io:'Input: classification + recent context. Output: reply text (internal confidence never exposed).',
+        deps:['resolve_strategy','sentence-transformers','NLPService'],runtime:'Runtime'}}),
+  N({id:'strategy',label:'resolve_strategy',sub:'Phase 8 arbitration',x:1168,y:666,w:228,h:86,k:'svc',mark:'ST',
+     d:{category:'Business logic / strategy',purpose:'Pure, deterministic conversational strategy selection.',
+        version:'Phase 8',location:'backend/app/services/response/',
+        files:['app/services/response/strategy.py','app/services/response/types.py'],
+        does:'Picks greeting / farewell / positive / mixed-clarification / aligned-support / fallback. No I/O, no RNG.',
+        io:'Input: ResponseContext. Output: Strategy enum.',
+        deps:['intent + emotion labels'],runtime:'Runtime'}}),
+  N({id:'phq9',label:'PHQ-9 scoring',sub:'pure arithmetic',x:1420,y:666,w:228,h:86,k:'svc',mark:'9',
+     d:{category:'Screening / scoring',purpose:'Scores a completed PHQ-9 questionnaire.',
+        version:'Phase 5',location:'backend/app/services/',
+        files:['app/services/phq9.py'],
+        does:'Sums the nine answers (0–27) and bands severity. No ML, no embeddings, no diagnosis.',
+        io:'Input: nine answers. Output: score + severity band + disclaimer.',
+        deps:['ScreeningService'],runtime:'Runtime'}}),
+
+  /* ---------- PERSISTENCE ---------- */
+  N({id:'repositories',label:'Repositories',sub:'only SQL layer',x:664,y:920,w:228,h:86,k:'data',mark:'RJ',
+     d:{category:'Persistence / data access',purpose:'The only code that builds SQL.',
+        location:'backend/app/repositories/',
+        files:['repository.py','conversation.py','message.py','mood.py','screening.py','user.py'],
+        does:'User · Conversation · Message · Mood · Screening repositories. Routes never query.',
+        io:'Input: service calls. Output: ORM rows / persisted entities.',
+        deps:['SQLAlchemy 2 async session'],runtime:'Runtime'}}),
+  N({id:'sqlalchemy',label:'SQLAlchemy 2',sub:'async ORM',x:916,y:920,w:228,h:86,k:'data',mark:'SA',
+     d:{category:'Persistence / ORM',purpose:'Async ORM, engine and session factory.',
+        version:'2.0.54',location:'backend/app/database/',
+        files:['connection.py','base.py','mixins.py','app/models/*.py'],
+        does:'engine + sessionmaker + get_session; NullPool across uvicorn/test event loops.',
+        io:'Input: repository queries. Output: SQL over asyncpg.',
+        deps:['asyncpg'],runtime:'Runtime'}}),
+  N({id:'asyncpg',label:'asyncpg',sub:'PostgreSQL driver',x:1168,y:920,w:228,h:86,k:'data',mark:'AP',
+     d:{category:'Persistence / database driver',purpose:'Async PostgreSQL driver used by SQLAlchemy.',
+        version:'0.31.0',location:'backend/',
+        files:['app/database/connection.py'],
+        does:'Carries the asyncpg+postgresql URL taken only from backend/.env (TOM_DATABASE_URL).',
+        io:'Input: SQLAlchemy dialect calls. Output: PostgreSQL wire protocol.',
+        deps:['PostgreSQL 18'],runtime:'Runtime'}}),
+  N({id:'alembic',label:'Alembic',sub:'migrations',x:1420,y:920,w:228,h:86,k:'data',mark:'AL',
+     d:{category:'Persistence / migrations',purpose:'Schema migrations.',
+        version:'1.20.0',location:'backend/alembic/',
+        files:['env.py','versions/0001_initial_schema.py','versions/0002_screening_status.py'],
+        does:'Creates and evolves the six tables (users, conversations, messages, mood_checkins, screening_sessions, screening_responses).',
+        io:'Input: migration scripts. Output: schema DDL.',
+        deps:['PostgreSQL 18'],runtime:'Development / deployment tooling'}}),
+
+  /* ---------- DATABASE ---------- */
+  N({id:'postgres',label:'PostgreSQL 18',sub:'tom_chatbot · localhost:5432',x:940,y:1150,w:440,h:86,k:'db',mark:'PG',
+     d:{category:'Database',purpose:'System of record for conversations, messages and screening sessions.',
+        version:'PostgreSQL 18',location:'external service · backend/.env',
+        files:['backend/.env (TOM_DATABASE_URL, git-ignored)','backend/.env.example'],
+        does:'Stores UUID-keyed rows with UTC timestamps, ON DELETE CASCADE FKs and message-timeline indexes.',
+        io:'Input: SQL from asyncpg. Output: rows to repositories.',
+        deps:['asyncpg','Alembic'],runtime:'Runtime'}}),
+
+  /* ---------- AI / NLP ---------- */
+  N({id:'normalizer',label:'Text normalizer',sub:'whitespace · unicode',x:72,y:690,w:232,h:86,k:'nlp',mark:'N1',
+     d:{category:'AI / NLP · preprocessing',purpose:'Safe normalization before any analysis.',
+        location:'backend/app/services/nlp/',files:['app/services/nlp/normalizer.py'],
+        does:'Collapses whitespace and unicode without stopword removal — negation and Devanagari survive.',
+        io:'Input: raw message. Output: normalized text.',
+        deps:['none (pure Python)'],runtime:'Runtime'}}),
+  N({id:'language',label:'Language detection',sub:'en · hi · hinglish',x:328,y:690,w:232,h:86,k:'nlp',mark:'L2',
+     d:{category:'AI / NLP · language',purpose:'Detects English, Hindi or Hinglish before classification.',
+        version:'langdetect 1.0.9 + TOM heuristics',location:'backend/app/services/nlp/',
+        files:['app/services/nlp/language.py'],
+        does:'Script analysis + distinctive romanised-Hindi tokens, with langdetect as fallback. Hinglish is an application-level decision and is imperfect on short input.',
+        io:'Input: normalized text. Output: en | hi | hinglish | unknown.',
+        deps:['langdetect'],runtime:'Runtime'}}),
+  N({id:'intent',label:'Intent classification',sub:'15 labels · cosine',x:72,y:800,w:232,h:86,k:'nlp',mark:'I3',
+     d:{category:'AI / NLP · classification',purpose:'Labels message content — not a diagnosis.',
+        version:'Phase 3B',location:'backend/app/services/nlp/',
+        files:['intent.py','prototypes.py','negation.py','scoring.py','data/intent_examples.py'],
+        does:'Averages curated en/hi/hinglish example embeddings into class centroids, scores cosine similarity, applies threshold + ambiguity margin and a low-content guard.',
+        io:'Input: 384-d embedding. Output: label | unknown with an internal cosine estimate (not a probability).',
+        deps:['embeddings','sentence-transformers'],runtime:'Runtime'}}),
+  N({id:'embeddings',label:'Embedding service',sub:'384-d · CPU',x:328,y:800,w:232,h:86,k:'nlp',mark:'E4',
+     d:{category:'AI / NLP · embeddings',purpose:'Local sentence embeddings — the only ML inference in the chat path.',
+        location:'backend/app/services/nlp/',files:['app/services/nlp/embeddings.py'],
+        does:'Lazy singleton EmbeddingService with device="cpu"; first call loads weights, later calls reuse them. Dimension read from the model, vector never returned.',
+        io:'Input: text batch. Output: 384-d vectors (in-memory only, never persisted).',
+        deps:['sentence-transformers','torch (transitive)'],runtime:'Runtime'}}),
+  N({id:'emotion',label:'Emotion classification',sub:'10 labels',x:72,y:910,w:232,h:86,k:'nlp',mark:'M5',
+     d:{category:'AI / NLP · classification',purpose:'Labels expressed affect — not a clinical assessment.',
+        version:'Phase 3B',location:'backend/app/services/nlp/',
+        files:['emotion.py','prototypes.py','negation.py','scoring.py','data/emotion_examples.py'],
+        does:'Same centroid scoring as intent, plus negation damping (×0.55) and a low-content guard for fillers.',
+        io:'Input: 384-d embedding. Output: label | uncertain.',
+        deps:['embeddings'],runtime:'Runtime'}}),
+  N({id:'minilm',label:'sentence-transformers',sub:'MiniLM-L12-v2 · local model',x:328,y:910,w:232,h:86,k:'nlp',mark:'ST',
+     d:{category:'AI / NLP · model runtime',purpose:'Multilingual sentence embedding model — CPU only, no API keys.',
+        version:'sentence-transformers 6.1.0 (pulls torch 2.14.0, transformers 5.17.0, scikit-learn 1.9.1)',
+        location:'backend/.venv · Hugging Face cache',
+        files:['backend/requirements.txt','models/README.md'],
+        does:'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 — 384-d, device="cpu", never GPU. Used for classification centroids and response semantic retrieval.',
+        io:'Input: text. Output: 384-d vector. No CUDA, no TensorFlow, no external AI API.',
+        deps:['torch','transformers','numpy'],runtime:'Runtime (local model dependency)'}}),
+
+  /* ---------- SAFETY ---------- */
+  N({id:'safetyService',label:'SafetyService',sub:'crisis screen first',x:72,y:1150,w:488,h:86,k:'saf',mark:'SS',
+     d:{category:'Safety / rule-based screening',purpose:'Runs on every chat message before generation. Not a clinical assessment.',
+        version:'Phase 4',location:'backend/app/services/safety/',
+        files:['service.py','detector.py','types.py','responses.py'],
+        does:'detect() returns risk none/low/moderate/high/imminent; high or imminent short-circuits ChatService to a non-clinical crisis redirect. response_for() supplies the reply copy.',
+        io:'Input: message + language. Output: SafetyResult (public categories only; scores and matches never leave the process).',
+        deps:['safety patterns · context · scoring','configured local resources only'],runtime:'Runtime'}}),
+  N({id:'safetyRules',label:'Patterns · context · scoring',sub:'pure Python · no ML',x:72,y:1256,w:488,h:86,k:'saf',mark:'P7',
+     d:{category:'Safety / detection engine',purpose:'Deterministic keyword, regex and context heuristics.',
+        version:'Phase 4 — zero new packages',location:'backend/app/services/safety/',
+        files:['patterns.py','context.py','scoring.py'],
+        does:'Per-language phrase inventory with base risk; context caps for negation, protective, third-person, hypothetical, quoted and past reference.',
+        io:'Input: normalized text. Output: risk level + signal categories.',
+        deps:['none (pure Python, CPU only)'],runtime:'Runtime'}}),
+
+  /* ---------- TOOLING ---------- */
+  N({id:'graphify',label:'Graphify',sub:'knowledge graph',x:80,y:1480,w:280,h:86,k:'tool',mark:'GX',
+     d:{category:'Developer tooling / documentation',purpose:'Turns this repository into a queryable knowledge graph.',
+        location:'graphify-out/ · .opencode/plugins/graphify.js',
+        files:['graphify-out/graph.json','graphify-out/GRAPH_REPORT.md','AGENTS.md','.opencode/plugins/graphify.js'],
+        does:'Powers graphify query / path / explain and graphify update . after code changes.',
+        io:'Input: source tree. Output: graph.json + reports.',
+        deps:['OpenCode'],runtime:'Development tooling — NOT in the runtime path'}}),
+  N({id:'archify',label:'Archify',sub:'architecture diagrams',x:400,y:1480,w:280,h:86,k:'tool',mark:'AX',
+     d:{category:'Developer tooling / documentation',purpose:'Generates the six detailed architecture diagrams in this directory.',
+        location:'scripts/archify.mjs · docs/architecture/sources/',
+        files:['scripts/archify.mjs','docs/architecture/sources/*.architecture.json','AGENTS.md'],
+        does:'Wraps archify validate + deliver, patches wheel zoom into the viewer, and deletes Archify visual-check sidecars so none are left in docs/architecture/.',
+        io:'Input: sources/*.architecture.json. Output: *.architecture.html.',
+        deps:['archify skill install'],runtime:'Development tooling — NOT in the runtime path'}}),
+  N({id:'ponytail',label:'Ponytail',sub:'minimal-change mode',x:720,y:1480,w:280,h:86,k:'tool',mark:'PT',
+     d:{category:'Developer tooling / agent configuration',purpose:'Coding-convention plugin that keeps changes minimal (YAGNI, stdlib first).',
+        location:'.opencode/opencode.json',
+        files:['.opencode/opencode.json'],
+        does:'Loaded as an OpenCode plugin alongside graphify. It changes how code is written, never what the app runs.',
+        io:'Input: coding tasks. Output: smaller diffs.',
+        deps:['OpenCode'],runtime:'Development tooling — NOT in the runtime path'}}),
+  N({id:'opencodeAgents',label:'OpenCode agents',sub:'65 .md agents',x:1040,y:1480,w:280,h:86,k:'tool',mark:'OC',
+     d:{category:'Developer tooling / agent configuration',purpose:'Specialist sub-agent definitions for this project.',
+        location:'.opencode/agents/',
+        files:['.opencode/agents/*.md (65 files)','.opencode/opencode.json','AGENTS.md'],
+        does:'Frontend, backend, database, SRE, privacy and documentation agents available to the coding assistant.',
+        io:'Input: task description. Output: agent-specific guidance.',
+        deps:['OpenCode'],runtime:'Development tooling — NOT in the runtime path'}}),
+  N({id:'pytest',label:'pytest',sub:'test suite',x:1360,y:1480,w:280,h:86,k:'tool',mark:'PT',
+     d:{category:'Developer tooling / testing',purpose:'Test runner for the backend.',
+        version:'pytest 8.3.4 (httpx 0.28.1 for API tests)',location:'backend/tests/',
+        files:['tests/test_api.py','tests/test_database.py','tests/test_nlp.py','tests/test_classification.py','tests/test_safety.py','tests/test_screening.py','tests/test_response.py','tests/test_phase9.py','evaluation/run_phase7.py','evaluation/run_phase8.py'],
+        does:'API, database, NLP, classification, safety, screening, response and Phase 9 reliability/security tests plus evaluation harnesses.',
+        io:'Input: source tree. Output: pass/fail + docs/phase*_evaluation_metrics.json.',
+        deps:['fastapi','httpx'],runtime:'Development tooling — NOT in the runtime path'}})
+];
+
+/* ---- edges: every arrow below corresponds to a real code path ---- */
+const E = [
+  {f:'tom',t:'react',fs:'left',ts:'top',via:[[188,70]],l:'browser UI'},
+  {f:'tom',t:'fastapi',fs:'right',ts:'top',via:[[778,70]],l:'API server',lp:[778,150]},
+  {f:'react',t:'axios',fs:'right',ts:'left',via:[[316,243],[316,455]],l:'components',lp:[316,296]},
+  {f:'axios',t:'fastapi',fs:'right',ts:'left',via:[[610,455],[610,243]],l:'CORS',v:'emph'},
+  {f:'fastapi',t:'python',fs:'right',ts:'left',l:'framework'},
+
+  {f:'routeChat',t:'chatService',fs:'bottom',ts:'top',via:[[905,478],[778,478]],l:'POST /api/chat',v:'emph'},
+  {f:'routeNlp',t:'nlpService',fs:'bottom',ts:'top',via:[[1071,478],[1030,478]],l:'/api/nlp/*',v:'dash'},
+  {f:'routeConv',t:'convService',fs:'bottom',ts:'top',via:[[1237,478],[1282,478]],l:'/api/conversations'},
+  {f:'routeScreen',t:'screeningService',fs:'bottom',ts:'top',via:[[1403,478],[1534,478]],l:'/api/screening/phq9',v:'emph'},
+  {f:'routeSafety',t:'safetyService',fs:'left',ts:'right',via:[[596,365],[596,1193]],l:'safety detect',lp:[596,1000],v:'sec'},
+
+  {f:'chatService',t:'safetyService',fs:'left',ff:0.75,ts:'top',via:[[628,624],[628,1120],[316,1120]],l:'detect first',v:'sec'},
+  {f:'chatService',t:'nlpService',fs:'right',ts:'left',l:'classify',v:'emph'},
+  {f:'chatService',t:'responseSelector',fs:'bottom',ts:'top',l:'generate',v:'emph'},
+  {f:'responseSelector',t:'strategy',fs:'right',ts:'left',l:'strategy'},
+  {f:'screeningService',t:'phq9',fs:'bottom',ts:'top',l:'pure scoring'},
+
+  {f:'nlpService',t:'normalizer',fs:'bottom',ts:'top',
+   via:[[1030,845],[636,845],[636,595],[188,595]],l:'NLP pipeline'},
+  {f:'normalizer',t:'language',fs:'right',ts:'left',l:'normalize'},
+  {f:'language',t:'embeddings',fs:'bottom',ts:'top',l:'en | hi | hinglish'},
+  {f:'embeddings',t:'intent',fs:'left',ts:'right',l:'384-d'},
+  {f:'embeddings',t:'emotion',fs:'bottom',ff:0.25,ts:'top',via:[[386,898],[188,898]],l:'classify'},
+  {f:'embeddings',t:'minilm',fs:'bottom',ff:0.75,ts:'top',via:[[500,898],[444,898]],l:'encode',v:'dash'},
+  {f:'safetyService',t:'safetyRules',fs:'bottom',ts:'top',l:'patterns · context · scoring'},
+
+  {f:'chatService',t:'repositories',fs:'left',ts:'left',via:[[612,603],[612,963]],l:'persist messages',v:'emph'},
+  {f:'screeningService',t:'repositories',fs:'right',ts:'top',via:[[1660,603],[1660,845],[778,845]],l:'persist session',v:'emph'},
+  {f:'repositories',t:'sqlalchemy',fs:'right',ts:'left',l:'SQL only',v:'emph'},
+  {f:'sqlalchemy',t:'asyncpg',fs:'right',ts:'left',l:'driver'},
+  {f:'asyncpg',t:'postgres',fs:'bottom',ts:'top',via:[[1282,1078],[1160,1078]],l:'postgresql+asyncpg://',v:'emph'},
+  {f:'alembic',t:'postgres',fs:'bottom',ts:'top',via:[[1534,1084],[1340,1084]],l:'migrations',v:'dash'}
+];
+
+const FLOWS =
+`CHAT      User → React UI → Axios (api.js) → FastAPI route → ChatService → SafetyService → NLPService → resolve_strategy → ResponseSelector → Repository → SQLAlchemy → asyncpg → PostgreSQL
+SCREENING User → Screening UI → /api/screening/phq9 → ScreeningService → PHQ-9 scoring → ScreeningRepository → PostgreSQL
+NLP       Message → normalize → language → embeddings → intent / emotion → strategy → response  (local CPU only)`;
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const SVG = document.getElementById('canvas');
+const VW = 1720, VH = 1760;
+const byId = Object.fromEntries(NODES.map(n=>[n.id,n]));
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function anchor(n, side, frac){
+  const f = frac==null?0.5:frac;
+  if(side==='left')  return [n.x, n.y+n.h*f];
+  if(side==='right') return [n.x+n.w, n.y+n.h*f];
+  if(side==='top')   return [n.x+n.w*f, n.y];
+  return [n.x+n.w*f, n.y+n.h];
+}
+function points(e){
+  const a = byId[e.f], b = byId[e.t];
+  const p1 = anchor(a, e.fs, e.ff);
+  const p2 = anchor(b, e.ts, e.tf);
+  if(e.via) return [p1, ...e.via, p2];
+  const h = s => s==='left'||s==='right';
+  const v = s => s==='top'||s==='bottom';
+  if(h(e.fs) && h(e.ts)){ const mx=(p1[0]+p2[0])/2; return [p1,[mx,p1[1]],[mx,p2[1]],p2]; }
+  if(v(e.fs) && v(e.ts)){ const my=(p1[1]+p2[1])/2; return [p1,[p1[0],my],[p2[0],my],p2]; }
+  if(h(e.fs) && v(e.ts)) return [p1,[p2[0],p1[1]],p2];
+  return [p1,[p1[0],p2[1]],p2];
+}
+function longestMid(pts){
+  let best=-1, m=[(pts[0][0]+pts[1][0])/2,(pts[0][1]+pts[1][1])/2];
+  for(let i=1;i<pts.length;i++){
+    const d=Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]);
+    if(d>best){best=d;m=[(pts[i][0]+pts[i-1][0])/2,(pts[i][1]+pts[i-1][1])/2];}
+  }
+  return m;
+}
+
+function markSvg(kind, x, y, color){
+  if(kind==='react') return `<g transform="translate(${x},${y})" fill="none" stroke="${color}" stroke-width="2">
+      <ellipse rx="11" ry="4.5"/><ellipse rx="11" ry="4.5" transform="rotate(60)"/>
+      <ellipse rx="11" ry="4.5" transform="rotate(-60)"/><circle r="2.6" fill="${color}" stroke="none"/></g>`;
+  if(kind==='vite') return `<g transform="translate(${x},${y})"><path d="M-9 -9 L1 -1 L-1 8 L-9 1 Z" fill="${color}"/>
+      <path d="M0 -9 L9 -9 L3 4 L-2 4 Z" fill="${color}" opacity=".6"/></g>`;
+  return '';
+}
+
+function draw(){
+  let s = '';
+
+  s += `<defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+    <marker id="arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="var(--saf)"/></marker>
+  </defs>`;
+
+  /* bands */
+  for(const b of BANDS){
+    const c = `var(${b.c})`;
+    s += `<g>
+      <rect class="band${b.dashed?' dashed':''}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}"
+            stroke="${b.dashed?'var(--tool)':'var(--ink)'}" stroke-dasharray="${b.dashed?'10 7':'none'}"/>
+      <rect x="${b.x}" y="${b.y}" width="${Math.min(b.w, b.label.length*9.6+30)}" height="26"
+            fill="${c}"/>
+      <text class="bandTitle" x="${b.x+10}" y="${b.y+18}" fill="#fff">${esc(b.label)}</text>
+    </g>`;
+  }
+
+  /* edges (paths only — labels are drawn last so boxes never hide them) */
+  s += `<g>`;
+  for(const e of E){
+    const pts = points(e);
+    const d = pts.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ');
+    const cls = e.v==='emph'?'edge emph':e.v==='dash'?'edge dash':e.v==='sec'?'edge sec':'edge';
+    s += `<path class="${cls}" d="${d}" marker-end="url(#${e.v==='sec'?'arR':'ar'})"/>`;
+  }
+  s += `</g>`;
+
+  /* nodes */
+  s += `<g>`;
+  for(const n of NODES){
+    const col = `var(--${n.k})`;
+    const isChip = n.h <= 70;
+    s += `<g class="node" data-id="${n.id}" tabindex="0" role="button" aria-label="${esc(n.label)}">
+      <rect class="nodeBox" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}"/>
+      <rect x="${n.x}" y="${n.y}" width="7" height="${n.h}" fill="${col}"/>
+      <rect x="${n.x}" y="${n.y}" width="${n.w}" height="6" fill="${col}"/>`;
+    if(isChip){
+      s += `<text class="nodeLbl" x="${n.x+n.w/2}" y="${n.y+n.h/2-1}" text-anchor="middle" style="font-size:13px">${esc(n.label)}</text>
+            <text class="nodeSub" x="${n.x+n.w/2}" y="${n.y+n.h/2+15}" text-anchor="middle" style="font-size:9.5px">${esc(n.sub||'')}</text>`;
+    }else{
+      const svg = n.marksvg ? markSvg(n.marksvg, n.x+30, n.y+n.h/2, col) : '';
+      const tx = n.x + (svg ? 56 : 20);
+      if(svg) s += svg;
+      else s += `<rect x="${n.x+14}" y="${n.y+n.h/2-16}" width="32" height="32" fill="${col}"/>
+                 <text x="${n.x+30}" y="${n.y+n.h/2+6}" text-anchor="middle" fill="#fff"
+                       style="font:900 14px ui-monospace,monospace;pointer-events:none">${esc(n.mark||'')}</text>`;
+      s += `<text class="nodeLbl" x="${tx+ (svg?8:46)}" y="${n.y+n.h/2-2}">${esc(n.label)}</text>
+            <text class="nodeSub" x="${tx+ (svg?8:46)}" y="${n.y+n.h/2+16}">${esc(n.sub||'')}</text>`;
+    }
+    s += `</g>`;
+  }
+  s += `</g>`;
+
+  /* edge labels — last layer, each with a knockout chip so text is always readable */
+  s += `<g class="elabels">`;
+  for(const e of E){
+    if(!e.l) continue;
+    const m = e.lp || longestMid(points(e));
+    s += `<text class="edgeLbl" x="${m[0]}" y="${m[1]+5}" text-anchor="middle">${esc(e.l)}</text>`;
+  }
+  s += `</g>`;
+
+  s += `<text class="cap" x="${VW-20}" y="${VH-16}" text-anchor="end">Sourced from this repository — no external AI APIs</text>`;
+  SVG.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
+  SVG.innerHTML = s;
+
+  SVG.querySelectorAll('text.edgeLbl').forEach(t=>{
+    const w = t.getComputedTextLength() + 10;
+    const x = parseFloat(t.getAttribute('x')), y = parseFloat(t.getAttribute('y'));
+    const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('class','chipbg');
+    r.setAttribute('x', x - w/2); r.setAttribute('y', y - 13);
+    r.setAttribute('width', w); r.setAttribute('height', 17);
+    r.setAttribute('fill', 'var(--panel)');
+    t.parentNode.insertBefore(r, t);
+  });
+}
+draw();
+document.getElementById('flows').textContent = FLOWS;
+
+/* ============================================================
+   VIEWPORT — zoom / pan / fit / reset (only this box zooms)
+   ============================================================ */
+const vp = document.getElementById('viewport');
+let vb = {x:0,y:0,w:VW,h:H()};
+function H(){ return VH; }
+function apply(){
+  SVG.setAttribute('viewBox', `${vb.x.toFixed(2)} ${vb.y.toFixed(2)} ${vb.w.toFixed(2)} ${vb.h.toFixed(2)}`);
+  document.getElementById('zoomLbl').textContent = 'zoom ' + (VW/vb.w*100).toFixed(0) + '%';
+}
+function fit(){
+  const r = vp.getBoundingClientRect();
+  const s = Math.min(r.width/VW, r.height/VH);
+  const w = r.width/s, h = r.height/s;
+  vb = {x:(VW-w)/2, y:(VH-h)/2, w, h};
+  apply();
+}
+function reset(){ vb = {x:0,y:0,w:VW,h:VH}; apply(); }
+function clientToSvg(cx, cy){
+  const r = SVG.getBoundingClientRect();
+  return [ vb.x + (cx-r.left)/r.width*vb.w, vb.y + (cy-r.top)/r.height*vb.h ];
+}
+function zoomAt(factor, cx, cy){
+  const minW = VW/5, maxW = VW*2.2;
+  const nw = Math.min(maxW, Math.max(minW, vb.w*factor));
+  const f = nw/vb.w;
+  const r = SVG.getBoundingClientRect();
+  const px = vb.x + (cx-r.left)/r.width*vb.w;
+  const py = vb.y + (cy-r.top)/r.height*vb.h;
+  vb = { x: px-(px-vb.x)*f, y: py-(py-vb.y)*f, w: vb.w*f, h: vb.h*f };
+  apply();
+}
+function zoomCenter(f){ const r=SVG.getBoundingClientRect(); zoomAt(f, r.left+r.width/2, r.top+r.height/2); }
+
+vp.addEventListener('wheel', e=>{
+  e.preventDefault();
+  const unit = e.deltaMode===1?16:e.deltaMode===2?100:1;
+  zoomAt(Math.pow(0.9988, -e.deltaY*unit), e.clientX, e.clientY);
+}, {passive:false});
+
+let drag=null;
+vp.addEventListener('pointerdown', e=>{
+  if(e.button!==0 && e.pointerType==='mouse') return;
+  drag={id:e.pointerId, x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, moved:0, node:e.target.closest('.node')};
+  vp.setPointerCapture(e.pointerId); vp.classList.add('dragging');
+});
+vp.addEventListener('pointermove', e=>{
+  if(!drag||drag.id!==e.pointerId) return;
+  const r = SVG.getBoundingClientRect();
+  const dx=(e.clientX-drag.x)/r.width*vb.w, dy=(e.clientY-drag.y)/r.height*vb.h;
+  drag.moved += Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y);
+  vb.x-=dx; vb.y-=dy; drag.x=e.clientX; drag.y=e.clientY; apply();
+});
+function endDrag(e){
+  if(!drag||drag.id!==e.pointerId) return;
+  const d=drag; drag=null; vp.classList.remove('dragging');
+  if(d.moved>=6) return;                 /* pan: keep drawer as-is */
+  if(d.node) select(d.node.dataset.id);  /* tap node: open detail  */
+  else closeDrawer();                    /* tap background: close  */
+}
+vp.addEventListener('pointerup', endDrag);
+vp.addEventListener('pointercancel', endDrag);
+
+document.getElementById('btnIn').onclick  = ()=>zoomCenter(1/1.25);
+document.getElementById('btnOut').onclick = ()=>zoomCenter(1.25);
+document.getElementById('btnFit').onclick = fit;
+document.getElementById('btnReset').onclick = reset;
+window.addEventListener('resize', fit);
+
+window.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closeDrawer();
+  if(e.key==='+'||e.key==='=') zoomCenter(1/1.25);
+  if(e.key==='-'||e.key==='_') zoomCenter(1.25);
+  if(e.key==='0') reset();
+  if(e.key==='f'||e.key==='F') fit();
+});
+
+/* ============================================================
+   DETAIL DRAWER
+   ============================================================ */
+const drawer = document.getElementById('drawer');
+const dBody  = document.getElementById('drawerBody');
+const dTitle = document.getElementById('dTitle');
+const dIcon  = document.getElementById('dIcon');
+let selected = null;
+
+function neighbours(id){
+  const out=[];
+  for(const e of E){
+    if(e.f===id) out.push({dir:'→', other:byId[e.t], l:e.l});
+    else if(e.t===id) out.push({dir:'←', other:byId[e.f], l:e.l});
+  }
+  return out;
+}
+function li(a){ return a && a.length ? `<ul>${a.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>` : ''; }
+function fld(title, html){ return html ? `<div class="fld"><h3>${title}</h3>${html}</div>` : ''; }
+
+function select(id){
+  const n = byId[id]; if(!n) return;
+  document.querySelectorAll('.node.sel').forEach(el=>el.classList.remove('sel'));
+  const el = SVG.querySelector(`.node[data-id="${id}"]`); if(el) el.classList.add('sel');
+  selected = id;
+  const d = n.d || {};
+  const nb = neighbours(id);
+
+  dTitle.textContent = n.label;
+  dIcon.textContent = n.mark || '?';
+
+  let h = `<div class="row">
+      <div class="dicon" style="background:var(--${n.k});color:#fff">${esc(n.mark||'?')}</div>
+      <div><div class="t">${esc(n.label)}</div><div class="c">${esc(d.category||'')}</div></div>
+    </div>`;
+
+  h += `<div class="fld"><h3>Status</h3><p><span class="chip ${/Development/.test(d.runtime||'')?'dv':'rt'}">${esc(d.runtime||'Runtime')}</span>${
+        d.version ? `<span class="chip">${esc(d.version)}</span>` : ''}</p></div>`;
+
+  h += fld('Purpose', d.purpose?`<p>${esc(d.purpose)}</p>`:'');
+  h += fld('Project location', d.location?`<p>${esc(d.location)}</p>`:'');
+  h += fld('Important files', li(d.files));
+  h += fld('What it does in TOM', d.does?`<p>${esc(d.does)}</p>`:'');
+  h += fld('Input / output', d.io?`<p>${esc(d.io)}</p>`:'');
+  h += fld('Connects to', nb.length
+      ? `<p>${nb.map(x=>`<span class="chip">${x.dir} ${esc(x.other.label)}${x.l?' — '+esc(x.l):''}</span>`).join('')}</p>`
+      : '<p>No direct runtime edge — supporting technology / tooling.</p>');
+  h += fld('Relevant dependencies', li(d.deps));
+
+  dBody.innerHTML = h;
+  drawer.classList.add('open');
+}
+function closeDrawer(){
+  drawer.classList.remove('open');
+  document.querySelectorAll('.node.sel').forEach(el=>el.classList.remove('sel'));
+  selected = null;
+}
+document.getElementById('closeDrawer').onclick = closeDrawer;
+document.getElementById('btnCloseAll').onclick = closeDrawer;
+SVG.addEventListener('keydown', e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('node')){
+    e.preventDefault(); select(e.target.dataset.id);
+  }
+});
+
+fit();
+</script>
+</body>
+</html>

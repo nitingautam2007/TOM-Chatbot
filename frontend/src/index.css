@@ -1,0 +1,508 @@
+@import "tailwindcss";
+
+/* ============================================================
+   TOM DESIGN SYSTEM — Calm Modern + Soft Editorial
+   Palette lives in @theme; components use utilities and the
+   component classes below, never magic values.
+   ============================================================ */
+
+@theme {
+  /* --- Typography (one system stack, no web fonts) --- */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  /* --- Surfaces --- */
+  --color-background: #f6f8fc;
+  --color-surface: #ffffff;
+  --color-surface-dim: #f1f5f9;
+  --color-border: #e2e8f0;
+  /* control boundaries need 3:1 (WCAG 1.4.11); dividers do not */
+  --color-border-strong: #7e8ca1;
+
+  /* --- Text --- */
+  --color-ink: #172033;
+  /* #64748b measured 4.49:1 on --color-background (needs 4.5:1) */
+  --color-secondary: #5b6b80;
+  --color-muted: #94a3b8;
+
+  /* --- Primary — TOM's identity --- */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-soft: #e8f0ff;
+
+  /* --- Accent — decorative only --- */
+  --color-accent: #7c83fd;
+  --color-accent-soft: #eef0ff;
+  --color-tom-accent: #0ea5e9;
+
+  /* --- Signals --- */
+  --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
+  --color-success-ink: #15803d;
+  --color-warning: #d97706;
+  --color-warning-soft: #fef3c7;
+  --color-warning-border: #fde68a;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-soft: #fee2e2;
+  --color-danger-border: #fca5a5;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================
+   SURFACES
+   ============================================================ */
+
+@layer components {
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow:
+      0 1px 2px rgb(23 32 51 / 0.05),
+      0 8px 20px -12px rgb(23 32 51 / 0.12);
+  }
+
+  .card-subtle {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+  }
+
+  /* ============================================================
+     TYPE HELPERS
+     ============================================================ */
+
+  .display {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .h-display {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .hero-text {
+    font-size: clamp(2rem, 5.5vw, 3.25rem);
+    line-height: 1.08;
+  }
+
+  .label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-secondary);
+  }
+
+  .meta {
+    font-size: 0.75rem;
+    letter-spacing: 0.01em;
+    color: var(--color-secondary);
+  }
+
+  /* ============================================================
+     BUTTONS
+     ============================================================ */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgb(23 32 51 / 0.1);
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+  }
+
+  .btn:disabled {
+    background: var(--color-surface-dim);
+    border-color: var(--color-border);
+    color: var(--color-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+    box-shadow: 0 4px 12px -4px rgb(37 99 235 / 0.35);
+  }
+
+  .btn-secondary {
+    background: var(--color-surface);
+    border-color: var(--color-border-strong);
+    color: var(--color-ink);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--color-surface-dim);
+    border-color: var(--color-secondary);
+  }
+
+  .btn-danger {
+    background: var(--color-danger);
+    color: #fff;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: var(--color-danger-hover);
+  }
+
+  /* ============================================================
+     INPUTS
+     ============================================================ */
+
+  .input {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 10px;
+    color: var(--color-ink);
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .input::placeholder {
+    color: var(--color-secondary);
+  }
+
+  .input:focus {
+    border-color: var(--color-primary);
+  }
+
+  .input:disabled,
+  .input[aria-disabled="true"] {
+    background: var(--color-surface-dim);
+    cursor: not-allowed;
+  }
+
+  /* ============================================================
+     BADGES
+     ============================================================ */
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-background);
+    color: var(--color-secondary);
+  }
+
+  .badge-primary {
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .badge-success {
+    background: var(--color-success-soft);
+    border-color: var(--color-success);
+    color: var(--color-success-ink);
+  }
+
+  /* ============================================================
+     BANNERS — safety / error / warning
+     ============================================================ */
+
+  .alert-danger {
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-border);
+    border-left: 4px solid var(--color-danger);
+    border-radius: 10px;
+    color: var(--color-ink);
+  }
+
+  .notice-warn {
+    background: var(--color-warning-soft);
+    border: 1px solid var(--color-warning-border);
+    border-left: 4px solid var(--color-warning);
+    border-radius: 10px;
+    color: var(--color-ink);
+  }
+
+  .section-head {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1.25rem;
+  }
+
+  /* ============================================================
+     CHAT BUBBLES
+     ============================================================ */
+
+  .bubble-bot {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    border-top-left-radius: 4px;
+    color: var(--color-ink);
+  }
+
+  /* Crisis replies (message.is_safety) — visually distinct, ink on soft red */
+  .bubble-safety {
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-border);
+    border-left: 4px solid var(--color-danger);
+    border-radius: 14px;
+    border-top-left-radius: 4px;
+    color: var(--color-ink);
+  }
+
+  .bubble-user {
+    background: var(--color-primary);
+    border-radius: 14px;
+    border-top-right-radius: 4px;
+    color: #fff;
+  }
+
+  /* ============================================================
+     SCREENING CHOICES
+     ============================================================ */
+
+  .choice {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: left;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 10px;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+    cursor: pointer;
+  }
+
+  .choice:hover:not(:disabled):not([aria-checked="true"]) {
+    background: var(--color-background);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  .choice[aria-checked="true"] {
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 0.15);
+  }
+
+  .choice:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /* ============================================================
+     PROGRESS
+     ============================================================ */
+
+  .progress {
+    height: 6px;
+    background: var(--color-border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    background: var(--color-primary);
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  /* ============================================================
+     BREATHING ORB (Phase 10 exercise) — static label always
+     conveys the phase; the orb is decoration only
+     ============================================================ */
+
+  .breath-orb {
+    width: 7.5rem;
+    height: 7.5rem;
+    border-radius: 999px;
+    background: var(--color-primary-soft);
+    border: 2px solid var(--color-primary);
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-in-out;
+  }
+
+  .breath-hold {
+    transform: scale(1);
+  }
+
+  .breath-orb.is-paused {
+    animation-play-state: paused;
+  }
+
+  .breath-inhale {
+    animation-name: breath-inhale;
+  }
+
+  .breath-exhale {
+    animation-name: breath-exhale;
+  }
+
+  /* ============================================================
+     LOADING DOTS (reduced-motion safe)
+     ============================================================ */
+
+  .load-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-tom-accent);
+    animation: tom-pulse 1s ease-in-out infinite;
+  }
+
+  .load-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .load-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  /* ============================================================
+     NAV LINKS
+     ============================================================ */
+
+  .nav-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .nav-link:hover {
+    background: var(--color-background);
+    color: var(--color-ink);
+  }
+
+  .nav-link.active {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+  }
+}
+
+/* ============================================================
+   MOTION
+   ============================================================ */
+
+@keyframes tom-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Phase 10 breathing orb — decorative only; the phase label + countdown
+   carry the meaning, so reduced-motion users lose nothing. */
+@keyframes breath-inhale {
+  from {
+    transform: scale(0.7);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes breath-exhale {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .load-dot {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  /* Breathing orb is decorative — hold it still; the phase label and
+     countdown timer still work. */
+  .breath-orb {
+    animation: none !important;
+  }
+
+  .progress-fill {
+    transition: none;
+  }
+}

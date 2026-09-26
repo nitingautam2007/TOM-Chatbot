@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg
+dist/
+build/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+npm-debug.log*
+
+# Environment
+.env
+*.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# AI tooling (local; AGENTS.md documents the workflow and IS committed)
+.opencode/
+
+# Test / coverage
+coverage/
+htmlcov/
+.coverage
+
+# Generated knowledge graph (graphify)
+graphify-out/
+
+# Local models & data (large binaries, never committed)
+models/*.bin
+models/*.gguf
+models/*.pt
+models/*.onnx
+models/*.safetensors
+# Hugging Face / sentence-transformers cache lives outside the repo by default
+# (~/.cache/huggingface). Guard against accidental local copies:
+**/huggingface/hub/
+*.gguf
+*.safetensors
+# Data: GoEmotions raw + processed are COMMITTED on purpose (small,
+# CC-BY-4.0, provenance + regeneration documented in data/README.md).
+# Ignore only future ad-hoc dumps at data/ root:
+data/*.csv
+data/*.json

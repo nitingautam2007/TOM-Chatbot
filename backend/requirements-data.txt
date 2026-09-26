@@ -1,0 +1,7 @@
+# Data-preparation dependencies (NOT production backend requirements).
+#
+# Installed into backend/.venv for local dataset work only; intentionally
+# kept out of requirements.txt so production installs stay lean.
+# Reproduce with: .venv\Scripts\python -m pip install -r requirements-data.txt
+
+datasets==4.8.5

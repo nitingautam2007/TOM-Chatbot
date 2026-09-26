@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TOM — Local NLP Pipeline",
+    "output": "tom-nlp.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1240, 520],
+    "views": [
+      {
+        "id": "analyze",
+        "label": "Analyze path",
+        "focus": ["input", "normalizer", "language", "embeddings", "minilm"],
+        "note": "Phase 3A: normalize → language → embedding."
+      },
+      {
+        "id": "classify",
+        "label": "Classify path",
+        "focus": ["embeddings", "intent", "emotion", "result"],
+        "note": "Phase 3B: intent + emotion prototypes from same embedding; not clinical."
+      }
+    ]
+  },
+  "components": [
+    { "id": "input", "type": "external", "label": "User message", "sublabel": "chat text", "pos": [40, 230], "size": [130, 64] },
+    { "id": "normalizer", "type": "backend", "label": "normalize_text", "sublabel": "clean · lower", "pos": [230, 230], "size": [140, 64] },
+    { "id": "language", "type": "backend", "label": "detect_language", "sublabel": "en · hi · hinglish", "pos": [230, 90], "size": [140, 64] },
+    { "id": "embeddings", "type": "backend", "label": "EmbeddingService", "sublabel": "encode text", "pos": [450, 230], "size": [150, 64] },
+    { "id": "minilm", "type": "external", "label": "MiniLM (CPU)", "sublabel": "sentence-transformers", "pos": [450, 80], "size": [160, 64], "tag": "local model" },
+    { "id": "intent", "type": "backend", "label": "classify_intent", "sublabel": "prototype cosine", "pos": [700, 160], "size": [150, 64] },
+    { "id": "emotion", "type": "backend", "label": "classify_emotion", "sublabel": "prototype cosine", "pos": [700, 320], "size": [150, 64] },
+    { "id": "result", "type": "backend", "label": "ClassificationResult", "sublabel": "labels + confidence", "pos": [950, 230], "size": [170, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "External dependency (local)", "wraps": ["minilm"], "pad": 12 },
+    { "kind": "region", "label": "Classification (not diagnosis)", "wraps": ["intent", "emotion"], "pad": 12 }
+  ],
+  "connections": [
+    { "id": "in-to-norm", "from": "input", "to": "normalizer", "label": "text", "fromSide": "right", "toSide": "left" },
+    { "id": "norm-to-lang", "from": "normalizer", "to": "language", "label": "script", "fromSide": "top", "toSide": "bottom", "labelAt": [300, 180] },
+    { "id": "norm-to-emb", "from": "normalizer", "to": "embeddings", "label": "text", "fromSide": "right", "toSide": "left", "labelAt": [415, 310] },
+    { "id": "emb-to-minilm", "from": "embeddings", "to": "minilm", "label": "forward pass", "variant": "dashed", "fromSide": "top", "toSide": "bottom", "labelAt": [530, 170] },
+    { "id": "emb-to-intent", "from": "embeddings", "to": "intent", "label": "embedding", "fromSide": "right", "toSide": "left", "labelAt": [675, 240], "via": [[650, 262], [650, 192]] },
+    { "id": "emb-to-emotion", "from": "embeddings", "to": "emotion", "label": "embedding", "fromSide": "right", "toSide": "left", "labelAt": [675, 352], "via": [[660, 262], [660, 352]] },
+    { "id": "intent-to-result", "from": "intent", "to": "result", "label": "label + conf", "fromSide": "right", "toSide": "left", "labelAt": [905, 160] },
+    { "id": "emotion-to-result", "from": "emotion", "to": "result", "label": "label + conf", "fromSide": "right", "toSide": "left", "labelAt": [905, 320] }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Local-only", "items": ["No OpenAI / Anthropic / cloud", "CPU MiniLM via requirements.txt", "NLP failure degrades to language detect"] },
+    { "dot": "rose", "title": "Not clinical", "items": ["Intent ≠ diagnosis", "Emotion ≠ diagnosis", "Confidence = internal estimate"] },
+    { "dot": "cyan", "title": "Outputs used by", "items": ["ResponseSelector strategy", "ChatService reply path", "optional — chat works without it"] }
+  ]
+}

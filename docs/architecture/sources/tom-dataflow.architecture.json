@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TOM — Data Flow & Persistence",
+    "output": "tom-dataflow.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1260, 540],
+    "views": [
+      {
+        "id": "write-path",
+        "label": "Write path",
+        "focus": ["chatService", "screeningService", "userRepo", "messageRepo", "conversationRepo", "screeningRepo", "sqlalchemy", "postgres"],
+        "note": "Only repositories issue SQL; SQLAlchemy async session commits."
+      },
+      {
+        "id": "entities",
+        "label": "Persisted entities",
+        "focus": ["postgres"],
+        "note": "users, conversations, messages, screening sessions/responses."
+      }
+    ]
+  },
+  "components": [
+    { "id": "chatService", "type": "backend", "label": "ChatService", "sublabel": "messages", "pos": [40, 80], "size": [150, 64] },
+    { "id": "conversationService", "type": "backend", "label": "ConversationService", "sublabel": "list · history", "pos": [40, 220], "size": [170, 64] },
+    { "id": "screeningService", "type": "backend", "label": "ScreeningService", "sublabel": "sessions", "pos": [40, 380], "size": [160, 64] },
+    { "id": "userRepo", "type": "backend", "label": "UserRepository", "sublabel": "default user", "pos": [320, 60], "size": [150, 64] },
+    { "id": "messageRepo", "type": "backend", "label": "MessageRepository", "sublabel": "user + assistant", "pos": [320, 160], "size": [160, 64] },
+    { "id": "conversationRepo", "type": "backend", "label": "ConversationRepository", "sublabel": "threads", "pos": [320, 260], "size": [170, 64] },
+    { "id": "screeningRepo", "type": "backend", "label": "ScreeningRepository", "sublabel": "session + answers", "pos": [320, 380], "size": [170, 64] },
+    { "id": "sqlalchemy", "type": "database", "label": "SQLAlchemy async", "sublabel": "AsyncSession", "pos": [640, 220], "size": [160, 64] },
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "tom_chatbot · asyncpg", "pos": [940, 220], "size": [170, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Services (no SQL)", "wraps": ["chatService", "conversationService", "screeningService"], "pad": 12 },
+    { "kind": "region", "label": "Only SQL layer", "wraps": ["userRepo", "messageRepo", "conversationRepo", "screeningRepo"], "pad": 12 },
+    { "kind": "region", "label": "Database boundary", "wraps": ["postgres"], "pad": 12 }
+  ],
+  "connections": [
+    { "id": "chat-to-user", "from": "chatService", "to": "userRepo", "label": "get_or_create", "fromSide": "right", "toSide": "left", "labelAt": [280, 80] },
+    { "id": "chat-to-msg", "from": "chatService", "to": "messageRepo", "label": "create turns", "fromSide": "right", "toSide": "left", "labelAt": [300, 156] },
+    { "id": "chat-to-conv", "from": "chatService", "to": "conversationRepo", "label": "create / get", "fromSide": "right", "toSide": "left", "labelAt": [280, 360], "via": [[250, 112], [250, 292]] },
+    { "id": "cs-to-conv", "from": "conversationService", "to": "conversationRepo", "label": "history", "fromSide": "right", "toSide": "left", "labelAt": [280, 320] },
+    { "id": "screen-to-repo", "from": "screeningService", "to": "screeningRepo", "label": "session CRUD", "fromSide": "right", "toSide": "left", "labelAt": [280, 450] },
+    { "id": "user-to-orm", "from": "userRepo", "to": "sqlalchemy", "label": "user", "fromSide": "right", "toSide": "left", "labelAt": [610, 70], "via": [[560, 92], [560, 252]] },
+    { "id": "msg-to-orm", "from": "messageRepo", "to": "sqlalchemy", "label": "messages", "fromSide": "right", "toSide": "left", "labelAt": [610, 170] },
+    { "id": "conv-to-orm", "from": "conversationRepo", "to": "sqlalchemy", "label": "conv", "fromSide": "right", "toSide": "left", "labelAt": [610, 340] },
+    { "id": "scr-to-orm", "from": "screeningRepo", "to": "sqlalchemy", "label": "screening", "fromSide": "right", "toSide": "left", "labelAt": [610, 470], "via": [[630, 412], [630, 252]] },
+    { "id": "orm-to-pg", "from": "sqlalchemy", "to": "postgres", "label": "commit · asyncpg", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelAt": [905, 300] }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Layer rule", "items": ["Routes never touch SQL", "Services use repositories only", "Repositories = only SELECT/INSERT"] },
+    { "dot": "cyan", "title": "Entities", "items": ["users · conversations · messages", "screening_sessions · responses", "mood check-ins (model present)"] },
+    { "dot": "rose", "title": "Not persisted", "items": ["Safety matches / risk scores", "PHQ-9 raw answers not logged", "NLP embeddings (ephemeral)"] }
+  ]
+}

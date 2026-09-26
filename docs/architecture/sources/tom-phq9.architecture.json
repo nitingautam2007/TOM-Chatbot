@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TOM — PHQ-9 Screening Flow",
+    "output": "tom-phq9.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1260, 540],
+    "views": [
+      {
+        "id": "session",
+        "label": "Session lifecycle",
+        "focus": ["frontend", "fastapi", "screeningService", "phq9", "repositories"],
+        "note": "Explicit start → answer ×9 → complete; never auto-triggered from chat."
+      },
+      {
+        "id": "item9",
+        "label": "Item-9 safety route",
+        "focus": ["screeningService", "safetyService"],
+        "note": "Positive item 9 probes SafetyService; screening still completes."
+      }
+    ]
+  },
+  "components": [
+    { "id": "frontend", "type": "frontend", "label": "Check-in UI", "sublabel": "PHQ-9 wizard", "pos": [40, 240], "size": [130, 64] },
+    { "id": "fastapi", "type": "backend", "label": "Screening routes", "sublabel": "start · answer · complete", "pos": [230, 240], "size": [150, 64] },
+    { "id": "screeningService", "type": "backend", "label": "ScreeningService", "sublabel": "session workflow", "pos": [450, 240], "size": [160, 64], "tag": "screening ≠ diagnosis" },
+    { "id": "phq9", "type": "backend", "label": "phq9 module", "sublabel": "score · severity band", "pos": [450, 400], "size": [160, 64] },
+    { "id": "safetyService", "type": "security", "label": "SafetyService", "sublabel": "item-9 probe", "pos": [720, 80], "size": [150, 64] },
+    { "id": "repositories", "type": "backend", "label": "ScreeningRepository", "sublabel": "session + responses", "pos": [720, 320], "size": [170, 64] },
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "score + severity", "pos": [980, 320], "size": [140, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Explicit workflow only", "wraps": ["screeningService", "phq9"], "pad": 12 },
+    { "kind": "region", "label": "Safety consult (item 9)", "wraps": ["safetyService"], "pad": 12 },
+    { "kind": "region", "label": "Persistence", "wraps": ["repositories", "postgres"], "pad": 12 }
+  ],
+  "connections": [
+    { "id": "ui-to-api", "from": "frontend", "to": "fastapi", "label": "wizard API", "fromSide": "right", "toSide": "left", "variant": "emphasis", "labelAt": [200, 320] },
+    { "id": "api-to-screen", "from": "fastapi", "to": "screeningService", "label": "owned session", "fromSide": "right", "toSide": "left", "labelAt": [425, 200] },
+    { "id": "screen-to-phq9", "from": "screeningService", "to": "phq9", "label": "score_phq9", "fromSide": "bottom", "toSide": "top", "labelAt": [530, 370] },
+    { "id": "screen-to-safety", "from": "screeningService", "to": "safetyService", "label": "item9 > 0", "variant": "security", "fromSide": "right", "toSide": "bottom", "labelAt": [700, 200], "via": [[670, 272], [670, 200], [795, 200]] },
+    { "id": "screen-to-repos", "from": "screeningService", "to": "repositories", "label": "CRUD", "fromSide": "right", "toSide": "left", "labelAt": [700, 340] },
+    { "id": "repos-to-pg", "from": "repositories", "to": "postgres", "label": "commit", "fromSide": "right", "toSide": "left", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Lifecycle rules", "items": ["Strictly sequential answers 1–9", "One in-progress session max", "404 for missing/non-owned"] },
+    { "dot": "rose", "title": "Item-9 routing", "items": ["Item 9 > 0 → SafetyService probe", "Safety outage ≠ block complete", "Disclaimer always returned"] },
+    { "dot": "cyan", "title": "Scoring", "items": ["Pure arithmetic, no ML", "Severity bands from total 0–27", "Answers never logged"] }
+  ]
+}

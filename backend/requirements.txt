@@ -1,0 +1,15 @@
+SQLAlchemy==2.0.54
+asyncpg==0.31.0
+alembic==1.20.0
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+pytest==8.3.4
+httpx==0.28.1
+
+# Phase 3A — local NLP foundation (CPU-only inference, no external AI APIs)
+langdetect==1.0.9
+sentence-transformers==6.1.0
+# NOTE: sentence-transformers pulls CPU torch + transformers + scikit-learn as
+# its declared dependencies. No CUDA/tensorflow packages are installed.

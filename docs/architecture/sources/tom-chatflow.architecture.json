@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TOM — Chat Request Flow",
+    "output": "tom-chatflow.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1280, 580],
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Normal reply path",
+        "focus": ["frontend", "fastapi", "chatService", "nlpService", "responseSelector", "repositories", "postgres"],
+        "note": "Safety clear → classify → local reply → persist both turns."
+      },
+      {
+        "id": "crisis-path",
+        "label": "Safety short-circuit",
+        "focus": ["chatService", "safetyService"],
+        "note": "HIGH/IMMINENT returns crisis reply; skips NLP/response; no safety persistence."
+      }
+    ]
+  },
+  "components": [
+    { "id": "frontend", "type": "frontend", "label": "React UI", "sublabel": "Chat page", "pos": [40, 240], "size": [130, 64] },
+    { "id": "fastapi", "type": "backend", "label": "POST /api/chat", "sublabel": "route + Depends", "pos": [230, 240], "size": [140, 64] },
+    { "id": "chatService", "type": "backend", "label": "ChatService", "sublabel": "send_message", "pos": [440, 240], "size": [150, 64], "tag": "orchestrator" },
+    { "id": "safetyService", "type": "security", "label": "SafetyService", "sublabel": "detect → crisis?", "pos": [680, 60], "size": [150, 64] },
+    { "id": "nlpService", "type": "backend", "label": "NLPService", "sublabel": "classify (optional)", "pos": [680, 240], "size": [150, 64] },
+    { "id": "responseSelector", "type": "backend", "label": "ResponseSelector", "sublabel": "local library", "pos": [680, 400], "size": [150, 64] },
+    { "id": "repositories", "type": "backend", "label": "Repositories", "sublabel": "user · conv · msg", "pos": [920, 320], "size": [140, 64] },
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "commit turns", "pos": [1110, 320], "size": [130, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "HTTP boundary", "wraps": ["fastapi"], "pad": 12 },
+    { "kind": "region", "label": "Safety first (ephemeral)", "wraps": ["safetyService"], "pad": 12 },
+    { "kind": "region", "label": "Local generation", "wraps": ["nlpService", "responseSelector"], "pad": 12 },
+    { "kind": "region", "label": "Persistence", "wraps": ["repositories", "postgres"], "pad": 12 }
+  ],
+  "connections": [
+    { "id": "ui-to-api", "from": "frontend", "to": "fastapi", "label": "Axios", "fromSide": "right", "toSide": "left", "variant": "emphasis" },
+    { "id": "api-to-chat", "from": "fastapi", "to": "chatService", "label": "1 · open conv", "fromSide": "right", "toSide": "left", "labelAt": [415, 200] },
+    { "id": "chat-to-safety", "from": "chatService", "to": "safetyService", "label": "2 · screen first", "variant": "security", "fromSide": "right", "toSide": "left", "labelAt": [635, 74] },
+    { "id": "safety-to-chat", "from": "safetyService", "to": "chatService", "label": "crisis reply", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelAt": [700, 170] },
+    { "id": "chat-to-nlp", "from": "chatService", "to": "nlpService", "label": "classify", "fromSide": "right", "toSide": "left", "labelAt": [820, 330] },
+    { "id": "nlp-to-response", "from": "nlpService", "to": "responseSelector", "label": "4 · select", "fromSide": "bottom", "toSide": "top", "labelAt": [755, 350] },
+    { "id": "chat-to-repos", "from": "chatService", "to": "repositories", "label": "persist turns", "fromSide": "right", "toSide": "bottom", "labelAt": [870, 530], "via": [[590, 272], [660, 272], [660, 530], [990, 530]] },
+    { "id": "repos-to-pg", "from": "repositories", "to": "postgres", "label": "commit", "fromSide": "right", "toSide": "left", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Order of operations", "items": ["Safety before NLP", "NLP failure → language detect only", "Response failure → library fallback"] },
+    { "dot": "cyan", "title": "Persistence", "items": ["user message always saved", "assistant reply always saved", "safety match not persisted"] },
+    { "dot": "rose", "title": "Safety short-circuit", "items": ["HIGH/IMMINENT skips normal path", "crisis reply only", "no ML involved"] }
+  ]
+}

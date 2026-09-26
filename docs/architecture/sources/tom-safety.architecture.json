@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TOM — Safety Detection Pipeline",
+    "output": "tom-safety.architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1240, 520],
+    "views": [
+      {
+        "id": "detect",
+        "label": "detect() pipeline",
+        "focus": ["input", "normalizer", "language", "patterns", "context", "scoring", "result"],
+        "note": "Deterministic CPU rules; no models, no external APIs."
+      },
+      {
+        "id": "reply",
+        "label": "Crisis reply path",
+        "focus": ["result", "responses"],
+        "note": "HIGH/IMMINENT (or moderate self-harm) → non-clinical crisis text."
+      }
+    ]
+  },
+  "components": [
+    { "id": "input", "type": "external", "label": "User message", "sublabel": "raw text", "pos": [40, 220], "size": [130, 64] },
+    { "id": "normalizer", "type": "backend", "label": "normalize_text", "sublabel": "case · whitespace", "pos": [230, 220], "size": [140, 64] },
+    { "id": "language", "type": "backend", "label": "detect_language", "sublabel": "en · hi · hinglish", "pos": [230, 80], "size": [140, 64] },
+    { "id": "patterns", "type": "backend", "label": "find_matches", "sublabel": "pattern library", "pos": [440, 220], "size": [140, 64] },
+    { "id": "context", "type": "backend", "label": "detect_context", "sublabel": "quotes · negation", "pos": [440, 360], "size": [140, 64] },
+    { "id": "scoring", "type": "backend", "label": "score_safety", "sublabel": "risk · score · cats", "pos": [660, 220], "size": [150, 64] },
+    { "id": "result", "type": "security", "label": "SafetyResult", "sublabel": "in-memory only", "pos": [880, 220], "size": [140, 64], "tag": "not persisted" },
+    { "id": "responses", "type": "security", "label": "crisis_response", "sublabel": "localized reply", "pos": [880, 80], "size": [140, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Ephemeral (no DB)", "wraps": ["result", "responses"], "pad": 12 },
+    { "kind": "region", "label": "Rule-based scoring", "wraps": ["patterns", "context", "scoring"], "pad": 12 }
+  ],
+  "connections": [
+    { "id": "in-to-norm", "from": "input", "to": "normalizer", "label": "text", "fromSide": "right", "toSide": "left" },
+    { "id": "norm-to-lang", "from": "normalizer", "to": "language", "label": "script", "fromSide": "top", "toSide": "bottom", "labelAt": [300, 170] },
+    { "id": "norm-to-match", "from": "normalizer", "to": "patterns", "label": "text", "fromSide": "right", "toSide": "left", "labelAt": [415, 300] },
+    { "id": "norm-to-ctx", "from": "normalizer", "to": "context", "label": "flags", "fromSide": "bottom", "toSide": "top", "labelAt": [300, 330] },
+    { "id": "match-to-score", "from": "patterns", "to": "scoring", "label": "matches", "fromSide": "right", "toSide": "left", "labelAt": [635, 220] },
+    { "id": "ctx-to-score", "from": "context", "to": "scoring", "label": "context", "fromSide": "right", "toSide": "left", "labelAt": [620, 400], "via": [[620, 392], [620, 252]] },
+    { "id": "score-to-result", "from": "scoring", "to": "result", "label": "risk level", "variant": "security", "fromSide": "right", "toSide": "left" },
+    { "id": "result-to-reply", "from": "result", "to": "responses", "label": "requires?", "variant": "security", "fromSide": "top", "toSide": "bottom", "labelAt": [950, 170] }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Constraints", "items": ["CPU-only rules, no ML", "No external AI APIs", "Raw message never logged"] },
+    { "dot": "rose", "title": "Trigger for crisis reply", "items": ["risk high or imminent", "moderate + self_harm category", "ephemeral result only"] },
+    { "dot": "cyan", "title": "Callers", "items": ["ChatService screens every chat", "ScreeningService item-9 probe", "failures never block callers"] }
+  ]
+}

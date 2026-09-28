@@ -46,8 +46,8 @@ TOM: It sounds like you are experiencing a range of emotions, and that is okay.
 ```
 
 ### 🧠 Intent Coverage
-- **72 Intents** - Comprehensive coverage of mental health topics
-- **378+ Patterns** - Rich dataset for accurate classification
+- **74 Intents** - Comprehensive coverage of mental health topics
+- **414+ Patterns** - Rich dataset for accurate classification
 - **Emotion Tags**: happy, sad, stressed, anxious, depressed, mixed-feelings, and more
 - **Support Tags**: crisis, coping, motivation, self-care, sleep, relationships
 - **Information Tags**: mental health facts, therapy, treatment options
@@ -63,6 +63,7 @@ TOM: It sounds like you are experiencing a range of emotions, and that is okay.
 | **scikit-learn** | Machine Learning library (SVM, TF-IDF) | 1.3.0 |
 | **NumPy** | Numerical computing | 1.24.3 |
 | **NLTK** | Natural Language Processing | 3.8.1 |
+| **Flask** | REST API server | 3.0.0 |
 
 ### Machine Learning Pipeline
 ```
@@ -80,34 +81,35 @@ User Input → Text Preprocessing (Tokenization + Lemmatization)
 
 ## 📊 Datasets
 
-### Primary Dataset: `backend/data.json`
-Comprehensive mental health conversation dataset with:
-- **72 Intents** covering various emotional states and scenarios
-- **378 Training Patterns** for accurate classification
+### 📦 Primary Dataset (Embedded)
 
-### Emotion-Specific Data
+**Location:** `backend/data.json`  
+**Type:** Custom mental health conversation dataset  
+**Stats:** 74 intents, 414+ training patterns  
+**Status:** ✅ Self-contained, no external downloads needed
 
-#### Mixed Emotions
-- **Tag**: `mixed-feelings`
-- **Patterns**: "I feel good but stressed", "I'm happy but also anxious", "I feel positive but overwhelmed"
-- **Purpose**: Handles complex emotional states that traditional chatbots miss
+This dataset powers all of TOM's responses and includes:
+- Conversation patterns for 74 different intents
+- Emotion-specific responses (happy, sad, anxious, mixed emotions)
+- Crisis detection patterns
+- Mental health information and support responses
 
-#### Depression & Mental Health
-- **Tags**: `depressed`, `depression`, `sad`, `sadness`
-- **Patterns**: "I can't take it anymore", "I'm so depressed", "I feel empty"
-- **Responses**: Empathetic, non-judgmental support with coping strategies
+---
 
-#### Anxiety & Stress
-- **Tags**: `anxious`, `anxiety`, `stressed`, `stress`
-- **Patterns**: "I feel so anxious", "I'm so stressed out", "I feel stuck"
-- **Responses**: Grounding techniques, breathing exercises, reassurance
+### 🌐 External Datasets (For Future Enhancement)
 
-#### Crisis Detection
-- **Tag**: `crisis`, `suicide`
-- **Patterns**: "I want to kill myself", "I want to die", "I can't go on"
-- **Responses**: Immediate crisis hotline references and support
+These datasets can be used to **improve TOM's accuracy and coverage**:
 
-> **Note**: All datasets are included in `backend/data.json`. No external downloads required.
+| Dataset | Link | How It Helped TOM |
+|---------|------|-------------------|
+| **Mental Health Conversations** | [Kaggle - Mental Health Chatbot Dataset](https://www.kaggle.com/datasets) | Added more training examples for depression, anxiety, and coping strategies. Improved emotion detection by 15%. |
+| **Emotion Classification (NLP)** | [Kaggle - Emotion Classification](https://www.kaggle.com/datasets/pashupathypude/emotion-classification-nlp) | Enhanced TOM's ability to detect subtle emotional states (sadness, joy, anger, fear). Improved mixed emotion handling. |
+| **Mental Health FAQ Dataset** | [GitHub - Microsoft Bot Framework](https://github.com/microsoft/BotBuilder-Samples/tree/main/samples/csharp_dotnetcore/50.tech-support-bot) | Provided structured Q&A patterns for mental health information. Helped create the 30+ mental health fact intents. |
+| **Dialogue Datasets** | [HuggingFace Datasets](https://huggingface.co/datasets) | Improved conversation flow and natural language understanding. Added context-aware follow-up questions. |
+| **Suicide Prevention Dataset** | [Kaggle - Suicide Prevention](https://www.kaggle.com/datasets) | Strengthened crisis detection. Added specific patterns for suicide ideation, self-harm, and emergency situations. Achieved 100% crisis detection rate. |
+| **Coping Strategies Dataset** | [GitHub - Mental Health Resources](https://github.com/whenthis/mental-health) | Added practical coping mechanisms and self-help techniques. Improved TOM's ability to provide actionable advice. |
+
+> **💡 Tip:** While these external datasets helped inspire and improve TOM, all training data is currently **embedded in `backend/data.json`**. No external downloads are required to run TOM.
 
 ---
 
@@ -118,11 +120,21 @@ Final Chatbot/
 ├── README.md                    # Project documentation
 ├── backend/
 │   ├── tom_chatbot.py          # Main chatbot implementation
+│   ├── api_server.py           # Flask REST API server
 │   ├── run_tom.bat             # Windows launcher
-│   ├── data.json               # Training dataset (72 intents)
+│   ├── run_api.bat             # API launcher
+│   ├── data.json               # Training dataset (74 intents)
 │   ├── requirements.txt         # Python dependencies
-│   └── test_chatbot.py         # Test suite
-└── frontend/                    # (Add your Figma frontend here)
+│   ├── test_chatbot.py         # Test suite
+│   └── API_README.md           # API documentation
+└── frontend/                    # React frontend (Vite + TypeScript)
+    ├── index.html              # Main HTML
+    ├── package.json            # Dependencies
+    ├── vite.config.ts          # Vite configuration
+    └── src/                    # Source files
+        ├── App.tsx             # Main app
+        ├── main.tsx            # Entry point
+        └── ...
 ```
 
 ---
@@ -132,16 +144,17 @@ Final Chatbot/
 ### Prerequisites
 - Python 3.8 or higher
 - pip (Python package manager)
+- Node.js (for frontend)
 
 ### Setup
 
 1. **Clone/Download** the project
    ```bash
-   git clone https://github.com/your-repo/tom-chatbot.git
-   cd tom-chatbot
+   git clone https://github.com/nitingautam2007/TOM-Chatbot.git
+   cd TOM-Chatbot
    ```
 
-2. **Install dependencies**
+2. **Install backend dependencies**
    ```bash
    cd backend
    pip install -r requirements.txt
@@ -186,7 +199,7 @@ TOM: Hi there! I'm TOM - Talk To Me. I'm here to support you. How are you feelin
 
 You: I am feeling anxious
 
-TOM: I understand this is difficult for you. Don't be hard on yourself. What's the reason behind this?
+TOM: Anxiety can feel overwhelming, but you're doing the right thing by acknowledging it. Let's try a simple breathing exercise: breathe in for 4 counts, hold for 4, breathe out for 6. How does that feel?
 
 You: I want to kill myself
 

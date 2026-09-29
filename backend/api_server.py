@@ -26,8 +26,20 @@ from pathlib import Path
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = 'tom-secret-key-2024'  # Change this in production!
-CORS(app)  # Enable CORS for frontend connection
+IS_PRODUCTION = os.environ.get('RENDER') == 'true'
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'tom-local-development-secret')
+if IS_PRODUCTION and app.secret_key == 'tom-local-development-secret':
+    raise RuntimeError('FLASK_SECRET_KEY must be set in production')
+
+cors_origins = [
+    origin.strip()
+    for origin in os.environ.get(
+        'CORS_ORIGINS',
+        'http://localhost:5173,http://127.0.0.1:5173'
+    ).split(',')
+    if origin.strip()
+]
+CORS(app, resources={r'/api/*': {'origins': cors_origins}})
 
 # Initialize TOM chatbot
 tom = TOmChatbot()
@@ -47,7 +59,9 @@ print("TOM chatbot initialized and ready!")
 # Initialize database
 BACKEND_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = BACKEND_DIR.parent
-DB_PATH = str(BACKEND_DIR / 'chats.db')
+DB_PATH = os.environ.get('DATABASE_PATH', str(BACKEND_DIR / 'chats.db'))
+Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://127.0.0.1:5173')
 
 def init_db():
     """Initialize the SQLite database for storing chat conversations"""
@@ -467,6 +481,8 @@ def stats():
         "top_words": [...]
     }
     """
+    if IS_PRODUCTION:
+        return jsonify({'error': 'Not found'}), 404
     try:
         stats_data = get_chat_stats()
         return jsonify(stats_data)
@@ -498,6 +514,8 @@ def get_chats():
         ]
     }
     """
+    if IS_PRODUCTION:
+        return jsonify({'error': 'Not found'}), 404
     try:
         limit = int(request.args.get('limit', 50))
         chats = get_recent_chats(limit)
@@ -893,6 +911,8 @@ ANALYSIS_DASHBOARD_HTML = '''
 @app.route('/dashboard')
 def dashboard():
     """Web-based analysis dashboard"""
+    if IS_PRODUCTION:
+        return "Not found", 404
     return ANALYSIS_DASHBOARD_HTML
 
 @app.route('/privacy')
@@ -1046,7 +1066,7 @@ def privacy_policy():
     
     <div class="footer">
         <p>Last updated: September 29, 2026</p>
-        <p><a href="http://127.0.0.1:5173">Back to TOM Chatbot</a></p>
+        <p><a href="{FRONTEND_URL}">Back to TOM Chatbot</a></p>
     </div>
 </body>
 </html>"""
@@ -1078,4 +1098,4 @@ if __name__ == '__main__':
     print("  ✓ Delete available from the chat screen")
     print("\n" + "="*60 + "\n")
     
-    app.run(host='0.0.0.0', port=8000, debug=False)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8000)), debug=False)

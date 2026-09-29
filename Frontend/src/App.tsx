@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import tomLogo from '@/imports/TOM_Bot.png'
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000').replace(/\/$/, '')
 
 type Mood = 1 | 2 | 3 | 4 | 5
 
@@ -67,7 +68,7 @@ async function fetchBotResponse(input: string): Promise<{ text: string; intent?:
     // Check if user has consented
     const consentGiven = localStorage.getItem('tom_consent') === 'true';
     
-    const response = await fetch('http://127.0.0.1:8000/api/chat', {
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -103,7 +104,7 @@ async function sendConsentToBackend(consentGiven: boolean): Promise<boolean> {
       localStorage.setItem('tom_session_id', sessionId);
     }
     
-    const response = await fetch('http://127.0.0.1:8000/api/consent', {
+    const response = await fetch(`${API_BASE_URL}/api/consent`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -120,7 +121,7 @@ async function sendConsentToBackend(consentGiven: boolean): Promise<boolean> {
 
 async function deleteStoredData(sessionId: string): Promise<{ ok: boolean; chatsDeleted: number }> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/data', {
+    const response = await fetch(`${API_BASE_URL}/api/data`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ session_id: sessionId }),
@@ -293,7 +294,7 @@ function ConsentModal({ onAgree, onDecline }: { onAgree: () => void; onDecline: 
         </div>
         
         <button
-          onClick={() => window.open('http://127.0.0.1:8000/privacy', '_blank')}
+          onClick={() => window.open(`${API_BASE_URL}/privacy`, '_blank')}
           className="text-sm text-sage-600 hover:text-sage-700 underline mb-5 text-left w-full"
         >
           Read our full Privacy Policy

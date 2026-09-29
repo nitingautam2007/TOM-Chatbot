@@ -48,7 +48,6 @@ export default function PrivacyPolicy() {
               <div
                 className="w-11 h-11 rounded-2xl flex items-center justify-center overflow-hidden"
                 style={{
-                  background: '#0d0d12',
                   background: 'linear-gradient(145deg, rgba(255,255,255,0.68) 0%, rgba(255,255,255,0.42) 100%)',
                   backdropFilter: 'blur(24px) saturate(1.9)',
                   WebkitBackdropFilter: 'blur(24px) saturate(1.9)',

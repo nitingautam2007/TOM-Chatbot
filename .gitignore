@@ -47,6 +47,7 @@ htmlcov/
 # Data
 *.json.backup
 *.json.old
+backend/chats.db
 
 # Logs
 *.log

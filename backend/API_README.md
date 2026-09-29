@@ -64,6 +64,16 @@ Check if the backend is running.
 }
 ```
 
+### DELETE /api/data
+Permanently delete all stored chats and the consent record for one browser session. The frontend uses this when the user selects **Delete my stored data and choose consent again**.
+
+**Request:**
+```json
+{
+  "session_id": "browser session identifier"
+}
+```
+
 ---
 
 ## 🎯 Supported Features

@@ -9,10 +9,6 @@ services:
     envVars:
       - key: FLASK_SECRET_KEY
         generateValue: true
-      - key: CORS_ORIGINS
-        sync: false
-      - key: FRONTEND_URL
-        sync: false
       - key: DATABASE_PATH
         value: /var/data/chats.db
     disk:

@@ -4,10 +4,7 @@
 
 1. In Render, select **New > Blueprint** and connect this GitHub repository.
 2. Render detects `render.yaml`. Create the `tom-api` web service.
-3. In the service environment settings, set these values after you have the Vercel URL:
-   - `CORS_ORIGINS=https://your-project.vercel.app`
-   - `FRONTEND_URL=https://your-project.vercel.app`
-4. Deploy the service and copy its public URL, such as `https://tom-api.onrender.com`.
+3. Deploy the service and copy its public URL, such as `https://tom-api.onrender.com`.
 
 The configured persistent disk keeps `chats.db` across restarts and deploys. Do not use an ephemeral filesystem for stored consented chats.
 

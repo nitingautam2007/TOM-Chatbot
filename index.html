@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOM - Talk To Me | Mental Health Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --sage-50: #f0f7f0;
+            --sage-100: #e8f5e8;
+            --sage-200: #d4edcf;
+            --sage-300: #b8d8b8;
+            --sage-400: #9bc49b;
+            --sage-500: #7d9e7d;
+            --sage-600: #5a7f5a;
+            --sage-700: #3d5f3d;
+            --sage-800: #2f4c2f;
+            --sage-900: #1e331e;
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.45);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #2f4c2f;
+        }
+        
+        /* Background grid pattern */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(90, 127, 90, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(90, 127, 90, 0.07) 1px, transparent 1px);
+            background-size: 32px 32px;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .logo-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(1.4);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 24px 60px rgba(60, 90, 60, 0.08);
+        }
+        
+        .logo-container img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2f4c2f;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+        
+        .hero .tagline {
+            font-size: 1.3rem;
+            color: #5a7f5a;
+            font-weight: 500;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .hero .subtitle {
+            font-size: 1rem;
+            color: #7d9e7d;
+            margin-top: 8px;
+            max-width: 500px;
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(145deg, rgba(90, 127, 90, 0.9) 0%, rgba(70, 100, 70, 0.95) 100%);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(70, 100, 70, 0.28);
+            text-decoration: none;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(70, 100, 70, 0.35);
+        }
+        
+        .cta-button:active {
+            transform: translateY(0);
+        }
+        
+        .cta-button .arrow {
+            font-size: 1.2rem;
+        }
+        
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 800px;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+        
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(1.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(90, 127, 90, 0.12);
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            background: rgba(255, 255, 255, 0.6);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2f4c2f;
+            margin-bottom: 10px;
+        }
+        
+        .feature-card p {
+            color: #5a7f5a;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Mood Preview */
+        .mood-preview {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(1.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+        
+        .mood-preview h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2f4c2f;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .mood-grid {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .mood-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mood-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+        
+        .mood-item span:first-child {
+            font-size: 1.5rem;
+        }
+        
+        .mood-item span:last-child {
+            font-size: 0.8rem;
+            color: #5a7f5a;
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            padding: 24px;
+            text-align: center;
+            color: #7d9e7d;
+            font-size: 0.9rem;
+            animation: slideUp 0.8s ease-out 0.6s both;
+        }
+        
+        .footer a {
+            color: #5a7f5a;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero .tagline {
+                font-size: 1.1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="logo-container">
+                <!-- Replace with your actual logo -->
+                <svg viewBox="0 0 100 100" width="80" height="80">
+                    <circle cx="50" cy="50" r="45" fill="#5a7f5a" opacity="0.8"/>
+                    <text x="50" y="60" font-size="30" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold">TOM</text>
+                </svg>
+            </div>
+            
+            <h1>TOM</h1>
+            <p class="tagline">Talk To Me - Your Mental Health Companion</p>
+            <p class="subtitle">A safe, judgment-free space to express yourself. I'm here to listen and support you, anytime.</p>
+            
+            <a href="./Frontend/dist/index.html" class="cta-button">
+                Start Conversation
+                <span class="arrow">→</span>
+            </a>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Natural Conversations</h3>
+                <p>Talk naturally about your feelings. TOM understands and responds with empathy and care.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>Context Memory</h3>
+                <p>Remembering conversation context, TOM provides relevant follow-up responses and guidance.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">😊</div>
+                <h3>Mood Tracking</h3>
+                <p>Select your mood to help TOM understand your emotional state and provide appropriate support.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Safe & Private</h3>
+                <p>All conversations are private. Your data stays on your device. A completely safe space.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3>Wellbeing Resources</h3>
+                <p>Access grounding exercises, breathing techniques, and crisis support resources when needed.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Support</h3>
+                <p>No wait times, no appointments. TOM is available 24/7 whenever you need someone to talk to.</p>
+            </div>
+        </div>
+        
+        <!-- Mood Preview -->
+        <div class="mood-preview">
+            <h3>How are you feeling today?</h3>
+            <div class="mood-grid">
+                <div class="mood-item">
+                    <span>😔</span>
+                    <span>Struggling</span>
+                </div>
+                <div class="mood-item">
+                    <span>😕</span>
+                    <span>Low</span>
+                </div>
+                <div class="mood-item">
+                    <span>😐</span>
+                    <span>Okay</span>
+                </div>
+                <div class="mood-item">
+                    <span>🙂</span>
+                    <span>Good</span>
+                </div>
+                <div class="mood-item">
+                    <span>😊</span>
+                    <span>Great</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>Built with care for mental wellbeing | <a href="https://github.com">View on GitHub</a></p>
+            <p style="margin-top: 8px; font-size: 0.8rem;">
+                <strong>Note:</strong> TOM is not a substitute for professional mental health care.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

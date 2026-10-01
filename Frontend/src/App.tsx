@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import tomLogo from '@/imports/TOM_Bot.png'
+import LandingPage from './LandingPage'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000').replace(/\/$/, '')
 
@@ -219,6 +220,7 @@ function ChatMessage({ message }: { message: Message }) {
 }
 
 export default function App() {
+  const [showLanding, setShowLanding] = useState(true)
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '0',
@@ -236,6 +238,21 @@ export default function App() {
   const [pressedBtn, setPressedBtn] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+
+  const handleStartChat = () => {
+    setShowLanding(false)
+    setMessages([
+      {
+        id: '0',
+        role: 'assistant',
+        text: "Hi, I'm TOM — Talk to Me. 💬\n\nThis is a safe, judgment-free space. I'm here to listen whenever you need it. How are you feeling today?",
+        timestamp: new Date(),
+        visible: true,
+      },
+    ])
+    setMoodSubmitted(false)
+    setSelectedMood(null)
+  }
 
   // Initialize session ID for context tracking
   useEffect(() => {
@@ -298,6 +315,10 @@ export default function App() {
       e.preventDefault()
       sendMessage(input)
     }
+  }
+
+  if (showLanding) {
+    return <LandingPage onStartChat={handleStartChat} />
   }
 
   return (

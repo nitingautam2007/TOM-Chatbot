@@ -680,7 +680,7 @@
                 "I need to talk"
             ],
             "responses": [
-                "I'm here and I'm listening. This is a safe space — there's no right or wrong way to feel. What would you like to share?"
+                "I'm here and I'm listening. This is a safe space \u00e2\u20ac\u201d there's no right or wrong way to feel. What would you like to share?"
             ]
         },
         {
@@ -729,8 +729,8 @@
                 "Grounding technique"
             ],
             "responses": [
-                "Let's do a calming box breath together:\n\n• Breathe in slowly for 4 counts\n• Hold for 4 counts\n• Breathe out for 4 counts\n• Hold for 4 counts\n\nRepeat this 4 times. Take your time — I'm right here with you.",
-                "A gentle grounding technique: the 5-4-3-2-1 method.\n\n• 5 things you can see\n• 4 things you can physically feel\n• 3 things you can hear\n• 2 things you can smell\n• 1 thing you can taste\n\nThis brings your attention back to the present moment."
+                "Let's do a calming box breath together:\n\n\u00e2\u20ac\u00a2 Breathe in slowly for 4 counts\n\u00e2\u20ac\u00a2 Hold for 4 counts\n\u00e2\u20ac\u00a2 Breathe out for 4 counts\n\u00e2\u20ac\u00a2 Hold for 4 counts\n\nRepeat this 4 times. Take your time \u00e2\u20ac\u201d I'm right here with you.",
+                "A gentle grounding technique: the 5-4-3-2-1 method.\n\n\u00e2\u20ac\u00a2 5 things you can see\n\u00e2\u20ac\u00a2 4 things you can physically feel\n\u00e2\u20ac\u00a2 3 things you can hear\n\u00e2\u20ac\u00a2 2 things you can smell\n\u00e2\u20ac\u00a2 1 thing you can taste\n\nThis brings your attention back to the present moment."
             ]
         },
         {
@@ -1237,13 +1237,37 @@
                 "Following up on: 'I need to talk'. Now: what about",
                 "Following up on: 'I need to talk'. Now: can we talk",
                 "Following up on: 'Need to talk'. Now: yes",
-                "Following up on: 'I want to talk'. Now: okay"
+                "Following up on: 'I want to talk'. Now: okay",
+                "Following up on: 'I need to talk'. Now: what should i do",
+                "Following up on: 'I need to talk'. Now: what can i do",
+                "Following up on: 'I need to talk'. Now: help me"
             ],
             "responses": [
                 "This is a safe space - you can tell me anything that's on your mind. There's no right or wrong way to feel. What would you like to share?",
                 "I'm here and I'm listening. Sometimes the hardest part is starting. You can begin with whatever feels most pressing, or just tell me what's been on your mind lately. What would you like to talk about?",
                 "I'm ready when you are. This conversation is completely confidential and judgment-free. What's been weighing on you?",
                 "Take your time. You can talk about anything - big or small. Often the things we need to talk about most are the hardest to say. What's on your heart today?"
+            ]
+        },
+        {
+            "tag": "followup_generic",
+            "patterns": [
+                "Following up on: 'I feel struggling today'. Now: what should i do",
+                "Following up on: 'I feel struggling today'. Now: what can i do",
+                "Following up on: 'I'm feeling struggling today'. Now: what should i do",
+                "Following up on: 'I'm feeling struggling today'. Now: what can i do",
+                "what should i do",
+                "what can i do",
+                "what do i do",
+                "help me please",
+                "please help me"
+            ],
+            "responses": [
+                "I hear that you want help. What would be most helpful right now - talking through what's on your mind, or would you prefer some suggestions for coping strategies?",
+                "You're already taking a great step by asking for help. Let's figure this out together. What's the most pressing thing you'd like to address?",
+                "I'm here to help. Sometimes just having someone listen makes a difference. What's been the hardest part for you recently?",
+                "What you're feeling matters. Would it help to talk more about what led to this feeling, or would you like to explore ways to feel better?",
+                "Reaching out for help is a sign of strength, not weakness. How can I best support you right now?"
             ]
         }
     ]

@@ -234,6 +234,7 @@ export default function App() {
   const [isTyping, setIsTyping] = useState(false)
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null)
   const [moodSubmitted, setMoodSubmitted] = useState(false)
+  const [showMoodSelector, setShowMoodSelector] = useState(true)
   const [activeTab, setActiveTab] = useState<'chat' | 'resources'>('chat')
   const [pressedBtn, setPressedBtn] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -252,6 +253,7 @@ export default function App() {
     ])
     setMoodSubmitted(false)
     setSelectedMood(null)
+    setShowMoodSelector(true)
   }
 
   // Initialize session ID for context tracking
@@ -307,6 +309,7 @@ export default function App() {
     if (!selectedMood) return
     const mood = MOODS.find((m) => m.value === selectedMood)!
     setMoodSubmitted(true)
+    setShowMoodSelector(false)
     sendMessage(`I'm feeling ${mood.label.toLowerCase()} today (${mood.emoji})`)
   }
 
@@ -422,12 +425,27 @@ export default function App() {
                 <p className="text-[11px] text-sage-400 font-light tracking-wide">Talk to Me · Wellbeing companion</p>
               </div>
             </div>
-            <div
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-              style={glass.pill}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-sage-400 inline-block" style={{ boxShadow: '0 0 4px rgba(90,127,90,0.6)' }} />
-              <span className="text-[10px] text-sage-500 font-medium">Online</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowLanding(true)}
+                className="px-2.5 py-1 rounded-full text-[10px] font-medium text-sage-600 hover:text-sage-700 transition-colors ios-press"
+                style={glass.pill}
+              >
+                Home
+              </button>
+              <button
+                onClick={() => {
+                  if (moodSubmitted) {
+                    setMoodSubmitted(false)
+                  }
+                  setShowMoodSelector(!showMoodSelector)
+                }}
+                className="px-2.5 py-1 rounded-full text-[10px] font-medium text-sage-600 hover:text-sage-700 transition-colors ios-press"
+                style={glass.pill}
+                title="Share your mood"
+              >
+                Mood
+              </button>
             </div>
           </div>
 
@@ -457,14 +475,24 @@ export default function App() {
         {activeTab === 'chat' && (
           <>
             {/* Mood check-in */}
-            {!moodSubmitted && (
+            {!moodSubmitted && showMoodSelector && (
               <div
-                className="mx-4 mt-4 p-4 rounded-3xl flex-shrink-0"
+                className="mx-4 mt-4 p-4 rounded-3xl flex-shrink-0 relative"
                 style={{
                   ...glass.base,
                   animation: 'slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both',
                 }}
               >
+                <button
+                  onClick={() => {
+                    setShowMoodSelector(false)
+                    setSelectedMood(null)
+                  }}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-sage-400 hover:text-sage-600 hover:bg-sage-600/10 transition-colors ios-press"
+                  title="Skip mood selection"
+                >
+                  ×
+                </button>
                 <p className="text-xs font-medium text-sage-600 mb-3 tracking-wide">How are you feeling right now?</p>
                 <div className="flex justify-between mb-3">
                   {MOODS.map((m) => (
@@ -624,31 +652,35 @@ export default function App() {
               { title: 'Crisis Text Line', desc: 'Text HOME to 741741 (US/Canada) — free, 24/7.', icon: '💬', tag: 'Crisis', tagColor: '#c47a7a' },
               { title: 'International Suicide Hotlines', desc: 'Find crisis support in your country at befrienders.org', icon: '🌍', tag: 'Crisis', tagColor: '#c47a7a' },
               
-              // Self-Care Techniques
-              { title: '5-4-3-2-1 Grounding', desc: 'Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.', icon: '🌿', tag: 'Self-care', tagColor: '#5a7f5a' },
-              { title: 'Box Breathing', desc: 'Inhale 4 sec → Hold 4 sec → Exhale 4 sec → Hold 4 sec. Repeat.', icon: '🌬️', tag: 'Self-care', tagColor: '#5a7f5a' },
-              { title: 'Body Scan Meditation', desc: '10-minute practice to release physical tension and calm your mind.', icon: '🧘', tag: 'Self-care', tagColor: '#5a7f5a' },
-              { title: 'Progressive Muscle Relaxation', desc: 'Tense and release each muscle group from toes to head.', icon: '🦵', tag: 'Self-care', tagColor: '#5a7f5a' },
-              { title: 'Gratitude Journal', desc: 'Write 3 things you are grateful for each day to shift your mindset.', icon: '📖', tag: 'Self-care', tagColor: '#5a7f5a' },
+              // Immediate Help
+              { title: 'Emergency Services', desc: 'Call 911 (US) or your local emergency number for immediate danger.', icon: '🚨', tag: 'Crisis', tagColor: '#c47a7a' },
+              { title: 'National Domestic Violence Hotline', desc: 'Call 1-800-799-SAFE (7233) — confidential, 24/7.', icon: '🛡️', tag: 'Crisis', tagColor: '#c47a7a' },
               
-              // Professional Help
+              // Self-Care & Coping
+              { title: '5-4-3-2-1 Grounding Technique', desc: 'Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.', icon: '🌿', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Box Breathing', desc: 'Inhale 4 sec → Hold 4 sec → Exhale 4 sec → Hold 4 sec. Repeat for calm.', icon: '🌬️', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Body Scan Meditation', desc: '10-minute practice to release tension and calm your mind.', icon: '🧘', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Progressive Muscle Relaxation', desc: 'Tense and release each muscle group from toes to head.', icon: '🦵', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Journaling Prompts', desc: 'Guided prompts to help you process emotions and thoughts.', icon: '✍️', tag: 'Self-care', tagColor: '#5a7f5a' },
+              
+              // Mental Health Support
               { title: 'Find a Therapist', desc: 'Search licensed therapists by location, specialty, and insurance at PsychologyToday.com', icon: '🗺️', tag: 'Professional', tagColor: '#3d7a8e' },
-              { title: 'BetterHelp', desc: 'Online therapy platform with licensed counselors. Affordable, flexible.', icon: '💻', tag: 'Professional', tagColor: '#3d7a8e' },
+              { title: 'BetterHelp', desc: 'Online therapy with licensed counselors. Affordable, flexible, private.', icon: '💻', tag: 'Professional', tagColor: '#3d7a8e' },
               { title: 'Talkspace', desc: 'Connect with licensed therapists via text, video, or voice messaging.', icon: '📱', tag: 'Professional', tagColor: '#3d7a8e' },
               { title: 'Open Path Collective', desc: 'Directory of therapists offering sliding-scale fees ($40-$70).', icon: '💰', tag: 'Professional', tagColor: '#3d7a8e' },
               
               // Support Communities
-              { title: 'Mental Health Subreddits', desc: 'r/Anxiety, r/Depression, r/MentalHealth — peer support communities.', icon: '🔴', tag: 'Community', tagColor: '#8ab5c2' },
               { title: '7 Cups', desc: 'Free emotional support from trained listeners. Anytime, anywhere.', icon: '☕', tag: 'Community', tagColor: '#8ab5c2' },
+              { title: 'Mental Health Subreddits', desc: 'r/Anxiety, r/Depression, r/MentalHealth — peer support communities.', icon: '🔴', tag: 'Community', tagColor: '#8ab5c2' },
               { title: 'The Mighty', desc: 'Online community sharing real stories about mental health challenges.', icon: '✊', tag: 'Community', tagColor: '#8ab5c2' },
               
-              // Hotlines by Issue
-              { title: 'Domestic Violence Hotline', desc: 'Call 1-800-799-SAFE (7233) — confidential, 24/7.', icon: '🛡️', tag: 'Specialized', tagColor: '#a371f7' },
+              // Specialized Support
               { title: 'LGBTQ+ Lifeline', desc: 'Call 1-866-488-7386 or text START to 678678 — crisis support.', icon: '🏳️‍🌈', tag: 'Specialized', tagColor: '#a371f7' },
               { title: 'Substance Abuse Hotline', desc: 'Call 1-800-662-HELP (4357) — SAMHSA National Helpline.', icon: '💊', tag: 'Specialized', tagColor: '#a371f7' },
               { title: 'Veterans Crisis Line', desc: 'Call 988 then Press 1, or text 838255 — for veterans.', icon: '🎖️', tag: 'Specialized', tagColor: '#a371f7' },
+              { title: 'Disaster Distress Helpline', desc: 'Call or text 1-800-985-5990 — crisis counseling after natural disasters.', icon: '🌪️', tag: 'Specialized', tagColor: '#a371f7' },
               
-              // Educational Resources
+              // Learning & Growth
               { title: 'Mental Health America', desc: 'Screening tools, education, and resources at mhanational.org', icon: '📚', tag: 'Education', tagColor: '#f8a55f' },
               { title: 'NAMI (National Alliance on Mental Illness)', desc: 'Mental health education, support groups, advocacy at nami.org', icon: '🎓', tag: 'Education', tagColor: '#f8a55f' },
               { title: 'Headspace App', desc: 'Guided meditation and mindfulness exercises for stress and anxiety.', icon: '🧠', tag: 'Education', tagColor: '#f8a55f' },

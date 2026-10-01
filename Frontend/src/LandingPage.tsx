@@ -116,13 +116,7 @@ export default function LandingPage({ onStartChat }: LandingPageProps) {
                 <p className="text-[11px] text-sage-400 font-light tracking-wide">Talk to Me · Wellbeing companion</p>
               </div>
             </div>
-            <div
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-              style={glass.pill}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-sage-400 inline-block" style={{ boxShadow: '0 0 4px rgba(90,127,90,0.6)' }} />
-              <span className="text-[10px] text-sage-500 font-medium">Online</span>
-            </div>
+            <div className="w-11 h-11"></div>
           </div>
         </div>
 
@@ -187,7 +181,7 @@ export default function LandingPage({ onStartChat }: LandingPageProps) {
           <button
             onClick={handleStart}
             disabled={isLoading}
-            className="w-full max-w-sm py-3 rounded-3xl text-base font-semibold text-white transition-all duration-300 disabled:opacity-70"
+            className="w-full max-w-sm py-2 rounded-3xl text-sm font-semibold text-white transition-all duration-300 disabled:opacity-70 ios-press"
             style={{
               background: 'linear-gradient(145deg, rgba(90,127,90,0.9) 0%, rgba(70,100,70,0.95) 100%)',
               border: '1px solid rgba(120,160,120,0.4)',

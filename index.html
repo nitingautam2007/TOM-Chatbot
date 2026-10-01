@@ -12,30 +12,29 @@
         }
         
         :root {
-            --sage-50: #f0f7f0;
-            --sage-100: #e8f5e8;
-            --sage-200: #d4edcf;
-            --sage-300: #b8d8b8;
-            --sage-400: #9bc49b;
-            --sage-500: #7d9e7d;
-            --sage-600: #5a7f5a;
-            --sage-700: #3d5f3d;
-            --sage-800: #2f4c2f;
-            --sage-900: #1e331e;
+            --bg-canvas: #0d1117;
+            --bg-overlay: #161b22;
+            --bg-card: #21262d;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
             --glass-bg: rgba(255, 255, 255, 0.12);
             --glass-border: rgba(255, 255, 255, 0.45);
         }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #ffffff 0%, #f0f7f0 100%);
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            color: #2f4c2f;
         }
         
         /* Background grid pattern */
@@ -62,6 +61,31 @@
             gap: 40px;
         }
         
+        /* Glass style helpers */
+        .glass-base {
+            background: linear-gradient(145deg, rgba(255,255,255,0.68) 0%, rgba(255,255,255,0.42) 100%);
+            backdrop-filter: blur(24px) saturate(1.9);
+            -webkit-backdrop-filter: blur(24px) saturate(1.9);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 8px 32px rgba(90,127,90,0.10), 0 1.5px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(90,127,90,0.05) inset;
+        }
+        
+        .glass-strong {
+            background: linear-gradient(145deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.56) 100%);
+            backdrop-filter: blur(32px) saturate(2);
+            -webkit-backdrop-filter: blur(32px) saturate(2);
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 16px 48px rgba(90,127,90,0.12), 0 2px 0 rgba(255,255,255,1) inset, 0 -1px 0 rgba(90,127,90,0.06) inset;
+        }
+        
+        .glass-pill {
+            background: linear-gradient(145deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.32) 100%);
+            backdrop-filter: blur(16px) saturate(1.6);
+            -webkit-backdrop-filter: blur(16px) saturate(1.6);
+            border: 1px solid rgba(255,255,255,0.72);
+            box-shadow: 0 2px 8px rgba(90,127,90,0.07), 0 1px 0 rgba(255,255,255,0.9) inset;
+        }
+        
         /* Hero Section */
         .hero {
             text-align: center;
@@ -82,26 +106,25 @@
             background: var(--glass-bg);
             backdrop-filter: blur(12px) saturate(1.4);
             border: 1px solid var(--glass-border);
-            box-shadow: 0 24px 60px rgba(60, 90, 60, 0.08);
+            box-shadow: 0 24px 60px rgba(60,90,60,0.08), 0 1.5px 0 rgba(255,255,255,0.7) inset;
         }
         
-        .logo-container img {
+        .logo-container svg {
             width: 60%;
             height: 60%;
-            object-fit: contain;
         }
         
         .hero h1 {
             font-size: 3rem;
             font-weight: 700;
-            color: #2f4c2f;
+            color: var(--text-primary);
             letter-spacing: -0.02em;
             margin-bottom: 12px;
         }
         
         .hero .tagline {
             font-size: 1.3rem;
-            color: #5a7f5a;
+            color: var(--accent-green);
             font-weight: 500;
             max-width: 600px;
             line-height: 1.6;
@@ -109,7 +132,7 @@
         
         .hero .subtitle {
             font-size: 1rem;
-            color: #7d9e7d;
+            color: var(--text-secondary);
             margin-top: 8px;
             max-width: 500px;
         }
@@ -120,22 +143,22 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 16px 40px;
-            font-size: 1.1rem;
+            padding: 14px 32px;
+            font-size: 1rem;
             font-weight: 600;
             color: white;
             background: linear-gradient(145deg, rgba(90, 127, 90, 0.9) 0%, rgba(70, 100, 70, 0.95) 100%);
             border: none;
-            border-radius: 20px;
+            border-radius: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(70, 100, 70, 0.28);
+            box-shadow: 0 6px 20px rgba(70, 100, 70, 0.28), 0 1px 0 rgba(160,200,160,0.4) inset;
             text-decoration: none;
         }
         
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(70, 100, 70, 0.35);
+            box-shadow: 0 8px 24px rgba(70, 100, 70, 0.35);
         }
         
         .cta-button:active {
@@ -179,18 +202,18 @@
             justify-content: center;
             font-size: 1.5rem;
             margin-bottom: 16px;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .feature-card h3 {
             font-size: 1.1rem;
             font-weight: 600;
-            color: #2f4c2f;
+            color: var(--text-primary);
             margin-bottom: 10px;
         }
         
         .feature-card p {
-            color: #5a7f5a;
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.6;
         }
@@ -210,7 +233,7 @@
         .mood-preview h3 {
             font-size: 1.2rem;
             font-weight: 600;
-            color: #2f4c2f;
+            color: var(--text-primary);
             margin-bottom: 20px;
             text-align: center;
         }
@@ -228,15 +251,17 @@
             align-items: center;
             gap: 6px;
             padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .mood-item:hover {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
+            border-color: var(--accent-green);
         }
         
         .mood-item span:first-child {
@@ -245,7 +270,7 @@
         
         .mood-item span:last-child {
             font-size: 0.8rem;
-            color: #5a7f5a;
+            color: var(--text-secondary);
             font-weight: 500;
         }
         
@@ -254,13 +279,13 @@
             margin-top: 60px;
             padding: 24px;
             text-align: center;
-            color: #7d9e7d;
+            color: var(--text-muted);
             font-size: 0.9rem;
             animation: slideUp 0.8s ease-out 0.6s both;
         }
         
         .footer a {
-            color: #5a7f5a;
+            color: var(--accent-green);
             text-decoration: none;
         }
         
@@ -293,6 +318,24 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-overlay);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -300,7 +343,7 @@
         <!-- Hero Section -->
         <div class="hero">
             <div class="logo-container">
-                <!-- Replace with your actual logo -->
+                <!-- SVG Logo matching chat UI -->
                 <svg viewBox="0 0 100 100" width="80" height="80">
                     <circle cx="50" cy="50" r="45" fill="#5a7f5a" opacity="0.8"/>
                     <text x="50" y="60" font-size="30" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold">TOM</text>

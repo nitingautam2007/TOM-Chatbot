@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import tomLogo from '@/imports/TOM_Bot.png'
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000').replace(/\/$/, '')
+
 type Mood = 1 | 2 | 3 | 4 | 5
 
 interface Message {
@@ -54,12 +56,26 @@ const BOT_RESPONSES: Record<string, string[]> = {
   ],
 }
 
-async function fetchBotResponse(input: string): Promise<{ text: string; intent?: string; riskLevel?: 'low' | 'high' }> {
+async function fetchBotResponse(input: string, sessionId?: string): Promise<{ text: string; intent?: string; riskLevel?: 'low' | 'high' }> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/chat', {
+    // Generate or get session ID for context tracking
+    let finalSessionId = sessionId
+    if (!finalSessionId) {
+      let storedSessionId = localStorage.getItem('tom_session_id')
+      if (!storedSessionId) {
+        storedSessionId = crypto.randomUUID()
+        localStorage.setItem('tom_session_id', storedSessionId)
+      }
+      finalSessionId = storedSessionId
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input }),
+      body: JSON.stringify({ 
+        message: input,
+        session_id: finalSessionId
+      }),
     })
     if (!response.ok) {
       throw new Error(`Server returned ${response.status}`)
@@ -220,6 +236,13 @@ export default function App() {
   const [pressedBtn, setPressedBtn] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+
+  // Initialize session ID for context tracking
+  useEffect(() => {
+    if (!localStorage.getItem('tom_session_id')) {
+      localStorage.setItem('tom_session_id', crypto.randomUUID())
+    }
+  }, [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

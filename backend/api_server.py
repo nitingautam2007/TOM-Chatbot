@@ -8,15 +8,18 @@ Flask REST API for TOM - Talk To Me frontend integration.
 Special handling:
 - Buttons and mood emojis: Uses frontend's nice responses
 - Text queries: Uses TOM's backend responses from data.json
+- Context memory: Maintains conversation context per session
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from tom_chatbot import TOmChatbot
+import uuid
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend connection
+app.secret_key = 'tom-secret-key-2024'
+CORS(app, supports_credentials=True)  # Enable CORS for frontend connection with credentials
 
 # Initialize TOM chatbot
 tom = TOmChatbot()
@@ -32,6 +35,10 @@ if not tom.train_model():
     exit(1)
 
 print("TOM chatbot initialized and ready!")
+
+# Conversation context storage (in-memory, per session)
+# Stores last 5 messages per session for context
+CONTEXT_MEMORY = {}  # Format: {session_id: [list of last messages]}
 
 # Frontend responses for specific buttons and moods
 # These will be used when backend is ON for these specific inputs
@@ -60,17 +67,51 @@ def get_risk_level(intent):
         return 'high'
     return 'low'
 
+def update_context(session_id, message, response=None):
+    """Update conversation context for a session"""
+    if session_id not in CONTEXT_MEMORY:
+        CONTEXT_MEMORY[session_id] = []
+    
+    # Add user message to context
+    CONTEXT_MEMORY[session_id].append({
+        'role': 'user',
+        'text': message
+    })
+    
+    # Add bot response to context if provided
+    if response:
+        CONTEXT_MEMORY[session_id].append({
+            'role': 'assistant',
+            'text': response
+        })
+    
+    # Keep only last 5 exchanges (10 messages max) to avoid memory bloat
+    CONTEXT_MEMORY[session_id] = CONTEXT_MEMORY[session_id][-10:]
+
+
+def get_context_summary(session_id):
+    """Get a summary of recent context for the model"""
+    if session_id not in CONTEXT_MEMORY:
+        return ""
+    
+    # Extract just the text from the last few messages
+    recent_messages = CONTEXT_MEMORY[session_id][-4:]  # Last 2 exchanges
+    context_text = " \n".join([f"{msg['role']}: {msg['text']}" for msg in recent_messages])
+    return context_text
+
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """
     Chat API endpoint for frontend.
     
     For buttons and mood emojis: Uses frontend's nice responses
-    For text queries: Uses TOM's backend responses
+    For text queries: Uses TOM's backend responses with context
     
     Request JSON:
     {
-        "message": "user input text"
+        "message": "user input text",
+        "session_id": "optional browser session identifier"
     }
     
     Response JSON:
@@ -91,6 +132,17 @@ def chat():
             }), 400
         
         user_message = data['message']
+        session_id = data.get('session_id')
+        
+        # Generate or get session ID for context tracking
+        if not session_id:
+            session_id = session.get('session_id')
+            if not session_id:
+                session_id = str(uuid.uuid4())
+                session['session_id'] = session_id
+        
+        # Get context summary for this session
+        context_summary = get_context_summary(session_id)
         
         # Special handling: Check if message matches buttons or moods
         # Try to match with and without emojis
@@ -104,16 +156,26 @@ def chat():
         # Check if this matches any special response
         for pattern, response_text in FRONTEND_SPECIAL_RESPONSES.items():
             if pattern in clean_message or pattern in message_lower:
+                # Update context
+                update_context(session_id, user_message, response_text)
                 return jsonify({
                     'response': response_text,
                     'intent': 'frontend_special',
                     'risk_level': 'low'
                 })
         
-        # For all other messages, use TOM's backend responses
-        response = tom.respond(user_message)
-        intent = tom.predict_intent(user_message)
+        # For all other messages, use TOM's backend responses with context
+        # Prepend context to the message for better understanding
+        message_with_context = user_message
+        if context_summary:
+            message_with_context = f"[CONTEXT: {context_summary}]\n\nUSER: {user_message}"
+        
+        response = tom.respond(message_with_context)
+        intent = tom.predict_intent(message_with_context)
         risk_level = get_risk_level(intent)
+        
+        # Update context with this exchange
+        update_context(session_id, user_message, response)
         
         return jsonify({
             'response': response,
@@ -143,17 +205,18 @@ def health():
 
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("TOM Backend API Server")
+    print("TOM Backend API Server with Context Memory")
     print("="*60)
     print("\nStarting Flask server...")
     print("API will be available at: http://127.0.0.1:8000")
     print("\nEndpoints:")
-    print("  POST /api/chat    - Send user messages")
+    print("  POST /api/chat    - Send user messages (with optional session_id)")
     print("  GET  /api/health  - Health check")
-    print("\nSpecial handling:")
+    print("\nFeatures:")
     print("  - Mood selections use frontend responses")
     print("  - Suggestion buttons use frontend responses")
     print("  - All other text uses TOM backend responses")
+    print("  - Context memory: Remember last 5 exchanges per session")
     print("\n" + "="*60 + "\n")
     
     app.run(host='0.0.0.0', port=8000, debug=False)

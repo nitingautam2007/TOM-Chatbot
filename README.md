@@ -173,19 +173,23 @@ VITE_API_BASE_URL=http://your-backend-url:port
 
 ---
 
-## 🚀 Deployment
+## 🏠 Local Deployment
 
-### Backend (Render.com)
-1. Create new Web Service
-2. Connect GitHub repository
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `python api_server.py`
-5. Deploy!
+To run locally:
 
-### Frontend (Vercel)
-1. Import project from GitHub
-2. Set environment variable: `VITE_API_BASE_URL=https://your-render-url.onrender.com`
-3. Deploy!
+### Backend
+```bash
+cd backend
+pip install -r requirements.txt
+python api_server.py
+```
+
+### Frontend
+```bash
+cd Frontend
+npm install
+npm run dev
+```
 
 ---
 

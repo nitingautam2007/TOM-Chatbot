@@ -1,0 +1,32 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "tom-api": {
+      "root": "backend",
+      "framework": "flask",
+      "buildCommand": "pip install -r requirements.txt",
+      "bindings": []
+    },
+    "frontend": {
+      "root": "Frontend",
+      "framework": "vite",
+      "bindings": [
+        { "type": "service", "service": "tom-api", "format": "url", "env": "VITE_TOM_API_URL" }
+      ]
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "tom-api"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
+    }
+  ]
+}

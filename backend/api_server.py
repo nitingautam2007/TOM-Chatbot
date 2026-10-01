@@ -89,16 +89,6 @@ def update_context(session_id, message, response=None):
     CONTEXT_MEMORY[session_id] = CONTEXT_MEMORY[session_id][-10:]
 
 
-def get_context_summary(session_id):
-    """Get a summary of recent context for the model"""
-    if session_id not in CONTEXT_MEMORY:
-        return ""
-    
-    # Extract just the text from the last few messages
-    recent_messages = CONTEXT_MEMORY[session_id][-4:]  # Last 2 exchanges
-    context_text = " \n".join([f"{msg['role']}: {msg['text']}" for msg in recent_messages])
-    return context_text
-
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -165,13 +155,21 @@ def chat():
                 })
         
         # For all other messages, use TOM's backend responses with context
-        # Prepend context to the message for better understanding
+        # Prepend context in a natural way the model can understand
         message_with_context = user_message
         if context_summary:
-            message_with_context = f"[CONTEXT: {context_summary}]\n\nUSER: {user_message}"
+            # Get the last user message for context
+            last_user_msg = ""
+            if session_id in CONTEXT_MEMORY:
+                for msg in reversed(CONTEXT_MEMORY[session_id]):
+                    if msg['role'] == 'user':
+                        last_user_msg = msg['text']
+                        break
+            if last_user_msg:
+                message_with_context = f"Following up on: '{last_user_msg}'. Now: {user_message}"
         
         response = tom.respond(message_with_context)
-        intent = tom.predict_intent(message_with_context)
+        intent = tom.predict_intent(user_message)
         risk_level = get_risk_level(intent)
         
         # Update context with this exchange

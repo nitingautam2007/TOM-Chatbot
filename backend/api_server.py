@@ -157,14 +157,13 @@ def chat():
         # For all other messages, use TOM's backend responses with context
         # Prepend context in a natural way the model can understand
         message_with_context = user_message
-        if context_summary:
+        if session_id in CONTEXT_MEMORY and CONTEXT_MEMORY[session_id]:
             # Get the last user message for context
             last_user_msg = ""
-            if session_id in CONTEXT_MEMORY:
-                for msg in reversed(CONTEXT_MEMORY[session_id]):
-                    if msg['role'] == 'user':
-                        last_user_msg = msg['text']
-                        break
+            for msg in reversed(CONTEXT_MEMORY[session_id]):
+                if msg['role'] == 'user':
+                    last_user_msg = msg['text']
+                    break
             if last_user_msg:
                 message_with_context = f"Following up on: '{last_user_msg}'. Now: {user_message}"
         

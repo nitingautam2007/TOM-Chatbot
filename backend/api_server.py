@@ -15,14 +15,20 @@ from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from tom_chatbot import TOmChatbot
 import uuid
+import os
+from pathlib import Path
 
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = 'tom-secret-key-2024'
 CORS(app, supports_credentials=True)  # Enable CORS for frontend connection with credentials
 
-# Initialize TOM chatbot
-tom = TOmChatbot()
+# Get the absolute path to data.json
+BACKEND_DIR = Path(__file__).resolve().parent
+DATA_PATH = str(BACKEND_DIR / 'data.json')
+
+# Initialize TOM chatbot with explicit data path
+tom = TOmChatbot(data_path=DATA_PATH)
 
 # Load data and train model at startup
 print("Initializing TOM chatbot...")

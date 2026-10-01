@@ -13,6 +13,7 @@
       "framework": "vite",
       "installCommand": "npm install",
       "buildCommand": "npm run build",
+      "nodeVersion": "18",
       "bindings": [
         { "type": "service", "service": "tom-api", "format": "url", "env": "VITE_TOM_API_URL" }
       ]

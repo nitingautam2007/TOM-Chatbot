@@ -1149,6 +1149,102 @@
                 "Many students feel this way. What specifically is worrying you about your exams?",
                 "Exam time is challenging. Remember to take breaks and not overwhelm yourself. What's your study plan looking like?"
             ]
+        },
+        {
+            "tag": "followup_anxiety",
+            "patterns": [
+                "Following up on: 'I feel anxious'. Now: what should i do",
+                "Following up on: 'I feel anxious'. Now: what can i do",
+                "Following up on: 'I feel anxious'. Now: help me",
+                "Following up on: 'I have anxiety'. Now: what should i do",
+                "Following up on: 'Feeling nervous'. Now: what can i do",
+                "Following up on: 'Anxiety attack'. Now: help",
+                "Following up on: 'I'm worried'. Now: what should i do",
+                "Following up on: 'I'm so anxious'. Now: what can i do",
+                "what should i do about anxiety",
+                "what can i do for anxiety",
+                "how do i cope with anxiety",
+                "anxiety what should i do"
+            ],
+            "responses": [
+                "I understand you want more ways to cope with anxiety. Let's explore some options together. Would you like to try a 5-4-3-2-1 grounding exercise right now, or would you prefer to talk about what's specifically triggering this feeling?",
+                "You're already doing great by reaching out. For anxiety, many people find relief through deep breathing, talking to someone they trust, or physical activity like a short walk. Which sounds most helpful to try?",
+                "Let's tackle this together. One effective approach is to acknowledge the anxiety without judgment, then shift your focus outward. Would you like me to guide you through a quick grounding exercise?",
+                "Anxiety often responds well to action. Try this: stand up, stretch your arms overhead, and take 3 deep breaths. Then we can talk about what's on your mind. What triggered this feeling?"
+            ]
+        },
+        {
+            "tag": "followup_sadness",
+            "patterns": [
+                "Following up on: 'I feel sad'. Now: what should i do",
+                "Following up on: 'I am feeling sad'. Now: what can i do",
+                "Following up on: 'I'm feeling low'. Now: help me",
+                "Following up on: 'feeling down'. Now: what should i do",
+                "Following up on: 'I feel lonely'. Now: what can i do",
+                "what should i do about sadness",
+                "what can i do for sadness",
+                "how do i cope with sadness",
+                "sad what should i do"
+            ],
+            "responses": [
+                "It's okay to feel sad, and it's also okay to want to feel better. Sometimes writing down your thoughts, talking to a friend, or doing something creative can help. What do you usually do when you feel this way?",
+                "Sadness can feel heavy. Would it help to talk more about what's making you feel this way, or would you prefer some suggestions for lifting your mood?",
+                "Let's honor this feeling while also exploring ways to move through it. Would you like to try a small act of self-care, like listening to a favorite song or taking a walk outside?",
+                "You're not alone in feeling this way. Sometimes the best thing is to be gentle with yourself. Would you like to share what's on your heart?"
+            ]
+        },
+        {
+            "tag": "followup_stress",
+            "patterns": [
+                "Following up on: 'I feel stressed'. Now: what should i do",
+                "Following up on: 'I am feeling stressed'. Now: what can i do",
+                "Following up on: 'so much stress'. Now: help me",
+                "Following up on: 'overwhelmed'. Now: what should i do",
+                "what should i do about stress",
+                "what can i do for stress",
+                "how do i manage stress",
+                "stress what should i do"
+            ],
+            "responses": [
+                "Stress often comes from feeling like we have too much to handle. Try this: make a list of everything on your mind, then pick just ONE thing to focus on first. What's the most important thing weighing on you right now?",
+                "When stressed, our bodies need support too. Try the 4-7-8 breathing: inhale for 4, hold for 7, exhale for 8. Then let's talk about what's causing the stress. Would you like to share?",
+                "Stress can be managed by breaking things into smaller steps. What's one small thing you can do today to reduce this stress? Sometimes just starting is the hardest part.",
+                "Our minds and bodies are connected. Try standing up and shaking out your limbs for 30 seconds, then sit down and tell me what's stressing you. Often physical movement helps mental clarity."
+            ]
+        },
+        {
+            "tag": "followup_anger",
+            "patterns": [
+                "Following up on: 'I'm angry'. Now: what should i do",
+                "Following up on: 'So frustrated'. Now: what can i do",
+                "Following up on: 'Mad'. Now: help me",
+                "Following up on: 'Pissed off'. Now: what should i do",
+                "what should i do about anger",
+                "how do i handle anger",
+                "anger what can i do"
+            ],
+            "responses": [
+                "Anger is a signal that something needs attention. Try this: write down what you're feeling on paper, then tear it up. The physical act can be very releasing. What triggered this anger for you?",
+                "It's natural to feel angry. Try the STOP method: Stop, Take a breath, Observe your feelings, Proceed mindfully. What do you need most right now to feel more at peace?",
+                "Anger can be energy. How can you channel it productively? Some people find exercise, art, or journaling helpful. What works best for you when you feel this way?",
+                "When anger feels overwhelming, try removing yourself from the situation for a few minutes. Take some deep breaths and ask yourself: 'What am I really feeling underneath this anger?'"
+            ]
+        },
+        {
+            "tag": "followup_need_talk",
+            "patterns": [
+                "Following up on: 'I need to talk'. Now: about what",
+                "Following up on: 'I need to talk'. Now: what about",
+                "Following up on: 'I need to talk'. Now: can we talk",
+                "Following up on: 'Need to talk'. Now: yes",
+                "Following up on: 'I want to talk'. Now: okay"
+            ],
+            "responses": [
+                "This is a safe space - you can tell me anything that's on your mind. There's no right or wrong way to feel. What would you like to share?",
+                "I'm here and I'm listening. Sometimes the hardest part is starting. You can begin with whatever feels most pressing, or just tell me what's been on your mind lately. What would you like to talk about?",
+                "I'm ready when you are. This conversation is completely confidential and judgment-free. What's been weighing on you?",
+                "Take your time. You can talk about anything - big or small. Often the things we need to talk about most are the hardest to say. What's on your heart today?"
+            ]
         }
     ]
 }

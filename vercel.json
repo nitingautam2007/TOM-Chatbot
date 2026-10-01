@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "nodeVersion": "18",
   "services": {
     "tom-api": {
       "root": "backend",
@@ -13,7 +14,6 @@
       "framework": "vite",
       "installCommand": "npm install",
       "buildCommand": "npm run build",
-      "nodeVersion": "18",
       "bindings": [
         { "type": "service", "service": "tom-api", "format": "url", "env": "VITE_TOM_API_URL" }
       ]

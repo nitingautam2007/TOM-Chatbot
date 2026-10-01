@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import tomLogo from '@/imports/TOM_Bot.png'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000').replace(/\/$/, '')
-
 type Mood = 1 | 2 | 3 | 4 | 5
 
 interface Message {
@@ -58,24 +56,10 @@ const BOT_RESPONSES: Record<string, string[]> = {
 
 async function fetchBotResponse(input: string): Promise<{ text: string; intent?: string; riskLevel?: 'low' | 'high' }> {
   try {
-    // Generate or get session ID
-    let sessionId = localStorage.getItem('tom_session_id');
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-      localStorage.setItem('tom_session_id', sessionId);
-    }
-    
-    // Check if user has consented
-    const consentGiven = localStorage.getItem('tom_consent') === 'true';
-    
-    const response = await fetch(`${API_BASE_URL}/api/chat`, {
+    const response = await fetch('http://127.0.0.1:8000/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        message: input,
-        session_id: sessionId,
-        consent_given: consentGiven
-      }),
+      body: JSON.stringify({ message: input }),
     })
     if (!response.ok) {
       throw new Error(`Server returned ${response.status}`)
@@ -93,45 +77,6 @@ async function fetchBotResponse(input: string): Promise<{ text: string; intent?:
       intent: 'fallback',
       riskLevel: 'low',
     }
-  }
-}
-
-// Function to send consent to backend
-async function sendConsentToBackend(consentGiven: boolean): Promise<boolean> {
-  try {
-    const sessionId = localStorage.getItem('tom_session_id') || crypto.randomUUID();
-    if (!localStorage.getItem('tom_session_id')) {
-      localStorage.setItem('tom_session_id', sessionId);
-    }
-    
-    const response = await fetch(`${API_BASE_URL}/api/consent`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        session_id: sessionId,
-        consent_given: consentGiven
-      }),
-    })
-    return response.ok;
-  } catch (err) {
-    console.warn('Could not send consent to backend:', err);
-    return false;
-  }
-}
-
-async function deleteStoredData(sessionId: string): Promise<{ ok: boolean; chatsDeleted: number }> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/data`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id: sessionId }),
-    })
-    if (!response.ok) return { ok: false, chatsDeleted: 0 }
-    const data = await response.json()
-    return { ok: true, chatsDeleted: data.chats_deleted ?? 0 }
-  } catch (err) {
-    console.warn('Could not delete stored data from backend:', err)
-    return { ok: false, chatsDeleted: 0 }
   }
 }
 
@@ -257,68 +202,6 @@ function ChatMessage({ message }: { message: Message }) {
   )
 }
 
-// Consent Modal Component
-function ConsentModal({ onAgree, onDecline }: { onAgree: () => void; onDecline: () => void }) {
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4" style={{ animation: 'fadeIn 0.3s ease-out' }}>
-      <div 
-        className="bg-white rounded-2xl p-6 max-w-sm w-full"
-        style={{
-          boxShadow: '0 20px 60px rgba(90,127,90,0.25)',
-          border: '1px solid rgba(90,127,90,0.15)',
-        }}
-      >
-        <div className="mb-4">
-          <h2 
-            className="text-lg font-semibold text-sage-800 mb-2"
-            style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.01em' }}
-          >
-            Help Improve TOM
-          </h2>
-          <p className="text-sm text-sage-500">
-            Your conversations help us make TOM better for everyone.
-          </p>
-        </div>
-        
-        <div className="mb-5">
-          <p className="text-sm text-sage-600 mb-3 leading-relaxed">
-            If you agree, chats are stored locally with a random browser session ID and may be used to improve TOM.
-          </p>
-          
-          <ul className="text-sm text-sage-500 space-y-1.5 list-disc list-outside ml-5">
-            <li>Messages, replies, and optional mood selections are stored locally</li>
-            <li>Used only to improve TOM's responses</li>
-            <li>You can delete this browser session's data in the chat screen</li>
-            <li>You can opt-out and still use TOM</li>
-          </ul>
-        </div>
-        
-        <button
-          onClick={() => window.open(`${API_BASE_URL}/privacy`, '_blank')}
-          className="text-sm text-sage-600 hover:text-sage-700 underline mb-5 text-left w-full"
-        >
-          Read our full Privacy Policy
-        </button>
-        
-        <div className="flex gap-3">
-          <button
-            onClick={onAgree}
-            className="flex-1 bg-sage-500 text-white py-2.5 px-4 rounded-xl hover:bg-sage-600 active:bg-sage-700 transition-all duration-200 ios-press font-medium"
-          >
-            I Agree
-          </button>
-          <button
-            onClick={onDecline}
-            className="flex-1 text-sage-600 bg-white border border-sage-200 hover:bg-sage-50 py-2.5 px-4 rounded-xl transition-all duration-200 ios-press font-medium"
-          >
-            No Thanks
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -335,69 +218,8 @@ export default function App() {
   const [moodSubmitted, setMoodSubmitted] = useState(false)
   const [activeTab, setActiveTab] = useState<'chat' | 'resources'>('chat')
   const [pressedBtn, setPressedBtn] = useState<string | null>(null)
-  const [showConsentModal, setShowConsentModal] = useState(false)
-  const [consentGiven, setConsentGiven] = useState<boolean | null>(null)
-  const [isDeletingData, setIsDeletingData] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
-
-  // Check consent status on app load
-  useEffect(() => {
-    const storedConsent = localStorage.getItem('tom_consent');
-    if (storedConsent === null) {
-      // First time user - show consent modal
-      setShowConsentModal(true);
-    } else {
-      setConsentGiven(storedConsent === 'true');
-    }
-    
-    // Generate session ID if doesn't exist
-    if (!localStorage.getItem('tom_session_id')) {
-      localStorage.setItem('tom_session_id', crypto.randomUUID());
-    }
-  }, []);
-
-  // Handle consent decision
-  const handleConsent = async (agreed: boolean) => {
-    setConsentGiven(agreed);
-    localStorage.setItem('tom_consent', agreed.toString());
-    setShowConsentModal(false);
-    
-    // Send consent to backend if available
-    if (agreed) {
-      await sendConsentToBackend(true);
-    }
-  };
-
-  const handleDeleteMyData = async () => {
-    const sessionId = localStorage.getItem('tom_session_id')
-    if (!sessionId) {
-      localStorage.removeItem('tom_consent')
-      setConsentGiven(null)
-      setShowConsentModal(true)
-      return
-    }
-
-    const confirmed = window.confirm(
-      'Delete all chats and consent records stored for this browser? This cannot be undone.'
-    )
-    if (!confirmed) return
-
-    setIsDeletingData(true)
-    const deletionResult = await deleteStoredData(sessionId)
-    setIsDeletingData(false)
-
-    if (!deletionResult.ok) {
-      window.alert('Your stored data could not be deleted. Make sure the TOM backend is running and try again.')
-      return
-    }
-
-    localStorage.removeItem('tom_consent')
-    localStorage.removeItem('tom_session_id')
-    setConsentGiven(null)
-    setShowConsentModal(true)
-    window.alert(`${deletionResult.chatsDeleted} stored chat(s) and your consent record were deleted. You can now choose consent again.`)
-  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -411,38 +233,6 @@ export default function App() {
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim()) return
-    
-    // Check if consent is required (not declined)
-    if (consentGiven === false) {
-      // User declined consent - still allow chat but don't store data
-      const userMsg: Message = {
-        id: Date.now().toString(),
-        role: 'user',
-        text: text.trim(),
-        timestamp: new Date(),
-        visible: true,
-      }
-      setMessages((prev) => [...prev, userMsg])
-      setInput('')
-      setIsTyping(true)
-      
-      // Use fallback response (no backend call to avoid storage)
-      setTimeout(() => {
-        const botMsg: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          text: getBotResponseFallback(text),
-          timestamp: new Date(),
-          visible: true,
-          riskLevel: 'low',
-        }
-        setMessages((prev) => [...prev, botMsg])
-        setIsTyping(false)
-      }, 500)
-      return
-    }
-    
-    // Consent given or not yet decided (first message before consent shown)
     const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -471,7 +261,7 @@ export default function App() {
     } finally {
       setIsTyping(false)
     }
-  }, [consentGiven])
+  }, [])
 
   const handleMoodSubmit = () => {
     if (!selectedMood) return
@@ -546,18 +336,7 @@ export default function App() {
         .resource-row:active {
           transform: scale(0.975);
         }
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-out;
-        }
       `}</style>
-
-      {/* Consent Modal */}
-      {showConsentModal && (
-        <ConsentModal
-          onAgree={() => handleConsent(true)}
-          onDecline={() => handleConsent(false)}
-        />
-      )}
 
       {/* App shell — liquid glass card */}
       <div
@@ -701,36 +480,6 @@ export default function App() {
               <div ref={bottomRef} />
             </div>
 
-            {/* Consent Notice in Input Area */}
-            {consentGiven === false && (
-              <div className="px-6 pb-2">
-                <div className="bg-sage-50/80 border border-sage-200 rounded-lg p-3 mb-2">
-                  <p className="text-xs text-sage-600">
-                    <strong>Note:</strong> Data collection is disabled. Your conversations are not being stored. 
-                    <button 
-                      onClick={() => {
-                        localStorage.removeItem('tom_consent');
-                        setShowConsentModal(true);
-                      }}
-                      className="text-blue-600 hover:text-blue-700 underline cursor-pointer"
-                    >
-                      Enable data collection
-                    </button>
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="px-6 pb-2 text-center">
-              <button
-                onClick={handleDeleteMyData}
-                disabled={isDeletingData}
-                className="text-[11px] text-sage-400 hover:text-red-600 underline transition-colors disabled:opacity-50"
-              >
-                {isDeletingData ? 'Deleting stored data…' : 'Delete my stored data and choose consent again'}
-              </button>
-            </div>
-
             {/* Suggestions */}
             <div className="px-4 pb-1 flex-shrink-0">
               <div
@@ -782,7 +531,7 @@ export default function App() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={consentGiven === false ? "Chat without data collection..." : "Share what's on your mind…"}
+                  placeholder="Share what's on your mind…"
                   rows={1}
                   className="flex-1 bg-transparent text-sm text-sage-800 placeholder:text-sage-300 resize-none outline-none leading-relaxed max-h-24 overflow-y-auto"
                   style={{ minHeight: '24px', fontFamily: 'var(--font-body)' }}

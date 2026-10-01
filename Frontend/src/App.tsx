@@ -619,12 +619,40 @@ export default function App() {
             </p>
 
             {[
-              { title: 'Crisis Text Line', desc: 'Text HOME to 741741 — free, 24/7 support.', icon: '💬', tag: 'Crisis', tagColor: '#c47a7a' },
-              { title: 'Suicide & Crisis Lifeline', desc: 'Call or text 988 — available 24 hours a day.', icon: '📞', tag: 'Crisis', tagColor: '#c47a7a' },
-              { title: 'Calm breathing exercise', desc: '4-7-8 breathing to ease anxiety in minutes.', icon: '🌬️', tag: 'Self-care', tagColor: '#5a7f5a' },
-              { title: 'Body scan meditation', desc: 'A 10-minute practice to release tension.', icon: '🧘', tag: 'Self-care', tagColor: '#5a7f5a' },
-              { title: 'Therapist finder', desc: 'Find licensed therapists in your area by specialty.', icon: '🗺️', tag: 'Professional', tagColor: '#3d7a8e' },
-              { title: 'BetterHelp', desc: 'Online therapy with licensed counselors, anytime.', icon: '💻', tag: 'Professional', tagColor: '#3d7a8e' },
+              // Crisis Support - Urgent
+              { title: 'Suicide & Crisis Lifeline', desc: 'Call or text 988 (US/Canada) — free, confidential, 24/7.', icon: '🆘', tag: 'Crisis', tagColor: '#c47a7a' },
+              { title: 'Crisis Text Line', desc: 'Text HOME to 741741 (US/Canada) — free, 24/7.', icon: '💬', tag: 'Crisis', tagColor: '#c47a7a' },
+              { title: 'International Suicide Hotlines', desc: 'Find crisis support in your country at befrienders.org', icon: '🌍', tag: 'Crisis', tagColor: '#c47a7a' },
+              
+              // Self-Care Techniques
+              { title: '5-4-3-2-1 Grounding', desc: 'Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.', icon: '🌿', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Box Breathing', desc: 'Inhale 4 sec → Hold 4 sec → Exhale 4 sec → Hold 4 sec. Repeat.', icon: '🌬️', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Body Scan Meditation', desc: '10-minute practice to release physical tension and calm your mind.', icon: '🧘', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Progressive Muscle Relaxation', desc: 'Tense and release each muscle group from toes to head.', icon: '🦵', tag: 'Self-care', tagColor: '#5a7f5a' },
+              { title: 'Gratitude Journal', desc: 'Write 3 things you are grateful for each day to shift your mindset.', icon: '📖', tag: 'Self-care', tagColor: '#5a7f5a' },
+              
+              // Professional Help
+              { title: 'Find a Therapist', desc: 'Search licensed therapists by location, specialty, and insurance at PsychologyToday.com', icon: '🗺️', tag: 'Professional', tagColor: '#3d7a8e' },
+              { title: 'BetterHelp', desc: 'Online therapy platform with licensed counselors. Affordable, flexible.', icon: '💻', tag: 'Professional', tagColor: '#3d7a8e' },
+              { title: 'Talkspace', desc: 'Connect with licensed therapists via text, video, or voice messaging.', icon: '📱', tag: 'Professional', tagColor: '#3d7a8e' },
+              { title: 'Open Path Collective', desc: 'Directory of therapists offering sliding-scale fees ($40-$70).', icon: '💰', tag: 'Professional', tagColor: '#3d7a8e' },
+              
+              // Support Communities
+              { title: 'Mental Health Subreddits', desc: 'r/Anxiety, r/Depression, r/MentalHealth — peer support communities.', icon: '🔴', tag: 'Community', tagColor: '#8ab5c2' },
+              { title: '7 Cups', desc: 'Free emotional support from trained listeners. Anytime, anywhere.', icon: '☕', tag: 'Community', tagColor: '#8ab5c2' },
+              { title: 'The Mighty', desc: 'Online community sharing real stories about mental health challenges.', icon: '✊', tag: 'Community', tagColor: '#8ab5c2' },
+              
+              // Hotlines by Issue
+              { title: 'Domestic Violence Hotline', desc: 'Call 1-800-799-SAFE (7233) — confidential, 24/7.', icon: '🛡️', tag: 'Specialized', tagColor: '#a371f7' },
+              { title: 'LGBTQ+ Lifeline', desc: 'Call 1-866-488-7386 or text START to 678678 — crisis support.', icon: '🏳️‍🌈', tag: 'Specialized', tagColor: '#a371f7' },
+              { title: 'Substance Abuse Hotline', desc: 'Call 1-800-662-HELP (4357) — SAMHSA National Helpline.', icon: '💊', tag: 'Specialized', tagColor: '#a371f7' },
+              { title: 'Veterans Crisis Line', desc: 'Call 988 then Press 1, or text 838255 — for veterans.', icon: '🎖️', tag: 'Specialized', tagColor: '#a371f7' },
+              
+              // Educational Resources
+              { title: 'Mental Health America', desc: 'Screening tools, education, and resources at mhanational.org', icon: '📚', tag: 'Education', tagColor: '#f8a55f' },
+              { title: 'NAMI (National Alliance on Mental Illness)', desc: 'Mental health education, support groups, advocacy at nami.org', icon: '🎓', tag: 'Education', tagColor: '#f8a55f' },
+              { title: 'Headspace App', desc: 'Guided meditation and mindfulness exercises for stress and anxiety.', icon: '🧠', tag: 'Education', tagColor: '#f8a55f' },
+              { title: 'Woebot Health', desc: 'AI chatbot based on CBT principles. Available 24/7.', icon: '🤖', tag: 'Education', tagColor: '#f8a55f' },
             ].map((r, i) => (
               <div
                 key={r.title}

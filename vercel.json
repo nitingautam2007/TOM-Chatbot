@@ -5,11 +5,14 @@
       "root": "backend",
       "framework": "flask",
       "buildCommand": "pip install -r requirements.txt",
+      "installCommand": "pip install -r requirements.txt",
       "bindings": []
     },
     "frontend": {
       "root": "Frontend",
       "framework": "vite",
+      "installCommand": "npm install",
+      "buildCommand": "npm run build",
       "bindings": [
         { "type": "service", "service": "tom-api", "format": "url", "env": "VITE_TOM_API_URL" }
       ]

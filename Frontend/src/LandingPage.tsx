@@ -187,14 +187,14 @@ export default function LandingPage({ onStartChat }: LandingPageProps) {
           <button
             onClick={handleStart}
             disabled={isLoading}
-            className="w-full max-w-sm py-4 rounded-3xl text-lg font-semibold text-white transition-all duration-300 disabled:opacity-70"
+            className="w-full max-w-sm py-3 rounded-3xl text-base font-semibold text-white transition-all duration-300 disabled:opacity-70"
             style={{
               background: 'linear-gradient(145deg, rgba(90,127,90,0.9) 0%, rgba(70,100,70,0.95) 100%)',
               border: '1px solid rgba(120,160,120,0.4)',
-              boxShadow: '0 8px 24px rgba(70,100,70,0.28), 0 1px 0 rgba(160,200,160,0.4) inset',
+              boxShadow: '0 6px 20px rgba(70,100,70,0.28), 0 1px 0 rgba(160,200,160,0.4) inset',
             }}
           >
-            {isLoading ? 'Starting conversation...' : 'Start Chat'}
+            {isLoading ? 'Starting...' : 'Start Chat'}
           </button>
 
           <p className="text-[10px] text-sage-400 mt-4 tracking-wide">

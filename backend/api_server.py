@@ -144,8 +144,7 @@ def chat():
                 session_id = str(uuid.uuid4())
                 session['session_id'] = session_id
         
-        # Get context summary for this session
-        context_summary = get_context_summary(session_id)
+
         
         # Special handling: Check if message matches buttons or moods
         # Try to match with and without emojis

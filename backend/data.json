@@ -1316,6 +1316,260 @@
                 "Stress is a natural physical and mental reaction to life experiences. Everyone expresses stress differently. Common symptoms include irritability, anxiety, depressed mood, headaches, and insomnia. Finding healthy ways to manage stress is important for your wellbeing.",
                 "Chronic stress can affect both your body and mind. It can lead to high blood pressure, heart disease, diabetes, and mental health conditions like depression or anxiety. Healthy coping strategies include exercise, meditation, journaling, and talking with trusted friends or a professional."
             ]
+        },
+        {
+            "tag": "coping_strategies",
+            "patterns": [
+                "how can I cope",
+                "coping strategies",
+                "how to cope with stress",
+                "ways to cope",
+                "what are coping mechanisms",
+                "help me cope",
+                "how do I handle this"
+            ],
+            "responses": [
+                "Healthy coping strategies include: talking to someone you trust, journaling, exercise, mindfulness, and creative expression. What sounds most helpful to you right now?",
+                "Try the 5-4-3-2-1 grounding technique, deep breathing, or progressive muscle relaxation. Small steps like taking a walk or listening to music can also help. Which would you like to try?",
+                "Coping looks different for everyone. Some people find comfort in routine, others in nature, art, or talking with friends. What usually helps you feel better?"
+            ]
+        },
+        {
+            "tag": "sleep_help",
+            "patterns": [
+                "how to sleep better",
+                "sleep advice",
+                "cant sleep",
+                "insomnia help",
+                "trouble sleeping at night",
+                "how to fall asleep",
+                "sleep problems",
+                "better sleep"
+            ],
+            "responses": [
+                "Try going to bed at the same time every night, avoiding screens 1 hour before bed, and creating a relaxing bedtime routine. A warm bath or reading can help signal to your body that it's time to rest.",
+                "Sleep hygiene is important: keep your bedroom cool and dark, avoid caffeine late in the day, and try to get sunlight in the morning. Would you like to try a guided body scan meditation?",
+                "If racing thoughts keep you awake, try writing them down before bed to clear your mind. Also, limit naps and avoid stimulating activities in the evening. What's your current sleep routine like?"
+            ]
+        },
+        {
+            "tag": "relationship_advice",
+            "patterns": [
+                "relationship advice",
+                "how to fix my relationship",
+                "relationship problems",
+                "my partner and I are fighting",
+                "how to communicate better",
+                "relationship issues",
+                "how to talk to my partner"
+            ],
+            "responses": [
+                "Healthy communication is key. Try using 'I feel' statements instead of 'you always' statements. Active listening without interrupting can also help. Would you like to share what's been difficult?",
+                "Relationships take work from both people. Setting boundaries, expressing needs clearly, and making time for each other can strengthen your connection. What's one small step you could take to improve communication?",
+                "Sometimes writing down your thoughts before talking can help you express yourself more clearly. Remember that both partners should feel heard and respected. What's the main challenge you're facing?"
+            ]
+        },
+        {
+            "tag": "self_care_tips",
+            "patterns": [
+                "self care ideas",
+                "how to practice self care",
+                "self care tips",
+                "ways to take care of myself",
+                "what is self care",
+                "how to be kind to myself",
+                "self love tips"
+            ],
+            "responses": [
+                "Self-care can be small acts: drinking enough water, taking breaks, moving your body, getting enough sleep, or doing something that brings you joy. What's one small self-care act you can do today?",
+                "Self-care isn't selfish - it's necessary. Try setting aside 15 minutes a day just for you. This could be reading, meditating, stretching, or anything that fills your cup. What do you enjoy doing for yourself?",
+                "Self-care looks different for everyone. It might be saying no to things that drain you, asking for help, or simply resting when you need to. What helps you feel recharged?"
+            ]
+        },
+        {
+            "tag": "confidence",
+            "patterns": [
+                "how to be more confident",
+                "low self esteem",
+                "feeling insecure",
+                "how to believe in myself",
+                "self confidence",
+                "how to feel better about myself",
+                "I dont feel good enough"
+            ],
+            "responses": [
+                "Confidence grows with practice. Try affirmations: write down 3 things you like about yourself or have accomplished. Over time, this can shift how you see yourself. What are some things you appreciate about who you are?",
+                "Everyone has doubts - you're not alone. Try challenging negative self-talk. When you think 'I'm not good enough,' ask yourself: 'Would I say this to a friend?' Be as kind to yourself as you would to others. What's one thing you're proud of?",
+                "Confidence comes from action, not from waiting to feel ready. Try doing one thing that scares you (even if it's small) - you'll often find you're more capable than you thought. What's a small challenge you could take on?"
+            ]
+        },
+        {
+            "tag": "grief",
+            "patterns": [
+                "I lost someone",
+                "grieving",
+                "how to cope with loss",
+                "missing someone",
+                "bereavement",
+                "how to deal with grief",
+                "someone died"
+            ],
+            "responses": [
+                "I'm so sorry for your loss. Grief is a natural response to loss, and there's no right or wrong way to experience it. It can come in waves. What do you need most right now - to talk about the person, or to share how you're feeling?",
+                "Grief is the price of love. It's okay to feel sadness, anger, guilt, or even moments of relief. All these emotions are normal. Would it help to share a memory of the person you lost?",
+                "Grief doesn't have a timeline. Be patient with yourself. Small acts like lighting a candle, writing a letter, or visiting a meaningful place can help. What helps you feel close to them?"
+            ]
+        },
+        {
+            "tag": "mindfulness",
+            "patterns": [
+                "what is mindfulness",
+                "how to practice mindfulness",
+                "mindfulness meditation",
+                "how to be mindful",
+                "mindfulness exercises",
+                "benefits of mindfulness"
+            ],
+            "responses": [
+                "Mindfulness is the practice of being fully present in the moment without judgment. Try focusing on your breath for 5 minutes, noticing each inhale and exhale. When your mind wanders, gently bring it back. Would you like to try a short mindfulness exercise?",
+                "Mindfulness can be as simple as paying full attention to everyday activities - eating, walking, or even washing dishes. Try the 5-4-3-2-1 grounding technique to bring yourself into the present moment. What's one activity you can do mindfully today?",
+                "Mindfulness helps reduce stress and improve focus. Try a body scan: mentally scan from head to toe, noticing any sensations without judging them. Start with just 5 minutes. What do you notice when you slow down?"
+            ]
+        },
+        {
+            "tag": "happiness",
+            "patterns": [
+                "how to be happy",
+                "how to find happiness",
+                "what makes people happy",
+                "how to be happier",
+                "secrets to happiness",
+                "want to be happy"
+            ],
+            "responses": [
+                "Happiness often comes from small, everyday moments rather than big achievements. Try noticing and appreciating small joys throughout your day. What's one thing that made you smile recently?",
+                "Research shows that strong relationships, gratitude, helping others, and engaging in activities you enjoy all contribute to happiness. Try writing down 3 things you're grateful for each day. What are you grateful for today?",
+                "Happiness is less about circumstances and more about perspective. Try reframing challenges as opportunities to learn. What's one positive thing that came from a difficult experience you had?"
+            ]
+        },
+        {
+            "tag": "forgiveness",
+            "patterns": [
+                "how to forgive",
+                "forgiveness",
+                "cant forgive someone",
+                "how to let go",
+                "forgive myself",
+                "holding a grudge",
+                "how to move on"
+            ],
+            "responses": [
+                "Forgiveness is a process, not a single decision. It's about freeing yourself from the burden of resentment. Start by acknowledging the hurt, then try to understand the other person's humanity (without excusing their actions). What would it feel like to let this go?",
+                "Forgiveness doesn't mean what happened was okay. It means you're choosing peace over pain for yourself. Try writing a letter you don't send, expressing all your feelings. What would you want to say?",
+                "Holding onto anger is like drinking poison and expecting the other person to die. Try small acts of releasing that energy. What's one step toward forgiveness you could take?"
+            ]
+        },
+        {
+            "tag": "purpose",
+            "patterns": [
+                "what is my purpose",
+                "how to find meaning",
+                "purpose in life",
+                "feeling lost",
+                "what should I do with my life",
+                "find my passion",
+                "life direction"
+            ],
+            "responses": [
+                "Purpose often comes from connecting with others, contributing to something larger than yourself, or engaging in work that feels meaningful. Try asking: what activities make me lose track of time? What are your values?",
+                "You don't need to have one grand purpose - small daily purposes matter too. Try helping someone else, learning something new, or creating something. What's one small way you can make a positive difference today?",
+                "Finding purpose is a journey. Try exploring new experiences, volunteering, or reconnecting with old passions. What did you love doing as a child? Often our early joys point to our purpose."
+            ]
+        },
+        {
+            "tag": "boundaries",
+            "patterns": [
+                "how to set boundaries",
+                "what are healthy boundaries",
+                "people take advantage of me",
+                "how to say no",
+                "boundaries in relationships",
+                "feeling used",
+                "how to be assertive"
+            ],
+            "responses": [
+                "Boundaries are essential for healthy relationships. Try using clear, direct language: 'I need to say no to this' or 'This doesn't work for me.' Start with small boundaries. What's one boundary you'd like to set?",
+                "Setting boundaries can feel scary, but it's a form of self-respect. Try the DEAR MAN technique: Describe, Express, Assert, Reinforce. Practice in low-stakes situations first. What situation needs a boundary?",
+                "Healthy boundaries mean knowing where you end and others begin. It's okay to prioritize your needs. Try saying: 'I need to take care of myself first.' What's preventing you from setting boundaries?"
+            ]
+        },
+        {
+            "tag": "decision_making",
+            "patterns": [
+                "how to make a decision",
+                "cant decide",
+                "decision making",
+                "what should I do",
+                "overwhelmed by choices",
+                "how to choose",
+                "afraid of making wrong decision"
+            ],
+            "responses": [
+                "Try the pros and cons list: write down the good and bad for each option. Then ask: which choice aligns best with my values? What does your gut tell you?",
+                "Sometimes we can't know the perfect choice - we just need to pick a good enough option. Try flipping a coin and noticing which outcome you hope for. That often reveals your preference. What are you deciding between?",
+                "There's rarely one 'right' choice. Try asking: 'What's the worst that could happen with each option?' and 'Can I live with that?' Trust that you can handle whatever comes. What's the decision you're facing?"
+            ]
+        },
+        {
+            "tag": "fear",
+            "patterns": [
+                "I feel afraid",
+                "how to overcome fear",
+                "scared of",
+                "how to be brave",
+                "facing my fears",
+                "anxious about",
+                "overcome anxiety"
+            ],
+            "responses": [
+                "Fear is natural - it's our brain's way of protecting us. Try asking yourself: 'What's the worst that could happen?' and 'How likely is that?' Often we catastrophize. What's one small step you can take toward facing this fear?",
+                "Bravery isn't the absence of fear - it's acting despite fear. Try exposure: start with a small version of what scares you and gradually increase. What's one fear you'd like to face?",
+                "Our fears often seem bigger than they are. Try writing down your fear, then write down evidence that it might not come true. What's the fear trying to protect you from?"
+            ]
+        },
+        {
+            "tag": "change",
+            "patterns": [
+                "how to change my life",
+                "want to change",
+                "how to make changes",
+                "stuck in a rut",
+                "how to improve myself",
+                "life changes",
+                "need a change"
+            ],
+            "responses": [
+                "Change starts with small, consistent steps. Try setting one small, achievable goal and building on it. What's one small change you'd like to make this week?",
+                "Big changes happen through small daily actions. Try the 1% rule: improve by just 1% each day. Over time, this compounds to huge change. What's one tiny improvement you can make today?",
+                "Change can feel scary. Start by identifying what you want to change and why. Then break it into the smallest possible steps. What area of your life feels most ready for change?"
+            ]
+        },
+        {
+            "tag": "work_stress",
+            "patterns": [
+                "work stress",
+                "stressed at work",
+                "job pressure",
+                "work overload",
+                "burnout",
+                "work life balance",
+                "too much work"
+            ],
+            "responses": [
+                "Work stress is real. Try setting boundaries around work hours, taking regular breaks, and communicating needs to your manager. What's one work stressor you could address?",
+                "The Pomodoro technique can help: work for 25 minutes, then take a 5-minute break. This can improve focus and reduce stress. Try scheduling these breaks into your day. What's your biggest work challenge right now?",
+                "Chronic work stress can lead to burnout. Try prioritizing tasks, delegating when possible, and making time for activities outside work. What's one thing you can do to create better work-life balance?"
+            ]
         }
     ]
 }

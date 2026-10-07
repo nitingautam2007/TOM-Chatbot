@@ -680,7 +680,7 @@
                 "I need to talk"
             ],
             "responses": [
-                "I'm here and I'm listening. This is a safe space \u00e2\u20ac\u201d there's no right or wrong way to feel. What would you like to share?"
+                "I'm here and I'm listening. This is a safe space â€” there's no right or wrong way to feel. What would you like to share?"
             ]
         },
         {
@@ -729,8 +729,8 @@
                 "Grounding technique"
             ],
             "responses": [
-                "Let's do a calming box breath together:\n\n\u00e2\u20ac\u00a2 Breathe in slowly for 4 counts\n\u00e2\u20ac\u00a2 Hold for 4 counts\n\u00e2\u20ac\u00a2 Breathe out for 4 counts\n\u00e2\u20ac\u00a2 Hold for 4 counts\n\nRepeat this 4 times. Take your time \u00e2\u20ac\u201d I'm right here with you.",
-                "A gentle grounding technique: the 5-4-3-2-1 method.\n\n\u00e2\u20ac\u00a2 5 things you can see\n\u00e2\u20ac\u00a2 4 things you can physically feel\n\u00e2\u20ac\u00a2 3 things you can hear\n\u00e2\u20ac\u00a2 2 things you can smell\n\u00e2\u20ac\u00a2 1 thing you can taste\n\nThis brings your attention back to the present moment."
+                "Let's do a calming box breath together:\n\nâ€¢ Breathe in slowly for 4 counts\nâ€¢ Hold for 4 counts\nâ€¢ Breathe out for 4 counts\nâ€¢ Hold for 4 counts\n\nRepeat this 4 times. Take your time â€” I'm right here with you.",
+                "A gentle grounding technique: the 5-4-3-2-1 method.\n\nâ€¢ 5 things you can see\nâ€¢ 4 things you can physically feel\nâ€¢ 3 things you can hear\nâ€¢ 2 things you can smell\nâ€¢ 1 thing you can taste\n\nThis brings your attention back to the present moment."
             ]
         },
         {
@@ -1268,6 +1268,100 @@
                 "I'm here to help. Sometimes just having someone listen makes a difference. What's been the hardest part for you recently?",
                 "What you're feeling matters. Would it help to talk more about what led to this feeling, or would you like to explore ways to feel better?",
                 "Reaching out for help is a sign of strength, not weakness. How can I best support you right now?"
+            ]
+        },
+        {
+            "tag": "depression_info",
+            "patterns": [
+                "what is depression",
+                "what does depression mean",
+                "tell me about depression",
+                "explain depression",
+                "what is clinical depression",
+                "depression symptoms"
+            ],
+            "responses": [
+                "Depression is a mental health condition characterized by persistent feelings of sadness, emptiness, or hopelessness that interfere with daily life. It's more than just feeling 'down' - it's a medical condition that affects mood, thinking, and physical health.",
+                "Depression is a mood disorder that causes persistent feelings of sadness and loss of interest. Symptoms can include fatigue, changes in sleep or appetite, difficulty concentrating, and thoughts of death or suicide. It's important to seek support from a mental health professional.",
+                "Depression affects people differently, but common signs include feeling sad or anxious, losing interest in activities you once enjoyed, experiencing changes in appetite or sleep, feeling worthless or guilty, and having trouble concentrating. If you're experiencing these, please reach out to a mental health professional."
+            ]
+        },
+        {
+            "tag": "anxiety_info",
+            "patterns": [
+                "what is anxiety",
+                "what does anxiety mean",
+                "tell me about anxiety",
+                "explain anxiety",
+                "what is anxiety disorder",
+                "anxiety symptoms"
+            ],
+            "responses": [
+                "Anxiety is your body's natural response to stress. It's a feeling of fear or apprehension about what's to come. While it's normal to feel anxious occasionally, anxiety disorders involve excessive fear or anxiety that doesn't go away and can interfere with daily activities.",
+                "Anxiety can manifest as physical symptoms like rapid heartbeat, sweating, or trembling, as well as emotional symptoms like feeling restless, irritable, or on edge. It's treatable with therapy, medication, or both.",
+                "Anxiety disorders are characterized by persistent, excessive fear or worry in situations that are not threatening. Common types include generalized anxiety disorder, panic disorder, and social anxiety disorder. If anxiety is affecting your daily life, consider reaching out to a mental health professional."
+            ]
+        },
+        {
+            "tag": "stress_info",
+            "patterns": [
+                "what is stress",
+                "what does stress mean",
+                "tell me about stress",
+                "explain stress",
+                "what causes stress"
+            ],
+            "responses": [
+                "Stress is your body's reaction to a challenge or demand. In short bursts, stress can be positive, helping you stay alert and motivated. But when stress lasts too long, it can harm your health. Common signs include headache, muscle tension, fatigue, and sleep problems.",
+                "Stress is a natural physical and mental reaction to life experiences. Everyone expresses stress differently. Common symptoms include irritability, anxiety, depressed mood, headaches, and insomnia. Finding healthy ways to manage stress is important for your wellbeing.",
+                "Chronic stress can affect both your body and mind. It can lead to high blood pressure, heart disease, diabetes, and mental health conditions like depression or anxiety. Healthy coping strategies include exercise, meditation, journaling, and talking with trusted friends or a professional."
+            ]
+        },
+        {
+            "tag": "depression_info",
+            "patterns": [
+                "what is depression",
+                "what does depression mean",
+                "tell me about depression",
+                "explain depression",
+                "what is clinical depression",
+                "depression symptoms"
+            ],
+            "responses": [
+                "Depression is a mental health condition characterized by persistent feelings of sadness, emptiness, or hopelessness that interfere with daily life. It's more than just feeling 'down' - it's a medical condition that affects mood, thinking, and physical health.",
+                "Depression is a mood disorder that causes persistent feelings of sadness and loss of interest. Symptoms can include fatigue, changes in sleep or appetite, difficulty concentrating, and thoughts of death or suicide. It's important to seek support from a mental health professional.",
+                "Depression affects people differently, but common signs include feeling sad or anxious, losing interest in activities you once enjoyed, experiencing changes in appetite or sleep, feeling worthless or guilty, and having trouble concentrating. If you're experiencing these, please reach out to a mental health professional."
+            ]
+        },
+        {
+            "tag": "anxiety_info",
+            "patterns": [
+                "what is anxiety",
+                "what does anxiety mean",
+                "tell me about anxiety",
+                "explain anxiety",
+                "what is anxiety disorder",
+                "anxiety symptoms"
+            ],
+            "responses": [
+                "Anxiety is your body's natural response to stress. It's a feeling of fear or apprehension about what's to come. While it's normal to feel anxious occasionally, anxiety disorders involve excessive fear or anxiety that doesn't go away and can interfere with daily activities.",
+                "Anxiety can manifest as physical symptoms like rapid heartbeat, sweating, or trembling, as well as emotional symptoms like feeling restless, irritable, or on edge. It's treatable with therapy, medication, or both.",
+                "Anxiety disorders are characterized by persistent, excessive fear or worry in situations that are not threatening. Common types include generalized anxiety disorder, panic disorder, and social anxiety disorder. If anxiety is affecting your daily life, consider reaching out to a mental health professional."
+            ]
+        },
+        {
+            "tag": "stress_info",
+            "patterns": [
+                "what is stress",
+                "what does stress mean",
+                "tell me about stress",
+                "explain stress",
+                "what causes stress"
+            ],
+            "responses": [
+                "Stress is your body's reaction to a challenge or demand. In short bursts, stress can be positive, helping you stay alert and motivated. But when stress lasts too long, it can harm your health. Common signs include headache, muscle tension, fatigue, and sleep problems.",
+                "Stress is a natural physical and mental reaction to life experiences. Everyone expresses stress differently. Common symptoms include irritability, anxiety, depressed mood, headaches, and insomnia. Finding healthy ways to manage stress is important for your wellbeing.",
+                "Chronic stress can affect both your body and mind. It can lead to high blood pressure, heart disease, diabetes, and mental health conditions like depression or anxiety. Healthy coping strategies include exercise, meditation, journaling, and talking with trusted friends or a professional."
             ]
         }
     ]

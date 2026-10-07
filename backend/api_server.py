@@ -51,10 +51,17 @@ CONTEXT_MEMORY = {}  # Format: {session_id: [list of last messages]}
 FRONTEND_SPECIAL_RESPONSES = {
     # Mood selections (with and without emojis)
     "i'm feeling struggling today": "I hear you. Would you like to tell me more about what's on your mind?",
-    "i'm feeling low today": "Thank you for sharing that with me. You're not alone in feeling this way.",
-    "i'm feeling okay today": "It takes courage to reach out. How long have you been feeling this way?",
-    "i'm feeling good today": "I'm here with you. Let's take this one step at a time.",
-    "i'm feeling great today": "I'm here with you. Let's take this one step at a time.",
+    "i'm feeling low today": "Thank you for sharing that with me. You're not alone in feeling this way. Would you like to talk about what's been difficult lately?",
+    "i'm feeling okay today": "I appreciate you reaching out. Sometimes just checking in with yourself makes a difference. What's been on your mind today?",
+    "i'm feeling good today": "That's wonderful to hear! What's making you feel good?",
+    "i'm feeling great today": "That's fantastic! What's bringing you joy today?",
+    
+    # Mood selections with emojis
+    "i'm feeling struggling today (😔)": "I hear you. Would you like to tell me more about what's on your mind?",
+    "i'm feeling low today (😕)": "Thank you for sharing that with me. You're not alone in feeling this way. Would you like to talk about what's been difficult lately?",
+    "i'm feeling okay today (😐)": "I appreciate you reaching out. Sometimes just checking in with yourself makes a difference. What's been on your mind today?",
+    "i'm feeling good today (🙂)": "That's wonderful to hear! What's making you feel good?",
+    "i'm feeling great today (😊)": "That's fantastic! What's bringing you joy today?",
     
     # Suggestion buttons (exact matches)
     "i'm feeling anxious": "Anxiety can feel overwhelming, but you're doing the right thing by acknowledging it. Let's try a simple breathing exercise: breathe in for 4 counts, hold for 4, breathe out for 6. How does that feel?",

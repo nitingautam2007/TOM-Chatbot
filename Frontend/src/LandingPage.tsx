@@ -28,9 +28,10 @@ const glass = {
 
 interface LandingPageProps {
   onStartChat: () => void
+  onGetHelp: () => void
 }
 
-export default function LandingPage({ onStartChat }: LandingPageProps) {
+export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleStart = () => {
@@ -43,7 +44,7 @@ export default function LandingPage({ onStartChat }: LandingPageProps) {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center p-4"
+      className="tom-screen flex flex-col items-center justify-center"
       style={{
         backgroundColor: '#ffffff',
         backgroundImage:
@@ -78,10 +79,8 @@ export default function LandingPage({ onStartChat }: LandingPageProps) {
 
       {/* App shell - liquid glass card */}
       <div
-        className="w-full max-w-md rounded-[2.5rem] overflow-hidden flex flex-col"
+        className="tom-app-shell w-full max-w-md rounded-[2.5rem] overflow-hidden flex flex-col"
         style={{
-          height: '90vh',
-          maxHeight: '780px',
           background: 'rgba(255,255,255,0.12)',
           backdropFilter: 'blur(12px) saturate(1.4)',
           WebkitBackdropFilter: 'blur(12px) saturate(1.4)',
@@ -172,9 +171,20 @@ export default function LandingPage({ onStartChat }: LandingPageProps) {
               style={glass.base}
             >
               <div className="text-2xl mb-2">🛡️</div>
-              <p className="text-sm font-medium text-sage-700">Safe & Private</p>
-              <p className="text-xs text-sage-500 mt-1">Your conversations stay private</p>
+              <p className="text-sm font-medium text-sage-700">Thoughtful Privacy</p>
+              <p className="text-xs text-sage-500 mt-1">No ads or training on your chats</p>
             </div>
+          </div>
+
+          {/* Honest AI disclosure */}
+          <div
+            className="w-full max-w-sm mb-4 p-3 rounded-2xl text-[11px] leading-relaxed text-sage-600"
+            style={{
+              background: 'rgba(90,127,90,0.07)',
+              border: '1px solid rgba(90,127,90,0.18)',
+            }}
+          >
+            <strong className="font-semibold text-sage-700">TOM is an AI companion</strong> — not a therapist, doctor, or emergency service. It can make mistakes. If you are in danger, call your local emergency number.
           </div>
 
           {/* Start Button */}
@@ -191,8 +201,20 @@ export default function LandingPage({ onStartChat }: LandingPageProps) {
             {isLoading ? 'Starting...' : 'Start Chat'}
           </button>
 
+          <button
+            onClick={onGetHelp}
+            className="w-full max-w-sm mt-2 py-2 rounded-3xl text-xs font-semibold text-[#7a2e2e] transition-all duration-300 ios-press"
+            style={{
+              background: 'rgba(196,122,122,0.12)',
+              border: '1px solid rgba(196,122,122,0.3)',
+            }}
+            aria-label="Get crisis support and helpline information"
+          >
+            Get crisis support
+          </button>
+
           <p className="text-[10px] text-sage-400 mt-4 tracking-wide">
-            Not a substitute for professional help
+            Available 24/7 · Not an emergency service
           </p>
         </div>
 

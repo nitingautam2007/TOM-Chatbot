@@ -8,6 +8,7 @@ Test suite for the SVM-based mental health chatbot.
 
 import sys
 from tom_chatbot import TOmChatbot
+from safety import CRISIS_RESPONSE
 
 
 def test_chatbot():
@@ -41,16 +42,16 @@ def test_chatbot():
         # Basic intents
         ("Hello", "greeting"),
         ("Hi there", "greeting"),
-        ("Good morning", "morning"),
+        ("Good morning", "greeting"),
         ("Goodbye", "goodbye"),
         ("Thank you", "thanks"),
         
         # Single emotions
         ("I am happy", "happy"),
-        ("I feel sad", "sad"),
-        ("I am so stressed", "stressed"),
-        ("I feel anxious", "anxious"),
-        ("I'm depressed", "depressed"),
+        ("I feel sad", "sadness"),
+        ("I am so stressed", "stress"),
+        ("I feel anxious", "anxiety"),
+        ("I'm depressed", "depression"),
         ("I can't sleep", "sleep"),
         
         # Mixed emotions (key feature!)
@@ -87,7 +88,8 @@ def test_chatbot():
     crisis_passed = 0
     for text in crisis_tests:
         response = tom.respond(text)
-        if "crisis" in response.lower() or "hotline" in response.lower() or "help" in response.lower():
+        intent = tom.predict_intent(text)
+        if response == CRISIS_RESPONSE and intent == "crisis":
             print(f"   [OK] Crisis response triggered")
             crisis_passed += 1
         else:

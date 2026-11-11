@@ -13,10 +13,12 @@ TOM is a **mental health companion chatbot** built with:
 
 ### Key Features
 ✅ Natural language understanding with SVM
-✅ Context memory - remembers conversation history
+✅ Short-lived session context with automatic expiry
 ✅ Mood-based responses (Struggling, Low, Okay, Good, Great)
 ✅ Grounding exercises and coping strategies
-✅ Crisis resources and support information
+✅ Deterministic crisis handling with regional support information
+✅ Consent, privacy, and data-deletion controls
+✅ Offline recovery with a local crisis fallback
 ✅ Beautiful glass-morphism UI design
 
 ---
@@ -24,8 +26,8 @@ TOM is a **mental health companion chatbot** built with:
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.8+
-- Node.js 16+
+- Python 3.11+
+- Node.js 22+ (required for the frontend test command; Vite 8 needs a modern Node release)
 - pip & npm
 
 ### Backend Setup
@@ -54,8 +56,13 @@ Frontend runs at: `http://localhost:5173`
 Final Chatbot/
 ├── backend/
 │   ├── api_server.py      # Flask API server with context memory
+│   ├── config.py          # Environment-driven production settings
+│   ├── observability.py   # JSON request logging and request IDs
+│   ├── wsgi.py            # Gunicorn entrypoint
+│   ├── gunicorn.conf.py   # Single-worker, threaded production config
 │   ├── tom_chatbot.py     # SVM-based chatbot engine
 │   ├── data.json          # Training data and responses
+│   ├── tests/             # Backend unittest suite
 │   └── requirements.txt   # Python dependencies
 │
 ├── Frontend/
@@ -63,9 +70,13 @@ Final Chatbot/
 │   │   ├── App.tsx        # Main chat application
 │   │   └── ...
 │   ├── vite.config.ts     # Vite configuration
+│   ├── vercel.json        # Vercel static deployment config
 │   └── package.json       # Frontend dependencies
 │
-├── README.md             # This file
+├── .github/workflows/ci.yml # Backend and frontend CI
+├── DEPLOYMENT.md          # Render + Vercel deployment guide
+├── render.yaml            # Render backend blueprint
+├── README.md              # This file
 └── .gitignore
 ```
 
@@ -74,14 +85,14 @@ Final Chatbot/
 ## 🎨 Features in Detail
 
 ### 💬 Conversation Context
-TOM remembers the last 5 exchanges in your conversation, making responses more relevant:
+TOM keeps a short-lived server-side session cache (up to 10 messages) in memory only. It expires after 30 minutes of inactivity, is cleared when you start a new conversation or delete your data, and is never written to disk. The app does not keep a durable chat archive.
 
 ```
 You: "I'm feeling anxious"
 TOM: "Anxiety can feel overwhelming... let's try breathing..."
 
 You: "What should I do?"
-TOM: "I understand you want more ways to cope with anxiety..." ✅
+TOM: "I hear you. Let's find a coping step that feels manageable right now."
 ```
 
 ### 😊 Mood Selection
@@ -111,24 +122,39 @@ Start your conversation by selecting how you feel:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/chat` | Send messages and get responses |
-| GET | `/api/health` | Health check |
+| POST | `/api/session/reset` | Forget one session's context |
+| DELETE | `/api/data` | Delete one session's server-side data |
+| GET | `/api/health` | Health check and model metrics |
+| GET | `/api/ready` | Readiness check (503 until the model is loaded) |
 
 ### Chat Request Format
 ```json
 {
   "message": "Your message here",
-  "session_id": "optional-browser-session-id"
+  "session_id": "optional-anonymous-session-id",
+  "region": "IN"
 }
 ```
+
+`region` is one of `IN`, `US_CA`, `UK`, or `INTL`.
 
 ### Chat Response Format
 ```json
 {
   "response": "TOM's reply",
-  "intent": "detected_intent",
-  "risk_level": "low" | "high"
+  "intent": "sadness",
+  "risk_level": "low",
+  "resources": [],
+  "region": "IN",
+  "session_id": "anonymous-session-id",
+  "confidence": 0.61,
+  "source": "classifier"
 }
 ```
+
+Crisis responses add `risk_reasons` and regional `resources`. See
+[`backend/API_README.md`](backend/API_README.md) for the full contract, error
+codes, rate limits, and session lifetimes.
 
 ---
 
@@ -144,38 +170,30 @@ Edit `backend/data.json` to add new conversation patterns:
 }
 ```
 
-For **context-aware** responses, use this format:
-```json
-{
-  "tag": "followup_new_intent",
-  "patterns": [
-    "Following up on: 'previous message'. Now: current question"
-  ],
-  "responses": ["context-aware reply"]
-}
-```
+Tags are canonicalised in code, so prefer one canonical tag (for example
+`anxiety`) instead of adding near-duplicates such as `anxious`. Synthetic
+`followup_*` intents are excluded from training, and factual `fact-*` /
+`*_info` intents belong in the FAQ index rather than the classifier.
 
 ---
 
 ## 🛠️ Customization
 
 ### Change Port
-Edit `api_server.py` line:
-```python
-app.run(host='0.0.0.0', port=8000, debug=False)
+Set `TOM_PORT` before starting the backend:
+```bash
+TOM_PORT=9000 python api_server.py
 ```
 
 ### Change API URL (Frontend)
-Create `.env` in Frontend folder:
+Create `.env` in the Frontend folder:
 ```
-VITE_API_BASE_URL=http://your-backend-url:port
+VITE_TOM_API_URL=http://your-backend-url:port
 ```
 
 ---
 
-## 🏠 Local Deployment
-
-To run locally:
+## 🏠 Local Development
 
 ### Backend
 ```bash
@@ -190,6 +208,37 @@ cd Frontend
 npm install
 npm run dev
 ```
+
+### Tests
+```bash
+cd backend
+.venv/bin/python -m unittest discover -s tests -v
+
+cd ../Frontend
+npm test
+npx tsc --noEmit
+npm run build
+```
+
+---
+
+## 🚀 Deployment
+
+TOM is configured for a Render backend and a Vercel frontend:
+
+- `render.yaml` deploys the API with gunicorn.
+- `Frontend/vercel.json` deploys the static frontend with security headers.
+- `.github/workflows/ci.yml` runs backend and frontend checks on every pull
+  request.
+
+Production requires `TOM_ENV=production`, a random `TOM_SECRET_KEY` of at least
+32 characters, and an explicit `TOM_CORS_ORIGINS` allowlist. The server refuses
+to start if those values are missing or unsafe.
+
+See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the full setup, environment variables,
+verification steps, rollback, and scaling limits. Session context and rate
+limits are in process memory, so the production configuration runs one gunicorn
+worker with threads.
 
 ---
 

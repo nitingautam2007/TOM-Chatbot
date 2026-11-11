@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: tom-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -m nltk.downloader punkt punkt_tab wordnet
+    startCommand: gunicorn --config gunicorn.conf.py wsgi:app
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.17
+      - key: TOM_ENV
+        value: production
+      - key: TOM_SECRET_KEY
+        generateValue: true
+      - key: TOM_CORS_ORIGINS
+        sync: false
+      - key: TOM_TRUST_PROXY
+        value: "1"
+      - key: TOM_LOG_LEVEL
+        value: INFO

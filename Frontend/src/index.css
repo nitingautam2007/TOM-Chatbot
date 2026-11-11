@@ -29,9 +29,19 @@
   --color-warm-200: #e3d8c8;
 }
 
+html, body, #root {
+  min-height: 100%;
+}
+
 html, body {
   font-family: var(--font-body);
   background-color: var(--color-warm-50);
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 * {
@@ -41,4 +51,101 @@ html, body {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-sage-200); border-radius: 2px; }
+
+/* Keep the shell usable when mobile browser chrome changes the viewport. */
+.tom-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-top: max(1rem, env(safe-area-inset-top));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  padding-left: max(1rem, env(safe-area-inset-left));
+}
+
+.tom-app-shell {
+  height: 90vh;
+  height: min(90dvh, 780px);
+  max-height: 780px;
+}
+
+.tom-composer {
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
+
+/* The rounded glass shell already frames the message box. Keep the focused
+   textarea free of an extra focus outline so a second rectangle does not
+   appear inside the composer while typing. */
+.tom-composer textarea:focus,
+.tom-composer textarea:focus-visible {
+  outline: none;
+}
+
+/* Accessible dialogs used for consent, privacy, and recovery. */
+.tom-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  background: rgba(38, 52, 38, 0.34);
+  backdrop-filter: blur(7px) saturate(1.1);
+  -webkit-backdrop-filter: blur(7px) saturate(1.1);
+}
+
+.tom-modal {
+  width: 100%;
+  max-width: 28rem;
+  max-height: 88vh;
+  max-height: min(88dvh, 46rem);
+  overflow-y: auto;
+  border-radius: 2rem;
+  padding: 1.25rem;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(249, 251, 249, 0.9) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 24px 64px rgba(46, 63, 46, 0.22),
+    0 1.5px 0 rgba(255, 255, 255, 1) inset;
+  outline: none;
+}
+
+.tom-toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 80;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  padding: 0.6rem 1rem;
+  border-radius: 9999px;
+  background: rgba(46, 63, 46, 0.94);
+  color: #f4f7f4;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 10px 28px rgba(38, 52, 38, 0.24);
+}
+
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-sage-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 

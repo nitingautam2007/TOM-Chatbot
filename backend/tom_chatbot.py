@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 """
 TOM - Talk To Me
-================
-
-A mental health support AI chatbot using TF-IDF + SVM classification, with a
-deterministic safety layer and a small FAQ retrieval index.
-
-Created for BTech AI/ML 3rd year project
+Mental Health Support Chatbot
+Using TF-IDF + Linear SVM Classifier with Safety Interception
 """
 
 from __future__ import annotations
@@ -17,7 +13,7 @@ import random
 import re
 import sys
 from dataclasses import dataclass
-from typing import Iterable, Sequence
+from typing import Sequence
 
 import nltk
 import numpy as np
@@ -28,16 +24,9 @@ from sklearn.svm import SVC
 
 from safety import CRISIS_RESPONSE, assess_safety, normalize_text
 
-# Crisis/suicide language is handled by the deterministic safety layer, not by
-# the classifier. Keeping these labels out of training prevents ordinary
-# phrases such as "I could die of embarrassment" from being classified as a
-# crisis.
+# Crisis intents are handled by the safety layer, not the ML classifier
 SAFETY_INTENTS = {"crisis", "suicide"}
-
-# Synthetic follow-up intents were generated for an older UI flow. They make
-# the classifier look broader than it is, so they are excluded entirely.
 SYNTHETIC_INTENT_PREFIX = "followup_"
-
 UNKNOWN_INTENT = "unknown"
 
 UNKNOWN_RESPONSE = (
@@ -46,8 +35,7 @@ UNKNOWN_RESPONSE = (
     "or finding support."
 )
 
-# Duplicate intent tags are merged in code rather than by rewriting data.json.
-# The target tag is the one whose response set we keep.
+# Canonical intent mapping for synonyms and variations
 INTENT_ALIASES = {
     "anxious": "anxiety",
     "coping_strategies": "coping",
@@ -65,68 +53,31 @@ INTENT_ALIASES = {
     "worthless": "self_esteem",
 }
 
-# Factual questions belong in the FAQ index, not in the intent classifier.
 FAQ_TAG_PREFIXES = ("fact-",)
 FAQ_TAG_SUFFIXES = ("_info",)
 
-# A conservative question gate keeps FAQ retrieval from hijacking emotional
-# statements such as "I feel empty".
 QUESTION_STARTERS = {
-    "are",
-    "can",
-    "could",
-    "define",
-    "did",
-    "do",
-    "does",
-    "explain",
-    "how",
-    "is",
-    "should",
-    "was",
-    "were",
-    "what",
-    "when",
-    "where",
-    "which",
-    "who",
-    "why",
-    "will",
-    "would",
+    "are", "can", "could", "define", "did", "do", "does", "explain",
+    "how", "is", "should", "was", "were", "what", "when", "where",
+    "which", "who", "why", "will", "would",
 }
 
+# Confidence and similarity thresholds
 FAQ_SIMILARITY_THRESHOLD = 0.40
 CLASSIFIER_CONFIDENCE_THRESHOLD = 0.10
 CLASSIFIER_AMBIGUITY_MARGIN = 0.025
 CLASSIFIER_SUPPORT_OVERRIDE = 0.55
 CLASSIFIER_SUPPORT_MINIMUM = 0.40
 
-# Scikit-learn's stop list removes several words that carry emotional meaning
-# ("down", "alone", "empty", "cry"), and the negations below matter for support
-# matching. They stay available for the overlap score (the classifier's own
-# vectorizer still uses its normal stop-word list).
+# Stop words tailored to preserve emotionally significant words
 SUPPORT_STOP_WORDS = set(ENGLISH_STOP_WORDS) - {
-    "alone",
-    "cry",
-    "down",
-    "empty",
-    "never",
-    "no",
-    "nobody",
-    "none",
-    "not",
-    "nothing",
+    "alone", "cry", "down", "empty", "never", "no", "nobody",
+    "none", "not", "nothing",
 }
 
 EMOTION_TAGS = {
-    "anxiety",
-    "depression",
-    "fear",
-    "happy",
-    "loneliness",
-    "mixed-feelings",
-    "sadness",
-    "stress",
+    "anxiety", "depression", "fear", "happy", "loneliness",
+    "mixed-feelings", "sadness", "stress",
 }
 
 FOLLOW_UP_QUESTIONS = [
@@ -137,24 +88,20 @@ FOLLOW_UP_QUESTIONS = [
     " That's completely valid. What else is on your mind?",
 ]
 
-# Download NLTK data if not present
+# Ensure required NLTK resources are available
 try:
     nltk.data.find("tokenizers/punkt")
     nltk.data.find("corpora/wordnet")
 except LookupError:
-    print("Downloading NLTK data (first time setup)...")
     try:
-        nltk.download("punkt")
-        nltk.download("punkt_tab")
-        nltk.download("wordnet")
+        nltk.download("punkt", quiet=True)
+        nltk.download("punkt_tab", quiet=True)
+        nltk.download("wordnet", quiet=True)
     except Exception:
-        # Fallback: download all
-        nltk.download("popular")
+        nltk.download("popular", quiet=True)
 
 
 def canonical_intent(tag: str) -> str:
-    """Return the canonical tag for a classifier intent."""
-
     return INTENT_ALIASES.get(tag, tag)
 
 
@@ -198,14 +145,13 @@ class Reply:
 
 
 class TOmChatbot:
-    """TOM - Talk To Me: ML-based mental health support chatbot using SVM."""
+    """Mental health chatbot using TF-IDF feature extraction and SVM classification."""
 
     def __init__(self, data_path: str = "data.json"):
         self.data_path = data_path
         try:
             self.lemmatizer = WordNetLemmatizer()
         except Exception:
-            # Fallback if wordnet is not available
             self.lemmatizer = None
 
         self.intents: list[dict] = []
@@ -227,8 +173,6 @@ class TOmChatbot:
         self.faq_matrix = None
         self.model_sample_count = 0
 
-        # Similarity support is used to keep the classifier from answering
-        # arbitrary text. These are rebuilt for every training run.
         self._training_patterns: list[str] = []
         self._training_tags: list[str] = []
         self._training_tokens: list[set[str]] = []
@@ -236,8 +180,7 @@ class TOmChatbot:
         self._vocabulary: dict[str, int] = {}
 
     def _preprocess_text(self, text: str) -> list[str]:
-        """Preprocess and lemmatize text."""
-
+        """Tokenize and lemmatize input text."""
         try:
             tokens = nltk.word_tokenize(text.lower())
         except Exception:
@@ -256,8 +199,7 @@ class TOmChatbot:
         return tokens
 
     def _content_tokens(self, text: str) -> set[str]:
-        """Return meaningful tokens for overlap-based support scoring."""
-
+        """Extract meaningful keywords for similarity comparison."""
         tokens = {
             token
             for token in self._preprocess_text(text)
@@ -265,7 +207,6 @@ class TOmChatbot:
             and token.isalpha()
             and token not in SUPPORT_STOP_WORDS
         }
-        # "No one cares" and "nobody cares" should count as the same idea.
         if re.search(r"\b(?:nobody|no\s*one|noone)\b", text.lower()):
             tokens.add("noone")
         return tokens
@@ -274,14 +215,7 @@ class TOmChatbot:
         self,
         text: str,
     ) -> tuple[float, str, float, float, int] | None:
-        """Find the nearest training pattern with enough real overlap.
-
-        TF-IDF cosine alone gives false 1.0 scores when a short query shares a
-        single vocabulary term with a pattern ("I like pizza" vs "No one likes
-        me"). Requiring either multiple overlapping terms or a single overlap
-        with no out-of-vocabulary query terms keeps those matches out.
-        """
-
+        """Find the closest matching training pattern using cosine + jaccard overlap."""
         if (
             not self.model_trained
             or self.model is None
@@ -333,8 +267,7 @@ class TOmChatbot:
         return best
 
     def load_data(self) -> bool:
-        """Load, canonicalize, and split training data."""
-
+        """Load and parse training intents and FAQ from data.json."""
         try:
             with open(self.data_path, "r", encoding="utf-8") as handle:
                 data = json.load(handle)
@@ -433,11 +366,10 @@ class TOmChatbot:
             f"{len(self.training_samples)} patterns; "
             f"{len(self.faq_entries)} FAQ entries"
         )
-        if synthetic_count:
-            print(f"Excluded {synthetic_count} synthetic follow-up intents")
         return True
 
     def _build_faq_index(self) -> None:
+        """Build TF-IDF search index for factual questions."""
         if not self.faq_entries:
             self.faq_vectorizer = None
             self.faq_matrix = None
@@ -456,12 +388,7 @@ class TOmChatbot:
         self,
         samples: Sequence[tuple[str, str]] | None = None,
     ) -> bool:
-        """Train the TF-IDF + SVM pipeline.
-
-        ``samples`` lets the evaluation script train on a holdout split while
-        reusing the same canonicalization and preprocessing.
-        """
-
+        """Train the TF-IDF vectorizer + Linear SVM classifier pipeline."""
         training_samples = (
             list(self.training_samples) if samples is None else list(samples)
         )
@@ -504,9 +431,6 @@ class TOmChatbot:
             ]
         )
 
-        # Exact matches are a fast path for known patterns. When the same
-        # normalized pattern appears with two labels, the first one wins and
-        # the conflict is recorded for inspection.
         self.exact_matches = {}
         self.exact_conflicts = set()
         for pattern, tag in zip(training_patterns, training_tags):
@@ -531,17 +455,13 @@ class TOmChatbot:
         self._vocabulary = self.model.named_steps["tfidf"].vocabulary_
 
         print(
-            f"TOM's brain trained with {len(training_patterns)} training "
-            f"samples across {len(self.model.classes_)} intents"
+            f"TOM trained with {len(training_patterns)} samples "
+            f"across {len(self.model.classes_)} intents"
         )
-        if self.exact_conflicts:
-            print(
-                f"Note: {len(self.exact_conflicts)} exact-match pattern "
-                "conflicts kept their first label"
-            )
         return True
 
     def _search_faq(self, text: str) -> tuple[FaqEntry, float] | None:
+        """Search FAQ patterns using cosine similarity."""
         if (
             not self.faq_entries
             or self.faq_vectorizer is None
@@ -576,11 +496,11 @@ class TOmChatbot:
         check_safety: bool = True,
         allow_faq: bool = True,
     ) -> Prediction:
-        """Classify *text* and return intent, confidence, and source."""
-
+        """Classify user text and return predicted intent with confidence."""
         if not isinstance(text, str) or not text.strip():
             return Prediction(UNKNOWN_INTENT, 0.0, "unknown")
 
+        # 1. Deterministic safety check
         if check_safety:
             assessment = assess_safety(text)
             if assessment.is_crisis:
@@ -591,11 +511,13 @@ class TOmChatbot:
                     assessment.response or CRISIS_RESPONSE,
                 )
 
+        # 2. Exact match lookup
         normalized = normalize_text(text)
         exact_tag = self.exact_matches.get(normalized)
         if exact_tag:
             return Prediction(exact_tag, 1.0, "exact")
 
+        # 3. FAQ search for questions
         if allow_faq and self._looks_like_question(text):
             faq_match = self._search_faq(text)
             if faq_match:
@@ -609,9 +531,7 @@ class TOmChatbot:
         if not content_tokens:
             return Prediction(UNKNOWN_INTENT, 0.0, "unknown")
 
-        # The classifier vectorizer removes its own stop words, so only check
-        # words that are meaningful to it. This keeps "nobody" (a support
-        # synonym) from looking like an unknown word.
+        # 4. Out-of-vocabulary check
         vocabulary_candidates = {
             token
             for token in content_tokens
@@ -626,6 +546,7 @@ class TOmChatbot:
             if out_of_vocabulary / len(vocabulary_candidates) >= 0.5:
                 return Prediction(UNKNOWN_INTENT, 0.0, "unknown")
 
+        # 5. SVM probability prediction
         probabilities = self.model.predict_proba([text])[0]
         ranked = sorted(
             enumerate(probabilities),
@@ -666,13 +587,7 @@ class TOmChatbot:
         check_safety: bool = True,
         continuing: bool | None = None,
     ) -> Reply:
-        """Classify *text* and produce a response plus metadata.
-
-        ``continuing`` lets a caller with its own per-session context decide
-        whether this is a follow-up. When omitted, the chatbot uses its local
-        conversation history (the interactive CLI path).
-        """
-
+        """Classify input text and generate a conversational reply."""
         prediction = self.classify(text, check_safety=check_safety)
 
         if prediction.intent == "crisis":
@@ -712,8 +627,7 @@ class TOmChatbot:
         )
 
     def _get_response(self, tag: str, user_input: str = "") -> str:
-        """Get a response for a canonical tag with conversation context."""
-
+        """Pick a curated response for the tag with optional follow-up questions."""
         tag = canonical_intent(tag)
         responses = self.responses.get(tag)
         if not responses:
@@ -738,8 +652,7 @@ class TOmChatbot:
         user_input: str,
         continuing: bool | None = None,
     ) -> str:
-        """Get an engaging response based on canonical intent and input."""
-
+        """Add supportive prefixes and conversation continuity."""
         intent = canonical_intent(intent)
 
         if continuing is None:
@@ -767,8 +680,6 @@ class TOmChatbot:
         return response
 
     def predict_intent(self, text: str, check_safety: bool = True) -> str:
-        """Predict the canonical intent for user input."""
-
         return self.classify(text, check_safety=check_safety).intent
 
     def respond(
@@ -777,8 +688,6 @@ class TOmChatbot:
         check_safety: bool = True,
         intent: str | None = None,
     ) -> str:
-        """Generate a response to user input."""
-
         if intent is None:
             return self.generate_reply(text, check_safety=check_safety).response
 
@@ -794,30 +703,22 @@ class TOmChatbot:
 
 
 def clear_screen() -> None:
-    """Clear the console screen."""
-
     os.system("cls" if os.name == "nt" else "clear")
 
 
 def print_welcome() -> None:
-    """Print TOM's welcome message."""
-
     clear_screen()
     print("=" * 60)
     print("  TOM - Talk To Me".center(60))
     print("  Your Mental Health Support Companion".center(60))
     print("=" * 60)
-    print()
-    print("Hello! I'm TOM - Talk To Me.")
+    print("\nHello! I'm TOM - Talk To Me.")
     print("I'm here to listen and support you.")
-    print("Type 'quit', 'exit', or 'bye' to end the conversation.")
-    print()
+    print("Type 'quit', 'exit', or 'bye' to end the conversation.\n")
     print("-" * 60)
 
 
 def main() -> None:
-    """Main function to run TOM."""
-
     tom = TOmChatbot()
 
     if not tom.load_data():
@@ -832,10 +733,7 @@ def main() -> None:
             user_input = input("\nYou: ").strip()
 
             if user_input.lower() in ["quit", "exit", "bye", "goodbye"]:
-                print(
-                    "\nTOM: Goodbye! Take care of yourself. Remember, I'm "
-                    "always here if you need to talk."
-                )
+                print("\nTOM: Goodbye! Take care of yourself. I'm always here if you need to talk.")
                 break
 
             if not user_input:

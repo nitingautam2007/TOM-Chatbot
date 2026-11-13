@@ -1,14 +1,7 @@
-"""Bounded in-memory stores for conversation context and rate limiting.
-
-The API server keeps no durable chat history.  These stores only hold short
-lived process memory:
-
-* :class:`SessionStore` expires idle sessions and caps both the number of
-  sessions and the number of messages kept per session.
-* :class:`RateLimiter` uses a sliding window per session.
-
-Both classes accept a ``clock`` callable so tests can advance time without
-sleeping.
+#!/usr/bin/env python3
+"""
+In-memory session context storage and rate limiter for TOM API.
+Provides bounded message history and sliding-window rate limiting.
 """
 
 from __future__ import annotations
@@ -17,9 +10,8 @@ import math
 import threading
 import time
 from collections import OrderedDict, deque
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable, Deque
-
 
 Clock = Callable[[], float]
 
@@ -32,7 +24,7 @@ class _Session:
 
 
 class SessionStore:
-    """TTL and size bounded conversation context storage."""
+    """Bounded in-memory conversation context storage with TTL expiration."""
 
     def __init__(
         self,
@@ -52,7 +44,7 @@ class SessionStore:
         self.max_sessions = int(max_sessions)
         self.max_messages = int(max_messages)
         self._clock = clock or time.monotonic
-        self._sessions: "OrderedDict[str, _Session]" = OrderedDict()
+        self._sessions: OrderedDict[str, _Session] = OrderedDict()
         self._lock = threading.Lock()
 
     def _prune_locked(self, now: float) -> None:
@@ -68,8 +60,7 @@ class SessionStore:
             self._sessions.popitem(last=False)
 
     def get_messages(self, session_id: str) -> list[dict]:
-        """Return a copy of the session context, or an empty list."""
-
+        """Return message history for the given session."""
         now = self._clock()
         with self._lock:
             self._prune_locked(now)
@@ -86,8 +77,7 @@ class SessionStore:
         user_message: str,
         assistant_message: str | None = None,
     ) -> None:
-        """Append a user message and optional assistant reply."""
-
+        """Append user message and assistant reply to the session history."""
         if not session_id:
             return
 
@@ -110,8 +100,7 @@ class SessionStore:
             self._prune_locked(now)
 
     def reset(self, session_id: str) -> bool:
-        """Remove one session.  Returns True when something was removed."""
-
+        """Clear context for one specific session."""
         with self._lock:
             return self._sessions.pop(session_id, None) is not None
 
@@ -130,7 +119,7 @@ class SessionStore:
 
 
 class RateLimiter:
-    """Sliding-window rate limiter keyed by session identifier."""
+    """Sliding-window rate limiter per session key."""
 
     def __init__(
         self,
@@ -150,7 +139,7 @@ class RateLimiter:
         self.window_seconds = float(window_seconds)
         self.max_keys = int(max_keys)
         self._clock = clock or time.monotonic
-        self._events: "OrderedDict[str, Deque[float]]" = OrderedDict()
+        self._events: OrderedDict[str, Deque[float]] = OrderedDict()
         self._lock = threading.Lock()
 
     def _prune_locked(self, now: float) -> None:
@@ -165,8 +154,7 @@ class RateLimiter:
             self._events.pop(key, None)
 
     def check(self, key: str) -> tuple[bool, int]:
-        """Record a request and return ``(allowed, retry_after_seconds)``."""
-
+        """Check if request is allowed. Returns (allowed, retry_after_seconds)."""
         now = self._clock()
         with self._lock:
             self._prune_locked(now)

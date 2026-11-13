@@ -53,7 +53,7 @@ Frontend runs at: `http://localhost:5173`
 ## 📁 Project Structure
 
 ```
-Final Chatbot/
+TOM/
 ├── backend/
 │   ├── api_server.py      # Flask API server with context memory
 │   ├── config.py          # Environment-driven production settings

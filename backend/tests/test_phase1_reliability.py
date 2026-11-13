@@ -1,8 +1,6 @@
-"""Phase 1 tests for session storage, rate limiting, and classifier cleanup.
+"""Unit tests for session storage and rate limiting.
 
-Run from the backend directory:
-
-    .venv/bin/python -m unittest discover -s tests -v
+Run with: python -m unittest discover -s tests -v
 """
 
 from __future__ import annotations

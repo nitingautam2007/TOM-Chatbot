@@ -1,8 +1,6 @@
-"""Phase 2 tests for production configuration and API hardening.
+"""Unit tests for production configuration and security settings.
 
-Run from the backend directory:
-
-    .venv/bin/python -m unittest discover -s tests -v
+Run with: python -m unittest discover -s tests -v
 """
 
 from __future__ import annotations

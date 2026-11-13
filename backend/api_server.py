@@ -1,15 +1,7 @@
 #!/usr/bin/env python3
 """
 TOM Backend API Server
-=======================
-
-Flask REST API for TOM - Talk To Me frontend integration.
-
-Special handling:
-- Deterministic safety checks run before quick replies and the ML model.
-- Buttons and mood emojis use the frontend's curated responses.
-- Text queries use TOM's canonical intents and FAQ retrieval.
-- Conversation context is short lived, bounded, and in memory only.
+Flask REST API for mental health chatbot frontend integration.
 """
 
 from __future__ import annotations
@@ -58,7 +50,6 @@ app.config.update(
 )
 
 if SETTINGS.trust_proxy:
-    # Render terminates TLS and forwards the original client address.
     app.wsgi_app = ProxyFix(
         app.wsgi_app,
         x_for=1,
@@ -66,9 +57,6 @@ if SETTINGS.trust_proxy:
         x_host=1,
     )
 
-# The frontend sends an anonymous session identifier in the request body, so
-# cross-origin requests do not need cookies. Keeping credentials disabled also
-# avoids CSRF-style access to another browser session.
 CORS(
     app,
     resources={
@@ -99,11 +87,9 @@ RATE_LIMITER = RateLimiter(
 STARTED_AT = time.monotonic()
 MODEL_READY = False
 
-# Get the absolute path to data.json
 BACKEND_DIR = Path(__file__).resolve().parent
 DATA_PATH = str(BACKEND_DIR / "data.json")
 
-# Initialize TOM chatbot with explicit data path
 tom = TOmChatbot(data_path=DATA_PATH)
 
 LOG.info("Initializing TOM chatbot")
@@ -125,22 +111,18 @@ LOG.info(
     },
 )
 
-# Frontend responses for specific buttons and moods.
-# These are exact matches after normalize_text().
+# Curated responses for frontend mood options and suggestions
 FRONTEND_SPECIAL_RESPONSES = {
-    # Mood selections (with and without emojis)
     "i'm feeling struggling today": "I hear you. Would you like to tell me more about what's on your mind?",
     "i'm feeling low today": "Thank you for sharing that with me. You're not alone in feeling this way. Would you like to talk about what's been difficult lately?",
     "i'm feeling okay today": "I appreciate you reaching out. Sometimes just checking in with yourself makes a difference. What's been on your mind today?",
     "i'm feeling good today": "That's wonderful to hear! What's making you feel good?",
     "i'm feeling great today": "That's fantastic! What's bringing you joy today?",
-    # Mood selections with emojis
     "i'm feeling struggling today (😔)": "I hear you. Would you like to tell me more about what's on your mind?",
     "i'm feeling low today (😕)": "Thank you for sharing that with me. You're not alone in feeling this way. Would you like to talk about what's been difficult lately?",
     "i'm feeling okay today (😐)": "I appreciate you reaching out. Sometimes just checking in with yourself makes a difference. What's been on your mind today?",
     "i'm feeling good today (🙂)": "That's wonderful to hear! What's making you feel good?",
     "i'm feeling great today (😊)": "That's fantastic! What's bringing you joy today?",
-    # Suggestion buttons (exact matches)
     "i'm feeling anxious": "Anxiety can feel overwhelming, but you're doing the right thing by acknowledging it. Let's try a simple breathing exercise: breathe in for 4 counts, hold for 4, breathe out for 6. How does that feel?",
     "i need to talk": "I'm here and I'm listening. This is a safe space — there's no right or wrong way to feel. What would you like to share?",
     "breathing exercise": "Let's do a calming box breath together:\n\n• Breathe in slowly for 4 counts\n• Hold for 4 counts\n• Breathe out for 4 counts\n• Hold for 4 counts\n\nRepeat this 4 times. Take your time — I'm right here with you.",
@@ -153,7 +135,6 @@ NORMALIZED_SPECIAL_RESPONSES = {
     for pattern, response in FRONTEND_SPECIAL_RESPONSES.items()
 }
 
-# Accept "I am feeling ..." as well as the button's "I'm feeling ...".
 for pattern, response in list(NORMALIZED_SPECIAL_RESPONSES.items()):
     if pattern.startswith("i'm feeling "):
         alias = pattern.replace("i'm feeling ", "i am feeling ", 1)
@@ -161,19 +142,13 @@ for pattern, response in list(NORMALIZED_SPECIAL_RESPONSES.items()):
 
 
 def get_risk_level(intent: str) -> str:
-    """Determine risk level based on canonical intent."""
-
     if intent in ("crisis", "suicide"):
         return "high"
     return "low"
 
 
 def resolve_session_id(data: dict) -> tuple[str | None, tuple | None]:
-    """Validate or create a session identifier.
-
-    Returns ``(session_id, error_response)``.
-    """
-
+    """Validate or create session ID."""
     session_id = data.get("session_id")
     if session_id is not None and not isinstance(session_id, str):
         return None, invalid_request("The session identifier is not valid.")
@@ -234,12 +209,7 @@ def rate_limited_response(session_id: str, retry_after: int):
 
 @app.route("/api/chat", methods=["POST"])
 def chat():
-    """Chat endpoint for the frontend.
-
-    Safety checks always run before quick replies, rate limiting, or the ML
-    classifier. Crisis messages are therefore never blocked.
-    """
-
+    """Main chat endpoint. Safety checks run before classification or rate limiting."""
     try:
         data = request.get_json(silent=True)
         if not isinstance(data, dict) or "message" not in data:
@@ -248,6 +218,7 @@ def chat():
         user_message = data.get("message")
         if not isinstance(user_message, str):
             return invalid_request("Your message needs to be text.")
+
         user_message = user_message.strip()
         if not user_message:
             return invalid_request(
@@ -268,8 +239,7 @@ def chat():
         if not isinstance(region, str) or region not in REGION_LABELS:
             region = DEFAULT_REGION
 
-        # Safety is authoritative and must run before any quick-reply, rate
-        # limit, or ML path.
+        # Step 1: Deterministic safety assessment
         safety = assess_safety(user_message)
         if safety.is_crisis:
             SESSION_STORE.append_exchange(session_id, user_message, safety.response)
@@ -287,11 +257,12 @@ def chat():
                 }
             )
 
+        # Step 2: Rate limit check
         allowed, retry_after = RATE_LIMITER.check(session_id)
         if not allowed:
             return rate_limited_response(session_id, retry_after)
 
-        # Quick replies are exact matches only, after normalisation.
+        # Step 3: Exact match quick reply check
         special_response = NORMALIZED_SPECIAL_RESPONSES.get(
             normalize_text(user_message)
         )
@@ -312,8 +283,7 @@ def chat():
                 }
             )
 
-        # The API keeps context per session, so the classifier must not use
-        # its process-global conversation history.
+        # Step 4: ML model classification and response generation
         continuing = bool(SESSION_STORE.get_messages(session_id))
         reply = tom.generate_reply(
             user_message,
@@ -346,9 +316,7 @@ def chat():
             jsonify(
                 {
                     "error": "server_error",
-                    "response": (
-                        "I'm having trouble responding right now. Please try again."
-                    ),
+                    "response": "I'm having trouble responding right now. Please try again.",
                     "intent": "none",
                     "risk_level": "low",
                     "resources": [],
@@ -375,8 +343,7 @@ def _reset_session_payload(data: dict | None):
 
 @app.route("/api/session/reset", methods=["POST"])
 def reset_session():
-    """Forget the short-lived context for one session."""
-
+    """Reset the context memory for one session."""
     payload = _reset_session_payload(request.get_json(silent=True))
     if isinstance(payload, tuple):
         return payload
@@ -385,12 +352,7 @@ def reset_session():
 
 @app.route("/api/data", methods=["DELETE"])
 def delete_data():
-    """Delete all server-side data held for one browser session.
-
-    TOM keeps no durable chat records. This clears the in-memory context and
-    rate-limit state; the frontend clears its own local/session storage.
-    """
-
+    """Delete server-side data held for one browser session."""
     data = request.get_json(silent=True)
     if data is None:
         data = {"session_id": request.args.get("session_id")}
@@ -406,8 +368,7 @@ def delete_data():
 
 @app.route("/api/health", methods=["GET"])
 def health():
-    """Liveness check with model, session, and rate-limit metrics."""
-
+    """Health check endpoint returning system status and model metrics."""
     ready = _model_ready()
     session_stats = SESSION_STORE.stats()
     return jsonify(
@@ -436,8 +397,6 @@ def health():
 
 @app.route("/api/ready", methods=["GET"])
 def readiness():
-    """Readiness check used by orchestrators before routing traffic."""
-
     if not _model_ready():
         return (
             jsonify(
@@ -631,28 +590,19 @@ def finish_request(response):
 if __name__ == "__main__":
     if SETTINGS.is_production:
         raise SystemExit(
-            "Refusing to start the Flask development server in production. "
-            "Use: gunicorn --worker-class gthread --workers 1 --threads 8 "
-            "wsgi:app"
+            "Use gunicorn in production: gunicorn --worker-class gthread --workers 1 --threads 8 wsgi:app"
         )
 
     print("\n" + "=" * 60)
-    print("TOM Backend API Server with Context Memory")
+    print("  TOM Backend API Server")
     print("=" * 60)
-    print("\nStarting Flask server...")
-    print(f"API will be available at: http://{SETTINGS.host}:{SETTINGS.port}")
+    print(f"\nAPI available at: http://{SETTINGS.host}:{SETTINGS.port}")
     print("\nEndpoints:")
-    print("  POST   /api/chat            - Send user messages")
-    print("  POST   /api/session/reset   - Forget one session's context")
-    print("  DELETE /api/data            - Delete one session's server data")
-    print("  GET    /api/health          - Health check and model metrics")
+    print("  POST   /api/chat            - Send message & get response")
+    print("  POST   /api/session/reset   - Reset session context")
+    print("  DELETE /api/data            - Delete session data")
+    print("  GET    /api/health          - Health check")
     print("  GET    /api/ready           - Readiness check")
-    print("\nFeatures:")
-    print("  - Deterministic crisis handling before every other path")
-    print("  - Exact-match quick replies")
-    print("  - Canonical intents, FAQ retrieval, and unknown handling")
-    print("  - Bounded context memory with a 30 minute TTL")
-    print("  - Per-session rate limiting (crisis messages exempt)")
     print("\n" + "=" * 60 + "\n")
 
     app.run(host=SETTINGS.host, port=SETTINGS.port, debug=False)

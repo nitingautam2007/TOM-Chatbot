@@ -29,8 +29,6 @@ venv/
 ENV/
 
 # Frontend dependencies
-# node_modules is still tracked from an earlier commit; untrack it separately
-# with `git rm -r --cached Frontend/node_modules` before relying on this rule.
 Frontend/node_modules/
 
 # IDE

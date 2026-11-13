@@ -1,8 +1,6 @@
-"""Phase 0 regression tests for deterministic safety handling.
+"""Unit tests for deterministic crisis safety handling.
 
-Run from the backend directory:
-
-    .venv/bin/python -m unittest discover -s tests -v
+Run with: python -m unittest discover -s tests -v
 """
 
 from __future__ import annotations

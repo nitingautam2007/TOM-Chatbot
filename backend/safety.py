@@ -1,8 +1,7 @@
-"""Deterministic safety checks for TOM.
-
-Crisis detection must not depend on the ML classifier.  This module is the
-single backend source of truth for explicit self-harm/suicide language and
-the crisis resources returned to the frontend.
+#!/usr/bin/env python3
+"""
+TOM Safety Module
+Deterministic safety interception and regional crisis hotline directory.
 """
 
 from __future__ import annotations
@@ -27,8 +26,7 @@ CRISIS_RESPONSE = (
     "You deserve support from a real person right now."
 )
 
-# Keep these concise and actionable.  Every entry should have a real phone,
-# SMS, or web destination.  Verify numbers periodically; they change.
+# Verified regional crisis hotlines and emergency contacts
 CRISIS_RESOURCES: dict[str, list[dict[str, str]]] = {
     "IN": [
         {
@@ -105,8 +103,7 @@ CRISIS_RESOURCES: dict[str, list[dict[str, str]]] = {
     ],
 }
 
-# A narrow, phrase-based list.  Do not add bare words such as "die": they
-# match grief ("my mum died") and ordinary language ("I'm dieting").
+# Regex patterns for explicit self-harm, suicide, and overdose
 _CRISIS_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("self_harm", re.compile(r"\b(?:kill|killing)\s+(?:myself|my\s*self)\b")),
     (
@@ -123,10 +120,7 @@ _CRISIS_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("suicide", re.compile(r"\bsuicid(?:e|al)\b")),
     ("suicide", re.compile(r"\b(?:end|ending)\s+my\s+life\b")),
     ("suicide", re.compile(r"\b(?:take|taking)\s+my\s+(?:own\s+)?life\b")),
-    (
-        "suicide",
-        re.compile(r"\b(?:want|wish|wanting|wishing)\s+to\s+die\b"),
-    ),
+    ("suicide", re.compile(r"\b(?:want|wish|wanting|wishing)\s+to\s+die\b")),
     (
         "suicide",
         re.compile(r"\b(?:don'?t|do\s+not)\s+want\s+to\s+(?:live|be\s+here|exist|go\s+on)\b"),
@@ -136,26 +130,17 @@ _CRISIS_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
         re.compile(r"\b(?:better\s+off\s+dead|wish\s+i\s+(?:was|were)\s+dead|rather\s+be\s+dead)\b"),
     ),
     ("suicide", re.compile(r"\bno\s+reason\s+to\s+live\b")),
-    (
-        "suicide",
-        re.compile(r"\blife\s+(?:is|isn'?t|is\s+not)\s+worth\s+living\b"),
-    ),
+    ("suicide", re.compile(r"\blife\s+(?:is|isn'?t|is\s+not)\s+worth\s+living\b")),
     ("suicide", re.compile(r"\b(?:end\s+it\s+all|ending\s+it\s+all)\b")),
     ("suicide", re.compile(r"\b(?:tired\s+of\s+living|done\s+with\s+life)\b")),
-    (
-        "suicide",
-        re.compile(r"\b(?:wish\s+i\s+wasn'?t\s+here|wish\s+i\s+wasn'?t\s+alive)\b"),
-    ),
+    ("suicide", re.compile(r"\b(?:wish\s+i\s+wasn'?t\s+here|wish\s+i\s+wasn'?t\s+alive)\b")),
     ("self_harm", re.compile(r"\b(?:self[-\s]?harm|self[-\s]?harming)\b")),
     ("self_harm", re.compile(r"\b(?:cut|cutting)\s+(?:myself|my\s+wrists?)\b")),
     (
         "self_harm",
         re.compile(r"\b(?:hurt|hurting|harm|harming|injure|injuring)\s+(?:myself|my\s*self)\b"),
     ),
-    (
-        "self_harm",
-        re.compile(r"\b(?:took|take|taking|had|have)\s+(?:an?\s+)?overdose\b"),
-    ),
+    ("self_harm", re.compile(r"\b(?:took|take|taking|had|have)\s+(?:an?\s+)?overdose\b")),
     ("self_harm", re.compile(r"\boverdosed\b")),
     (
         "self_harm",
@@ -168,8 +153,7 @@ _CRISIS_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("self_harm", re.compile(r"\bkms\b")),
 ]
 
-# These are protective/negated statements, not active crisis statements.  A
-# second positive phrase in the same message will still trigger detection.
+# Patterns for protective or negated statements to avoid false positives
 _NEGATED_PATTERNS = [
     re.compile(r"\b(?:i\s+)?(?:do\s+not|don'?t)\s+want\s+to\s+die\b"),
     re.compile(r"\b(?:i\s+)?(?:do\s+not|don'?t)\s+want\s+to\s+kill\s+(?:myself|my\s*self)\b"),
@@ -178,12 +162,7 @@ _NEGATED_PATTERNS = [
 
 
 def normalize_text(text: str) -> str:
-    """Normalise text for exact quick-reply matching.
-
-    Removes emoji/punctuation but keeps apostrophes so contractions such as
-    "I'm" remain intact.  This is deliberately stricter than safety matching.
-    """
-
+    """Normalize text by converting to lowercase and stripping extra punctuation."""
     cleaned = text.lower().replace("’", "'")
     cleaned = re.sub(r"[^a-z0-9'\s]", " ", cleaned)
     return re.sub(r"\s+", " ", cleaned).strip()
@@ -209,8 +188,7 @@ class SafetyAssessment:
 
 
 def assess_safety(text: str) -> SafetyAssessment:
-    """Return a deterministic safety assessment for *text*."""
-
+    """Evaluate text for crisis or self-harm keywords."""
     normalized = _normalized_for_safety(text)
     without_negations = _remove_negated_protective_phrases(normalized)
 
@@ -222,14 +200,11 @@ def assess_safety(text: str) -> SafetyAssessment:
 
 
 def detect_crisis(text: str) -> bool:
-    """Convenience wrapper used by the chatbot and tests."""
-
     return assess_safety(text).is_crisis
 
 
 def get_crisis_resources(region: str | None = None) -> list[dict[str, Any]]:
-    """Return crisis resources for a supported region, defaulting to India."""
-
+    """Return crisis helpline numbers for the given region."""
     selected = region if region in CRISIS_RESOURCES else DEFAULT_REGION
     return [dict(resource) for resource in CRISIS_RESOURCES[selected]]
 

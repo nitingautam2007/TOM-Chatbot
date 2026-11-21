@@ -406,22 +406,27 @@ function ChatMessage({
       }
     : isCrisis
       ? {
-          ...glass.base,
+          background: '#ffffff',
           border: '1.5px solid rgba(220, 80, 80, 0.45)',
           boxShadow: '0 8px 32px rgba(220, 80, 80, 0.15)',
         }
       : isError
         ? {
-            ...glass.base,
+            background: '#ffffff',
             border: '1.5px solid rgba(196,122,122,0.45)',
             boxShadow: '0 8px 32px rgba(196,122,122,0.10)',
           }
         : isOfflineReply
           ? {
-              ...glass.base,
+              background: '#ffffff',
               border: '1.5px solid rgba(196,155,90,0.38)',
+              boxShadow: '0 4px 16px rgba(196,155,90,0.08)',
             }
-          : glass.base
+          : {
+              background: '#ffffff',
+              border: '1px solid rgba(90,127,90,0.18)',
+              boxShadow: '0 4px 20px rgba(90,127,90,0.08)',
+            }
 
   const textClass = isUser
     ? 'text-white'
@@ -566,6 +571,14 @@ export default function App() {
       bottomRef.current?.scrollIntoView({ block: 'end' })
     }
   }, [activeTab])
+
+  // Auto-resize composer textarea as text wraps or Shift+Enter is pressed
+  useEffect(() => {
+    const el = inputRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${Math.min(el.scrollHeight, 220)}px`
+  }, [input])
 
   useEffect(() => {
     if (!consentGranted) return
@@ -770,7 +783,12 @@ export default function App() {
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
-      if (!isSending) void sendMessage(input)
+      if (!isSending && input.trim()) {
+        void sendMessage(input)
+        if (inputRef.current) {
+          inputRef.current.style.height = 'auto'
+        }
+      }
     }
   }
 
@@ -1417,7 +1435,7 @@ export default function App() {
 
                   {/* Input Box */}
                   <div
-                    className="flex items-center gap-3 rounded-2xl md:rounded-3xl px-4 py-3"
+                    className="flex items-end gap-3 rounded-2xl md:rounded-3xl px-4 py-3"
                     style={{
                       background: 'rgba(255,255,255,0.95)',
                       backdropFilter: 'blur(24px) saturate(2)',

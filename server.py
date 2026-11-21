@@ -286,8 +286,9 @@ routes = [
     Route("/api/health", health, methods=["GET"]),
     Route("/api/chat", chat, methods=["POST"]),
     Route("/api/mood/stats", mood_stats, methods=["GET"]),
+    Route("/api/mood/reset", delete_all_data, methods=["POST", "DELETE"]),
     Route("/api/session/reset", reset_session, methods=["POST"]),
-    Route("/api/data", delete_all_data, methods=["DELETE"]),
+    Route("/api/data", delete_all_data, methods=["POST", "DELETE"]),
 ]
 
 middleware = [

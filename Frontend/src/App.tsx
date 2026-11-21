@@ -18,6 +18,7 @@ import {
   checkBackendHealth,
   deleteServerData,
   isOfflineError,
+  resetMoodStats,
   resetServerSession,
   sendChatMessage,
 } from './api'
@@ -955,7 +956,8 @@ export default function App() {
 
   const handleDeleteData = useCallback(() => {
     cancelPending()
-    if (sessionIdRef.current) void deleteServerData(sessionIdRef.current)
+    void deleteServerData(sessionIdRef.current || '')
+    void resetMoodStats()
     clearAllStoredData()
     sessionIdRef.current = null
     setConsentGranted(false)

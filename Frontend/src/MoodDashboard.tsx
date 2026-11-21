@@ -108,20 +108,36 @@ export default function MoodDashboard({
     }
   }
 
+  const handleResetStats = async () => {
+    if (!window.confirm('Clear all recorded mood history?')) return
+    setLoading(true)
+    try {
+      await fetch(`${API_BASE_URL}/api/mood/reset`, { method: 'POST' })
+      await fetchStats()
+    } catch {
+      // Fallback
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     void fetchStats()
   }, [])
 
   const totalLogs = data?.total || 0
   const counts = data?.counts || {}
-  const topEmotion = (data?.top_emotion || 'general').toLowerCase()
-  const topMeta = EMOTION_META[topEmotion] || {
-    label: topEmotion.replace('_', ' '),
-    emoji: '💭',
-    color: '#5a7f5a',
-    bg: 'rgba(90,127,90,0.1)',
-    border: 'rgba(90,127,90,0.2)',
-  }
+  const topEmotion = (data?.top_emotion || 'none').toLowerCase()
+  const topMeta =
+    totalLogs > 0 && EMOTION_META[topEmotion]
+      ? EMOTION_META[topEmotion]
+      : {
+          label: totalLogs > 0 ? topEmotion.replace('_', ' ') : 'None yet',
+          emoji: totalLogs > 0 ? '💭' : '🌱',
+          color: '#5a7f5a',
+          bg: 'rgba(90,127,90,0.1)',
+          border: 'rgba(90,127,90,0.2)',
+        }
 
   return (
     <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
@@ -141,15 +157,29 @@ export default function MoodDashboard({
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => void fetchStats()}
-            disabled={loading}
-            className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl text-xs font-medium text-sage-700 bg-white border border-sage-900/15 shadow-2xs hover:bg-sage-50 transition-all flex items-center gap-1.5"
-          >
-            <span className={loading ? 'animate-spin' : ''}>🔄</span>
-            {loading ? 'Refreshing...' : 'Refresh Stats'}
-          </button>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => void fetchStats()}
+              disabled={loading}
+              className="px-3.5 py-1.5 rounded-xl text-xs font-medium text-sage-700 bg-white border border-sage-900/15 shadow-2xs hover:bg-sage-50 transition-all flex items-center gap-1.5"
+            >
+              <span className={loading ? 'animate-spin' : ''}>🔄</span>
+              {loading ? 'Refreshing...' : 'Refresh Stats'}
+            </button>
+            {totalLogs > 0 && (
+              <button
+                type="button"
+                onClick={() => void handleResetStats()}
+                disabled={loading}
+                className="px-3 py-1.5 rounded-xl text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-all flex items-center gap-1"
+                title="Reset mood tracking history"
+              >
+                <span>🗑️</span>
+                <span>Reset</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 4 Stat Overview Cards */}
@@ -177,7 +207,7 @@ export default function MoodDashboard({
             <span className="text-[11px] font-semibold text-sage-500 uppercase tracking-wider">
               Active Days
             </span>
-            <p className="text-2xl font-bold text-sage-800 mt-1">{data?.streak_days || 1}</p>
+            <p className="text-2xl font-bold text-sage-800 mt-1">{totalLogs > 0 ? (data?.streak_days ?? 0) : 0}</p>
             <span className="text-[10px] text-sage-400">Days journaling</span>
           </div>
 

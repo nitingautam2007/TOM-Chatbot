@@ -284,3 +284,7 @@ export function resetServerSession(sessionId: string): Promise<boolean> {
 export function deleteServerData(sessionId: string): Promise<boolean> {
   return sendControlRequest('/api/data', 'DELETE', sessionId)
 }
+
+export function resetMoodStats(): Promise<boolean> {
+  return sendControlRequest('/api/mood/reset', 'POST', '')
+}

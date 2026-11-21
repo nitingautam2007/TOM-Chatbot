@@ -533,6 +533,7 @@ export default function App() {
   const [showConsent, setShowConsent] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -936,7 +937,7 @@ export default function App() {
   return (
     <>
       <div
-        className="tom-screen flex flex-col items-center justify-center"
+        className="w-full h-screen h-[100dvh] flex overflow-hidden relative"
         style={{
           backgroundColor: '#ffffff',
           backgroundImage:
@@ -954,12 +955,8 @@ export default function App() {
             to   { opacity: 1; transform: translateY(0)   scale(1); }
           }
           @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.97); }
+            from { opacity: 0; transform: scale(0.98); }
             to   { opacity: 1; transform: scale(1); }
-          }
-          @keyframes shimmer {
-            0%   { background-position: -200% center; }
-            100% { background-position:  200% center; }
           }
           .glass-tab-active {
             background: linear-gradient(145deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.70) 100%);
@@ -972,504 +969,541 @@ export default function App() {
             background: transparent;
           }
           .ios-press:active {
-            transform: scale(0.92);
+            transform: scale(0.95);
             transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1);
           }
           .ios-press {
-            transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
-          }
-          .suggestion-chip:active {
-            transform: scale(0.94);
-          }
-          .suggestion-chip {
-            transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
           }
           .suggestion-chip:hover {
             box-shadow: 0 4px 14px rgba(90,127,90,0.14);
+            transform: translateY(-1px);
           }
-          .resource-row {
-            transition: transform 0.24s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+          .suggestion-chip {
+            transition: all 0.2s ease;
           }
-          .resource-row:active {
-            transform: scale(0.975);
+          .starter-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(90,127,90,0.12);
+            border-color: rgba(90,127,90,0.35);
+          }
+          .starter-card {
+            transition: all 0.2s ease;
           }
         `}</style>
 
-        {/* App shell — liquid glass card */}
-        <div
-          className="tom-app-shell w-full max-w-md rounded-[2.5rem] overflow-hidden flex flex-col"
+        {/* Mobile Sidebar Backdrop Overlay */}
+        {mobileSidebarOpen && (
+          <div
+            onClick={() => setMobileSidebarOpen(false)}
+            className="fixed inset-0 bg-sage-900/20 backdrop-blur-sm z-40 md:hidden"
+            aria-hidden="true"
+          />
+        )}
+
+        {/* ── LEFT DESKTOP SIDEBAR ── */}
+        <aside
+          className={`fixed md:static inset-y-0 left-0 w-72 lg:w-80 h-full flex flex-col z-50 md:z-20 transition-transform duration-300 ease-in-out ${
+            mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
           style={{
-            background: 'rgba(255,255,255,0.12)',
-            backdropFilter: 'blur(12px) saturate(1.4)',
-            WebkitBackdropFilter: 'blur(12px) saturate(1.4)',
-            border: '1px solid rgba(255,255,255,0.45)',
-            boxShadow:
-              '0 24px 60px rgba(60,90,60,0.08), 0 1.5px 0 rgba(255,255,255,0.7) inset',
-            animation: 'fadeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both',
+            background: 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(32px) saturate(2)',
+            WebkitBackdropFilter: 'blur(32px) saturate(2)',
+            borderRight: '1px solid rgba(90,127,90,0.12)',
+            boxShadow: '4px 0 24px rgba(90,127,90,0.04)',
           }}
         >
-          {/* Header */}
-          <div
-            className="px-5 pt-5 pb-4 flex-shrink-0"
-            style={{
-              borderBottom: '1px solid rgba(90,127,90,0.1)',
-              background: 'rgba(255,255,255,0.08)',
-            }}
-          >
-            <div className="flex items-center justify-between gap-2 mb-4">
-              <div className="flex items-center gap-3 min-w-0">
-                <div
-                  className="w-11 h-11 rounded-2xl flex items-center justify-center overflow-hidden ios-press flex-shrink-0"
-                  style={{ background: '#0d0d12', ...glass.base }}
-                >
-                  <img
-                    src={tomLogo}
-                    alt="TOM logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="min-w-0">
-                  <h1
-                    className="text-sage-800 leading-tight"
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '19px',
-                      fontWeight: 400,
-                      letterSpacing: '-0.01em',
-                    }}
-                  >
-                    TOM
-                  </h1>
-                  <p className="text-[11px] text-sage-400 font-light tracking-wide">
-                    Talk to Me · Wellbeing companion
-                  </p>
-                </div>
+          {/* Sidebar Header */}
+          <div className="p-5 flex items-center justify-between border-b border-sage-900/10">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0"
+                style={{ background: '#0d0d12' }}
+              >
+                <img src={tomLogo} alt="TOM logo" className="w-full h-full object-contain" />
               </div>
-              <div className="flex items-center justify-end gap-1.5 flex-wrap flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('resources')}
-                  className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-[#7a2e2e] hover:text-[#5f2020] transition-colors ios-press"
+              <div>
+                <h1
+                  className="text-sage-800 leading-tight"
                   style={{
-                    background: 'rgba(196,122,122,0.14)',
-                    border: '1px solid rgba(196,122,122,0.3)',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '18px',
+                    fontWeight: 400,
+                    letterSpacing: '-0.01em',
                   }}
-                  aria-label="Open crisis and support resources"
                 >
-                  Help
-                </button>
-                {consentGranted && (
-                  <button
-                    type="button"
-                    onClick={() => setShowPrivacy(true)}
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-sage-600 hover:text-sage-700 transition-colors ios-press"
-                    style={glass.pill}
-                    title="Privacy and conversation controls"
-                    aria-label="Open privacy and conversation controls"
-                  >
-                    <svg
-                      width="13"
-                      height="13"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
-                    </svg>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setShowLanding(true)}
-                  className="px-2.5 py-1 rounded-full text-[10px] font-medium text-sage-600 hover:text-sage-700 transition-colors ios-press"
-                  style={glass.pill}
-                  aria-label="Return to the home screen"
-                >
-                  Home
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (moodSubmitted) setMoodSubmitted(false)
-                    setShowMoodSelector(!showMoodSelector)
-                  }}
-                  className="px-2.5 py-1 rounded-full text-[10px] font-medium text-sage-600 hover:text-sage-700 transition-colors ios-press"
-                  style={glass.pill}
-                  title="Share your mood"
-                  aria-label="Open mood check-in"
-                >
-                  Mood
-                </button>
+                  TOM
+                </h1>
+                <p className="text-[11px] text-sage-400 font-light">Talk To Me · Wellbeing</p>
               </div>
             </div>
 
-            {/* Tabs */}
             <div
-              role="tablist"
-              aria-label="TOM sections"
-              className="flex gap-1 p-1 rounded-2xl"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold"
               style={{
-                background: 'rgba(90,127,90,0.06)',
-                border: '1px solid rgba(90,127,90,0.08)',
+                background: 'rgba(90,127,90,0.1)',
+                border: '1px solid rgba(90,127,90,0.25)',
+                color: '#384f38',
               }}
             >
-              {(['chat', 'resources'] as const).map((tab) => (
-                <button
-                  key={tab}
-                  type="button"
-                  role="tab"
-                  id={`tom-tab-${tab}`}
-                  aria-selected={activeTab === tab}
-                  aria-controls={`tom-panel-${tab}`}
-                  tabIndex={activeTab === tab ? 0 : -1}
-                  onClick={() => handleTabChange(tab)}
-                  onKeyDown={handleTabKeyDown}
-                  className={`flex-1 text-xs font-medium py-1.5 rounded-xl capitalize transition-all duration-250 ios-press ${
-                    activeTab === tab
-                      ? 'glass-tab-active text-sage-700'
-                      : 'glass-tab-inactive text-sage-400 hover:text-sage-600'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#5a7f5a', display: 'inline-block', boxShadow: '0 0 6px #5a7f5a' }} />
+              Local
             </div>
           </div>
 
-          {/* Chat tab */}
-          {activeTab === 'chat' && (
-            <div
-              role="tabpanel"
-              id="tom-panel-chat"
-              aria-labelledby="tom-tab-chat"
-              tabIndex={0}
-              className="flex-1 flex flex-col min-h-0"
+          {/* New Conversation Button */}
+          <div className="p-4 pb-2">
+            <button
+              type="button"
+              onClick={() => {
+                handleNewChat()
+                setMobileSidebarOpen(false)
+              }}
+              className="w-full py-2.5 px-4 rounded-2xl text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-sm ios-press"
+              style={{
+                background: 'linear-gradient(145deg, rgba(90,127,90,0.92) 0%, rgba(65,95,65,0.95) 100%)',
+                border: '1px solid rgba(120,160,120,0.3)',
+                boxShadow: '0 4px 14px rgba(70,100,70,0.22)',
+              }}
             >
-              {/* Mood check-in */}
-              {!moodSubmitted && showMoodSelector && (
-                <div
-                  className="mx-4 mt-4 p-4 rounded-3xl flex-shrink-0 relative"
-                  style={{
-                    ...glass.base,
-                    animation:
-                      'slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both',
-                  }}
-                >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              New Conversation
+            </button>
+          </div>
+
+          {/* Tab Switcher */}
+          <div className="px-4 py-2">
+            <div
+              role="tablist"
+              className="flex gap-1 p-1 rounded-2xl"
+              style={{
+                background: 'rgba(90,127,90,0.06)',
+                border: '1px solid rgba(90,127,90,0.1)',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  handleTabChange('chat')
+                  setMobileSidebarOpen(false)
+                }}
+                className={`flex-1 text-xs font-medium py-1.5 rounded-xl transition-all ${
+                  activeTab === 'chat'
+                    ? 'glass-tab-active text-sage-800'
+                    : 'text-sage-400 hover:text-sage-700'
+                }`}
+              >
+                💬 Chat
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleTabChange('resources')
+                  setMobileSidebarOpen(false)
+                }}
+                className={`flex-1 text-xs font-medium py-1.5 rounded-xl transition-all ${
+                  activeTab === 'resources'
+                    ? 'glass-tab-active text-sage-800'
+                    : 'text-sage-400 hover:text-sage-700'
+                }`}
+              >
+                🌿 Self-Care
+              </button>
+            </div>
+          </div>
+
+          {/* Scrollable Sidebar Content */}
+          <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
+            
+            {/* Mood Check-In Widget */}
+            <div
+              className="p-3.5 rounded-2xl"
+              style={{
+                background: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(90,127,90,0.12)',
+                boxShadow: '0 2px 10px rgba(90,127,90,0.04)',
+              }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-sage-700">How do you feel?</span>
+                {selectedMood && (
+                  <span className="text-[10px] text-sage-500 font-medium">Logged</span>
+                )}
+              </div>
+              <div className="grid grid-cols-5 gap-1">
+                {MOODS.map((mood) => (
                   <button
+                    key={mood.value}
                     type="button"
                     onClick={() => {
-                      setShowMoodSelector(false)
-                      setSelectedMood(null)
+                      setSelectedMood(mood.value)
+                      void handleMoodSubmit()
                     }}
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center text-sage-400 hover:text-sage-600 hover:bg-sage-600/10 transition-colors ios-press"
-                    title="Skip mood selection"
-                    aria-label="Skip mood check-in"
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition-all ${
+                      selectedMood === mood.value
+                        ? 'bg-white shadow-sm ring-1 ring-sage-500/30 scale-105'
+                        : 'hover:bg-white/50'
+                    }`}
+                    title={mood.label}
                   >
-                    ×
+                    <span className="text-base">{mood.emoji}</span>
+                    <span className="text-[9px] text-sage-600 truncate mt-0.5">{mood.label}</span>
                   </button>
-                  <p className="text-xs font-medium text-sage-600 mb-3 tracking-wide">
-                    How are you feeling right now?
-                  </p>
-                  <div className="flex justify-between mb-3">
-                    {MOODS.map((mood) => (
-                      <button
-                        key={mood.value}
-                        type="button"
-                        onClick={() => setSelectedMood(mood.value)}
-                        aria-pressed={selectedMood === mood.value}
-                        aria-label={mood.label}
-                        className="flex flex-col items-center gap-1 p-2 rounded-2xl ios-press"
-                        style={
-                          selectedMood === mood.value
-                            ? {
-                                background: 'rgba(255,255,255,0.9)',
-                                boxShadow: `0 4px 16px ${mood.color}30, 0 1px 0 rgba(255,255,255,1) inset`,
-                                border: `1px solid ${mood.color}30`,
-                                transform: 'scale(1.12)',
-                              }
-                            : {
-                                background: 'transparent',
-                                border: '1px solid transparent',
-                              }
-                        }
-                      >
-                        <span
-                          className="text-xl"
-                          style={{
-                            filter:
-                              selectedMood === mood.value
-                                ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))'
-                                : 'none',
-                          }}
-                        >
-                          {mood.emoji}
-                        </span>
-                        <span className="text-[9px] text-sage-500 font-medium">
-                          {mood.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleMoodSubmit}
-                    disabled={!selectedMood || isSending}
-                    className="w-full py-2 rounded-2xl text-xs font-medium ios-press disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{
-                      background: selectedMood
-                        ? 'linear-gradient(145deg, rgba(90,127,90,0.88) 0%, rgba(70,100,70,0.92) 100%)'
-                        : 'rgba(90,127,90,0.25)',
-                      color: '#fff',
-                      border: '1px solid rgba(120,160,120,0.4)',
-                      boxShadow: selectedMood
-                        ? '0 4px 14px rgba(70,100,70,0.22), 0 1px 0 rgba(160,200,160,0.4) inset'
-                        : 'none',
-                    }}
-                  >
-                    Share my mood
-                  </button>
-                </div>
-              )}
-
-              {isOffline && (
-                <div
-                  role="status"
-                  aria-live="polite"
-                  className="mx-4 mt-3 px-3 py-2 rounded-2xl text-[11px] leading-snug text-[#7a5a2e]"
-                  style={{
-                    background: 'rgba(196,155,90,0.12)',
-                    border: '1px solid rgba(196,155,90,0.28)',
-                  }}
-                >
-                  Offline mode — replies are limited. Crisis support is still
-                  available in{' '}
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('resources')}
-                    className="underline font-semibold"
-                  >
-                    Resources
-                  </button>
-                  .
-                </div>
-              )}
-
-              {/* Messages */}
-              <div
-                className="flex-1 overflow-y-auto px-4 py-4 min-h-0 mx-3 my-3 rounded-3xl"
-                role="log"
-                aria-live="polite"
-                aria-relevant="additions"
-                aria-label="Conversation with TOM"
-                aria-busy={isSending}
-                style={{
-                  background: 'rgba(255,255,255,0.10)',
-                  backdropFilter: 'blur(8px) saturate(1.3)',
-                  WebkitBackdropFilter: 'blur(8px) saturate(1.3)',
-                  border: '1px solid rgba(255,255,255,0.38)',
-                  boxShadow:
-                    '0 4px 16px rgba(90,127,90,0.04), 0 1px 0 rgba(255,255,255,0.6) inset',
-                }}
-              >
-                {messages.map((message) => (
-                  <ChatMessage
-                    key={message.id}
-                    message={message}
-                    region={region}
-                    onRetry={handleRetry}
-                  />
                 ))}
-                {isTyping && <TypingIndicator />}
-                <div ref={bottomRef} />
+              </div>
+            </div>
+
+            {/* Quick Grounding Tools */}
+            <div
+              className="p-3.5 rounded-2xl"
+              style={{
+                background: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(90,127,90,0.12)',
+              }}
+            >
+              <p className="text-xs font-semibold text-sage-700 mb-2">Quick Grounding Tools</p>
+              <div className="space-y-1.5">
+                {[
+                  { name: '🌬️ Box Breathing (4-4-4-4)', query: 'Breathing exercise' },
+                  { name: '✋ 5-4-3-2-1 Sensory Grounding', query: 'Grounding technique' },
+                  { name: '🧘 Mindful Minute', query: 'Meditation' },
+                  { name: '💡 Practical Coping Strategies', query: 'Coping strategies' },
+                ].map((tool) => (
+                  <button
+                    key={tool.name}
+                    type="button"
+                    onClick={() => {
+                      if (activeTab !== 'chat') handleTabChange('chat')
+                      void sendMessage(tool.query)
+                      setMobileSidebarOpen(false)
+                    }}
+                    className="w-full text-left text-[11px] font-medium text-sage-700 hover:text-sage-900 py-1.5 px-2.5 rounded-xl hover:bg-white/80 transition-all flex items-center justify-between group"
+                  >
+                    <span>{tool.name}</span>
+                    <span className="text-sage-400 group-hover:translate-x-0.5 transition-transform">→</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Emergency Contacts Card */}
+            <div
+              className="p-3 rounded-2xl"
+              style={{
+                background: 'rgba(196,122,122,0.08)',
+                border: '1px solid rgba(196,122,122,0.22)',
+              }}
+            >
+              <p className="text-[11px] font-semibold text-[#7a2e2e] mb-1">Emergency Support 24/7</p>
+              <p className="text-[10px] text-[#5f2020] leading-snug">
+                Tele-MANAS (India): <strong className="font-semibold">14416</strong><br />
+                National Emergency: <strong className="font-semibold">112</strong>
+              </p>
+            </div>
+
+          </div>
+
+          {/* Sidebar Footer */}
+          <div className="p-4 border-t border-sage-900/10 flex items-center justify-between text-[11px] text-sage-500">
+            <button
+              type="button"
+              onClick={() => setShowPrivacy(true)}
+              className="flex items-center gap-1.5 hover:text-sage-800 transition-colors"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+              </svg>
+              Privacy & Data
+            </button>
+            <span className="text-[10px] text-sage-400">llama3.2:3b</span>
+          </div>
+        </aside>
+
+        {/* ── RIGHT MAIN WORKSPACE CANVAS ── */}
+        <main className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
+          
+          {/* Desktop Top Navbar */}
+          <header
+            className="h-14 px-4 md:px-8 flex items-center justify-between flex-shrink-0 z-10"
+            style={{
+              background: 'rgba(255,255,255,0.7)',
+              backdropFilter: 'blur(20px)',
+              borderBottom: '1px solid rgba(90,127,90,0.1)',
+            }}
+          >
+            {/* Left: Mobile hamburger & title */}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+                className="md:hidden w-8 h-8 rounded-xl flex items-center justify-center text-sage-700 hover:bg-sage-100 transition-colors"
+                aria-label="Toggle navigation menu"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+              </button>
+              
+              <div>
+                <h2
+                  className="text-sage-800 text-sm font-semibold tracking-tight"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  {activeTab === 'chat' ? 'Conversation Workspace' : 'Self-Care & Resources'}
+                </h2>
+              </div>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleTabChange('resources')}
+                className="px-3 py-1 rounded-full text-xs font-semibold text-[#7a2e2e] hover:bg-[#c47a7a15] transition-colors"
+                style={{ border: '1px solid rgba(196,122,122,0.3)' }}
+              >
+                Helplines
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowLanding(true)}
+                className="px-3 py-1 rounded-full text-xs font-medium text-sage-700 hover:bg-white/80 transition-colors"
+                style={glass.pill}
+              >
+                Home
+              </button>
+
+              {consentGranted && (
+                <button
+                  type="button"
+                  onClick={() => setShowPrivacy(true)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sage-600 hover:text-sage-800 hover:bg-white/80 transition-colors"
+                  style={glass.pill}
+                  title="Privacy controls"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </header>
+
+          {/* Offline Warning Banner */}
+          {isOffline && (
+            <div
+              role="status"
+              className="px-6 py-2 bg-amber-500/10 border-b border-amber-500/20 text-xs text-amber-800 flex items-center justify-between"
+            >
+              <span>⚠️ Offline mode active. Replies are limited. Crisis support is still accessible.</span>
+              <button
+                type="button"
+                onClick={() => handleTabChange('resources')}
+                className="font-semibold underline ml-2"
+              >
+                View Helplines
+              </button>
+            </div>
+          )}
+
+          {/* ── TAB CONTENT: CHAT ── */}
+          {activeTab === 'chat' && (
+            <div className="flex-1 flex flex-col min-h-0 relative">
+              
+              {/* Messages Viewport */}
+              <div
+                className="flex-1 overflow-y-auto px-4 md:px-8 py-6"
+                role="log"
+                aria-label="Conversation"
+              >
+                <div className="max-w-3xl xl:max-w-4xl mx-auto w-full space-y-4">
+                  
+                  {/* Empty state / Welcome Hero Banner if conversation is fresh */}
+                  {messages.length <= 1 && (
+                    <div
+                      className="p-6 md:p-8 rounded-3xl text-center mb-6"
+                      style={{
+                        background: 'rgba(255,255,255,0.7)',
+                        backdropFilter: 'blur(16px)',
+                        border: '1px solid rgba(90,127,90,0.12)',
+                        boxShadow: '0 8px 30px rgba(90,127,90,0.04)',
+                      }}
+                    >
+                      <h3
+                        className="text-sage-800 text-xl font-normal mb-2"
+                        style={{ fontFamily: 'var(--font-display)' }}
+                      >
+                        Welcome to your quiet space 🌿
+                      </h3>
+                      <p className="text-sage-600 text-xs md:text-sm max-w-lg mx-auto mb-6 leading-relaxed">
+                        I'm TOM, your local companion. Everything you say stays completely on this machine. Pick a starter or type freely below:
+                      </p>
+
+                      {/* 4 Interactive Starter Prompt Cards */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left max-w-xl mx-auto">
+                        {[
+                          { title: '😰 Exam & College Stress', prompt: "I am feeling really stressed about my upcoming semester exams." },
+                          { title: '🌬️ Guided Breathing', prompt: "Can you guide me through a calming breathing exercise?" },
+                          { title: '😟 Family Expectations', prompt: "I feel overwhelmed by family pressure and career expectations." },
+                          { title: '💬 Just Need to Talk', prompt: "I've been feeling low and alone lately, just need someone to talk to." },
+                        ].map((card) => (
+                          <button
+                            key={card.title}
+                            type="button"
+                            onClick={() => void sendMessage(card.prompt)}
+                            disabled={isSending}
+                            className="starter-card p-3.5 rounded-2xl text-left bg-white/80 border border-sage-900/10 shadow-sm"
+                          >
+                            <p className="text-xs font-semibold text-sage-800 mb-1">{card.title}</p>
+                            <p className="text-[11px] text-sage-500 line-clamp-2 leading-snug">{card.prompt}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Message Stream */}
+                  {messages.map((message) => (
+                    <ChatMessage
+                      key={message.id}
+                      message={message}
+                      region={region}
+                      onRetry={handleRetry}
+                    />
+                  ))}
+                  {isTyping && <TypingIndicator />}
+                  <div ref={bottomRef} />
+                </div>
               </div>
 
-              {/* Suggestions */}
-              <div className="px-4 pb-1 flex-shrink-0">
-                <div
-                  className="overflow-x-auto pb-2"
-                  style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: 'rgba(90,127,90,0.25) transparent',
-                  }}
-                >
-                  <style>{`
-                    .suggestions-scroll::-webkit-scrollbar { height: 3px; }
-                    .suggestions-scroll::-webkit-scrollbar-track { background: rgba(90,127,90,0.06); border-radius: 2px; }
-                    .suggestions-scroll::-webkit-scrollbar-thumb { background: rgba(90,127,90,0.28); border-radius: 2px; }
-                  `}</style>
-                  <div
-                    className="suggestions-scroll flex gap-2 w-max overflow-x-auto pb-1"
-                    style={{
-                      scrollbarWidth: 'thin',
-                      scrollbarColor:
-                        'rgba(90,127,90,0.25) rgba(90,127,90,0.06)',
-                    }}
-                  >
+              {/* Floating Bottom Composer Bar */}
+              <div className="px-4 md:px-8 pb-4 pt-2 flex-shrink-0">
+                <div className="max-w-3xl xl:max-w-4xl mx-auto w-full">
+                  
+                  {/* Suggestion Chips */}
+                  <div className="flex gap-2 overflow-x-auto pb-2 mb-1 scrollbar-none">
                     {SUGGESTIONS.map((suggestion) => (
                       <button
                         key={suggestion}
                         type="button"
                         onClick={() => void sendMessage(suggestion)}
                         disabled={isSending}
-                        className="text-[11px] text-sage-600 rounded-full px-3 py-2 whitespace-nowrap flex-shrink-0 suggestion-chip font-medium disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={glass.pill}
+                        className="text-[11px] text-sage-700 bg-white/70 hover:bg-white rounded-full px-3.5 py-1.5 whitespace-nowrap flex-shrink-0 suggestion-chip font-medium shadow-xs disabled:opacity-40"
+                        style={{ border: '1px solid rgba(90,127,90,0.14)' }}
                       >
                         {suggestion}
                       </button>
                     ))}
                   </div>
-                </div>
-              </div>
 
-              {/* Input */}
-              <div
-                className="tom-composer px-6 pt-2 flex-shrink-0"
-                style={{ borderTop: '1px solid rgba(90,127,90,0.07)' }}
-              >
-                <div
-                  className="flex items-center gap-2 rounded-3xl px-3 py-2.5"
-                  style={{
-                    background:
-                      'linear-gradient(145deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.48) 100%)',
-                    backdropFilter: 'blur(24px) saturate(1.9)',
-                    WebkitBackdropFilter: 'blur(24px) saturate(1.9)',
-                    border: '1px solid rgba(255,255,255,0.88)',
-                    boxShadow:
-                      '0 4px 20px rgba(90,127,90,0.09), 0 1.5px 0 rgba(255,255,255,0.95) inset, 0 -1px 0 rgba(90,127,90,0.05) inset',
-                  }}
-                >
-                  <textarea
-                    ref={inputRef}
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Share what's on your mind…"
-                    rows={1}
-                    maxLength={MAX_MESSAGE_LENGTH}
-                    enterKeyHint="send"
-                    aria-label="Message TOM"
-                    aria-describedby="tom-composer-note"
-                    className="flex-1 bg-transparent text-sm text-sage-800 placeholder:text-sage-300 resize-none outline-none leading-relaxed max-h-24 overflow-y-auto"
-                    style={{ minHeight: '24px', fontFamily: 'var(--font-body)' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => void sendMessage(input)}
-                    disabled={!input.trim() || isSending}
-                    aria-label={isSending ? 'Sending message' : 'Send message'}
-                    aria-busy={isSending}
-                    className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0 ios-press disabled:opacity-35 disabled:cursor-not-allowed"
+                  {/* Input Box */}
+                  <div
+                    className="flex items-center gap-3 rounded-2xl md:rounded-3xl px-4 py-3"
                     style={{
-                      background: input.trim()
-                        ? 'linear-gradient(145deg, rgba(90,127,90,0.9) 0%, rgba(60,95,60,0.95) 100%)'
-                        : 'rgba(90,127,90,0.2)',
-                      border: '1px solid rgba(120,160,120,0.4)',
-                      boxShadow: input.trim()
-                        ? '0 3px 10px rgba(70,100,70,0.28), 0 1px 0 rgba(160,200,160,0.4) inset'
-                        : 'none',
-                      color: '#fff',
+                      background: 'rgba(255,255,255,0.9)',
+                      backdropFilter: 'blur(24px) saturate(2)',
+                      border: '1px solid rgba(90,127,90,0.18)',
+                      boxShadow: '0 8px 30px rgba(90,127,90,0.08), 0 1px 0 rgba(255,255,255,1) inset',
                     }}
                   >
-                    <svg
-                      width="13"
-                      height="13"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
+                    <textarea
+                      ref={inputRef}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Share what's on your mind... (English or Hinglish)"
+                      rows={1}
+                      maxLength={MAX_MESSAGE_LENGTH}
+                      enterKeyHint="send"
+                      aria-label="Message TOM"
+                      className="flex-1 bg-transparent text-sm text-sage-800 placeholder:text-sage-400 resize-none outline-none leading-relaxed max-h-32 overflow-y-auto"
+                      style={{ minHeight: '24px' }}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => void sendMessage(input)}
+                      disabled={!input.trim() || isSending}
+                      aria-label="Send message"
+                      className="w-9 h-9 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0 ios-press disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                      style={{
+                        background: input.trim()
+                          ? 'linear-gradient(145deg, rgba(90,127,90,0.95) 0%, rgba(60,95,60,1) 100%)'
+                          : 'rgba(90,127,90,0.2)',
+                        color: '#fff',
+                        boxShadow: input.trim() ? '0 3px 12px rgba(70,100,70,0.3)' : 'none',
+                      }}
                     >
-                      <path d="M22 2L11 13" />
-                      <path d="M22 2L15 22 11 13 2 9l20-7z" />
-                    </svg>
-                  </button>
-                </div>
-                {input.length > MAX_MESSAGE_LENGTH - 200 && (
-                  <p
-                    className="text-[10px] text-sage-400 text-right mt-1"
-                    aria-live="polite"
-                  >
-                    {input.length} / {MAX_MESSAGE_LENGTH}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 2L11 13" />
+                        <path d="M22 2L15 22 11 13 2 9l20-7z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Bottom Note */}
+                  <p className="text-[10px] text-sage-400 text-center mt-2">
+                    TOM is an offline AI companion · Data stays strictly on your computer · Tele-MANAS: 14416
                   </p>
-                )}
-                <p
-                  id="tom-composer-note"
-                  className="text-[10px] text-sage-300/80 text-center mt-2 tracking-wide"
-                >
-                  TOM is an AI companion, not a therapist or emergency service ·{' '}
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('resources')}
-                    className="underline hover:text-sage-400 transition-colors"
-                    aria-label="Open crisis resources"
-                  >
-                    Crisis resources
-                  </button>
-                </p>
+                </div>
               </div>
+
             </div>
           )}
 
-          {/* Resources tab */}
+          {/* ── TAB CONTENT: RESOURCES ── */}
           {activeTab === 'resources' && (
-            <div
-              role="tabpanel"
-              id="tom-panel-resources"
-              aria-labelledby="tom-tab-resources"
-              tabIndex={0}
-              className="flex-1 overflow-y-auto px-4 py-5 space-y-2.5"
-            >
-              <CrisisResources
-                region={region}
-                onRegionChange={handleRegionChange}
-              />
-
-              <p
-                className="text-sage-700 mb-2 mt-5"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '20px',
-                  fontWeight: 400,
-                  letterSpacing: '-0.01em',
-                  animation:
-                    'slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both',
-                }}
-              >
-                Support resources
-              </p>
-
-              {SUPPORT_RESOURCES.map((resource, index) => (
-                <ResourceCard
-                  key={resource.title}
-                  resource={resource}
-                  index={index}
+            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
+              <div className="max-w-3xl xl:max-w-4xl mx-auto w-full space-y-6">
+                
+                <CrisisResources
+                  region={region}
+                  onRegionChange={handleRegionChange}
                 />
-              ))}
 
-              <div
-                className="mt-2 p-4 rounded-2xl text-xs text-mist-600 leading-relaxed"
-                style={{
-                  background: 'rgba(61,122,142,0.06)',
-                  border: '1px solid rgba(61,122,142,0.12)',
-                }}
-              >
-                <strong className="font-medium text-mist-700">
-                  A note of care.
-                </strong>{' '}
-                TOM is an AI companion, not a therapist, doctor, or emergency
-                service. It can make mistakes. If you are in crisis or danger,
-                contact a crisis line or emergency services immediately.
+                <div>
+                  <h3
+                    className="text-sage-800 text-xl font-normal mb-3"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    Self-Care & Grounding Resources
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {SUPPORT_RESOURCES.map((resource, index) => (
+                      <ResourceCard
+                        key={resource.title}
+                        resource={resource}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  className="p-4 rounded-2xl text-xs text-mist-700 leading-relaxed"
+                  style={{
+                    background: 'rgba(61,122,142,0.06)',
+                    border: '1px solid rgba(61,122,142,0.15)',
+                  }}
+                >
+                  <strong>A note of care:</strong> TOM is an AI companion for emotional support and reflection, not a licensed medical professional or crisis intervention service. If you are experiencing an emergency, please reach out to emergency helplines immediately.
+                </div>
+
               </div>
             </div>
           )}
-        </div>
+
+        </main>
       </div>
+
       {overlays}
     </>
   )

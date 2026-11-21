@@ -56,16 +56,30 @@ body {
 .tom-screen {
   min-height: 100vh;
   min-height: 100dvh;
-  padding-top: max(1rem, env(safe-area-inset-top));
-  padding-right: max(1rem, env(safe-area-inset-right));
-  padding-bottom: max(1rem, env(safe-area-inset-bottom));
-  padding-left: max(1rem, env(safe-area-inset-left));
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .tom-screen {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
 }
 
 .tom-app-shell {
-  height: 90vh;
-  height: min(90dvh, 780px);
-  max-height: 780px;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+@media (max-width: 767px) {
+  .tom-app-shell {
+    height: 90vh;
+    height: min(90dvh, 780px);
+    max-height: 780px;
+  }
 }
 
 .tom-composer {

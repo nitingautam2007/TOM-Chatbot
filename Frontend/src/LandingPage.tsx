@@ -24,12 +24,12 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
     setTimeout(() => {
       onStartChat()
       setIsLoading(false)
-    }, 500)
+    }, 400)
   }
 
   return (
     <div
-      className="tom-screen flex flex-col items-center justify-center"
+      className="tom-screen flex flex-col items-center justify-center p-4 md:p-8"
       style={{
         backgroundColor: '#ffffff',
         backgroundImage:
@@ -40,37 +40,37 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
     >
       <style>{`
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(24px) scale(0.98); }
+          from { opacity: 0; transform: translateY(20px) scale(0.98); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-6px); }
+          50% { transform: translateY(-8px); }
         }
         .avatar-float { animation: float 4s ease-in-out infinite; }
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .fade-in-1 { animation: fadeIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.1s both; }
-        .fade-in-2 { animation: fadeIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.2s both; }
-        .fade-in-3 { animation: fadeIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
-        .fade-in-4 { animation: fadeIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(70,100,70,0.35), 0 1px 0 rgba(160,200,160,0.4) inset !important; }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .fade-in-1 { animation: fadeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.1s both; }
+        .fade-in-2 { animation: fadeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s both; }
+        .fade-in-3 { animation: fadeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(70,100,70,0.32), 0 1px 0 rgba(160,200,160,0.4) inset !important; }
         .btn-main:active { transform: translateY(0px); }
         .btn-main { transition: all 0.2s ease; }
       `}</style>
 
+      {/* Responsive Desktop / PC Presentation Shell */}
       <div
-        className="w-full max-w-sm mx-4 rounded-[2.5rem] overflow-hidden flex flex-col"
+        className="w-full max-w-sm md:max-w-4xl rounded-[2.5rem] overflow-hidden flex flex-col shadow-2xl transition-all duration-300"
         style={{
-          background: 'rgba(255,255,255,0.75)',
+          background: 'rgba(255,255,255,0.85)',
           backdropFilter: 'blur(32px) saturate(2)',
           WebkitBackdropFilter: 'blur(32px) saturate(2)',
-          border: '1px solid rgba(255,255,255,0.9)',
+          border: '1px solid rgba(255,255,255,0.95)',
           boxShadow: '0 32px 80px rgba(60,90,60,0.12), 0 2px 0 rgba(255,255,255,1) inset',
         }}
       >
         {/* Top bar */}
         <div
-          className="px-5 pt-5 pb-3 flex items-center justify-between flex-shrink-0"
+          className="px-6 md:px-8 py-4 flex items-center justify-between flex-shrink-0"
           style={{ borderBottom: '1px solid rgba(90,127,90,0.08)' }}
         >
           <div className="flex items-center gap-3">
@@ -81,140 +81,147 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
               <img src={tomLogo} alt="TOM" className="w-full h-full object-contain" />
             </div>
             <div>
-              <p className="text-sage-800 font-semibold text-sm leading-tight">TOM</p>
-              <p className="text-[10px] text-sage-400 tracking-wide">Talk to Me</p>
+              <p className="text-sage-800 font-semibold text-sm leading-tight">TOM · Talk To Me</p>
+              <p className="text-[11px] text-sage-400 tracking-wide">Offline AI Wellbeing Companion</p>
             </div>
           </div>
-          {/* Local badge */}
+
           <div
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
             style={{
               background: 'rgba(90,127,90,0.1)',
-              border: '1px solid rgba(90,127,90,0.2)',
-              color: '#466446',
+              border: '1px solid rgba(90,127,90,0.25)',
+              color: '#384f38',
             }}
           >
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#5a7f5a', display: 'inline-block', boxShadow: '0 0 6px #5a7f5a' }} />
-            100% Local
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#5a7f5a', display: 'inline-block', boxShadow: '0 0 8px #5a7f5a' }} />
+            100% Local & Private
           </div>
         </div>
 
-        {/* Hero Section */}
-        <div className="flex flex-col items-center px-6 pt-8 pb-6">
+        {/* Desktop Split Presentation Layout */}
+        <div className="flex flex-col md:grid md:grid-cols-12 gap-6 md:gap-10 p-6 md:p-10 items-center">
+          
+          {/* Left Column (Hero & Identity) */}
+          <div className="w-full md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left fade-in">
+            <div className="avatar-float mb-6">
+              <div
+                className="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] flex items-center justify-center overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #2e3f2e 0%, #0d0d12 100%)',
+                  boxShadow: '0 20px 50px rgba(46,63,46,0.28), 0 2px 0 rgba(255,255,255,0.15) inset',
+                }}
+              >
+                <img src={tomLogo} alt="TOM" className="w-full h-full object-contain p-2" />
+              </div>
+            </div>
 
-          {/* Avatar */}
-          <div className="avatar-float mb-6 fade-in">
+            <h1
+              className="text-sage-800 mb-3 leading-tight"
+              style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 400, letterSpacing: '-0.02em' }}
+            >
+              Meet TOM 👋
+            </h1>
+            <p className="text-sage-600 text-sm md:text-base leading-relaxed mb-6">
+              A private, judgment-free space built right on your computer. Talk freely about your feelings, thoughts, and college life in <strong>English or Hinglish</strong>.
+            </p>
+
             <div
-              className="w-24 h-24 rounded-[2rem] flex items-center justify-center overflow-hidden"
+              className="w-full p-3.5 rounded-2xl text-[11px] leading-relaxed text-sage-600 mb-4"
               style={{
-                background: 'linear-gradient(135deg, #2e3f2e 0%, #0d0d12 100%)',
-                boxShadow: '0 16px 48px rgba(46,63,46,0.25), 0 2px 0 rgba(255,255,255,0.1) inset',
+                background: 'rgba(90,127,90,0.06)',
+                border: '1px solid rgba(90,127,90,0.14)',
               }}
             >
-              <img src={tomLogo} alt="TOM" className="w-full h-full object-contain p-2" />
+              <strong className="text-sage-700">Safety First:</strong> TOM is an AI companion, not a doctor. In crisis, call <strong>112</strong> or <strong>Tele-MANAS: 14416</strong>.
             </div>
           </div>
 
-          {/* Headline */}
-          <div className="text-center mb-6 fade-in-1">
-            <h1
-              className="text-sage-800 mb-2 leading-tight"
-              style={{ fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: 400, letterSpacing: '-0.02em' }}
-            >
-              Hey, I'm TOM 👋
-            </h1>
-            <p className="text-sage-600 text-sm leading-relaxed">
-              Your private, offline-first companion.<br />
-              Talk about anything — in <span style={{ fontWeight: 600 }}>English or Hinglish</span>.
-            </p>
-          </div>
-
-          {/* Feature pills - Symmetric 2x2 Grid */}
-          <div className="grid grid-cols-2 gap-2.5 w-full mb-6 fade-in-2">
-            {[
-              { emoji: '🤫', label: '100% On-Device' },
-              { emoji: '🦙', label: 'Ollama Engine' },
-              { emoji: '💬', label: 'English & Hinglish' },
-              { emoji: '🛡️', label: 'Zero Data Shared' },
-            ].map(({ emoji, label }) => (
-              <div
-                key={label}
-                className="flex items-center justify-center gap-2 py-2 px-3 rounded-full text-xs font-medium text-sage-700 text-center"
-                style={glass.base}
-              >
-                <span className="text-sm">{emoji}</span>
-                <span className="whitespace-nowrap">{label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* What can I help with */}
-          <div
-            className="w-full rounded-2xl p-4 mb-6 fade-in-3"
-            style={{
-              background: 'rgba(90,127,90,0.06)',
-              border: '1px solid rgba(90,127,90,0.14)',
-            }}
-          >
-            <p className="text-xs font-semibold text-sage-700 mb-2.5 uppercase tracking-wider">I can help with</p>
-            <div className="grid grid-cols-2 gap-1.5">
+          {/* Right Column (Capabilities & CTA) */}
+          <div className="w-full md:col-span-7 flex flex-col fade-in-1">
+            
+            {/* Symmetrical Feature Grid */}
+            <div className="grid grid-cols-2 gap-3 w-full mb-6">
               {[
-                '😰 Exam stress',
-                '😔 Sadness & low mood',
-                '😟 Family pressure',
-                '😰 Anxiety & worry',
-                '😶 Loneliness',
-                '🧘 Coping strategies',
-              ].map((item) => (
-                <p key={item} className="text-xs text-sage-600 flex items-center gap-1.5">{item}</p>
+                { emoji: '🤫', title: '100% On-Device', desc: 'No cloud, zero tracking' },
+                { emoji: '🦙', title: 'Ollama Engine', desc: 'Runs locally on CPU/GPU' },
+                { emoji: '💬', title: 'English & Hinglish', desc: 'Speaks your language' },
+                { emoji: '🛡️', title: 'Theory of Mind', desc: 'Infers emotional context' },
+              ].map(({ emoji, title, desc }) => (
+                <div
+                  key={title}
+                  className="flex flex-col p-3.5 rounded-2xl text-left transition-all hover:translate-y-[-1px]"
+                  style={glass.base}
+                >
+                  <span className="text-xl mb-1">{emoji}</span>
+                  <span className="text-xs font-semibold text-sage-800">{title}</span>
+                  <span className="text-[10px] text-sage-500">{desc}</span>
+                </div>
               ))}
             </div>
-          </div>
 
-          {/* Disclaimer */}
-          <p
-            className="text-center text-[10px] leading-relaxed text-sage-500 mb-5 px-2 fade-in-3"
-          >
-            <strong className="text-sage-600">TOM is an AI companion</strong>, not a therapist or doctor.
-            If you're in danger, call <strong>112</strong> or <strong>Tele-MANAS: 14416</strong>.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="w-full flex flex-col gap-2 fade-in-4">
-            <button
-              onClick={handleStart}
-              disabled={isLoading}
-              className="btn-main w-full py-3 rounded-2xl text-sm font-semibold text-white disabled:opacity-70"
+            {/* I can help with */}
+            <div
+              className="w-full rounded-2xl p-4 mb-6"
               style={{
-                background: 'linear-gradient(145deg, rgba(90,127,90,0.95) 0%, rgba(60,90,60,1) 100%)',
-                border: '1px solid rgba(120,160,120,0.3)',
-                boxShadow: '0 8px 24px rgba(70,100,70,0.3), 0 1px 0 rgba(160,200,160,0.4) inset',
+                background: 'rgba(90,127,90,0.05)',
+                border: '1px solid rgba(90,127,90,0.12)',
               }}
             >
-              {isLoading ? '✨ Starting...' : '💬 Start Chatting'}
-            </button>
+              <p className="text-xs font-semibold text-sage-700 mb-2 uppercase tracking-wider">Here for you with</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  '😰 Exam stress',
+                  '😔 Low mood',
+                  '😟 Family pressure',
+                  '😰 Anxiety & fear',
+                  '😶 Loneliness',
+                  '🧘 Grounding steps',
+                ].map((item) => (
+                  <p key={item} className="text-xs text-sage-600 flex items-center gap-1.5">{item}</p>
+                ))}
+              </div>
+            </div>
 
-            <button
-              onClick={onGetHelp}
-              className="w-full py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200"
-              style={{
-                background: 'rgba(196,122,122,0.10)',
-                border: '1px solid rgba(196,122,122,0.25)',
-                color: '#7a2e2e',
-              }}
-            >
-              🆘 Get crisis support & helplines
-            </button>
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleStart}
+                disabled={isLoading}
+                className="btn-main flex-1 py-3.5 px-6 rounded-2xl text-sm font-semibold text-white disabled:opacity-70 text-center"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(90,127,90,0.95) 0%, rgba(60,90,60,1) 100%)',
+                  border: '1px solid rgba(120,160,120,0.3)',
+                  boxShadow: '0 8px 24px rgba(70,100,70,0.28), 0 1px 0 rgba(160,200,160,0.4) inset',
+                }}
+              >
+                {isLoading ? '✨ Launching Workspace...' : '💬 Launch Chatbot'}
+              </button>
+
+              <button
+                onClick={onGetHelp}
+                className="py-3 px-5 rounded-2xl text-xs font-semibold transition-all duration-200 text-center"
+                style={{
+                  background: 'rgba(196,122,122,0.12)',
+                  border: '1px solid rgba(196,122,122,0.28)',
+                  color: '#7a2e2e',
+                }}
+              >
+                🆘 Emergency Helplines
+              </button>
+            </div>
+
           </div>
+
         </div>
 
         {/* Footer */}
         <div
-          className="px-6 py-3 text-center flex-shrink-0"
+          className="px-6 md:px-8 py-3 text-center flex-shrink-0"
           style={{ borderTop: '1px solid rgba(90,127,90,0.08)' }}
         >
-          <p className="text-[10px] text-sage-300">
-            Available 24/7 · Runs locally · Not an emergency service
+          <p className="text-[11px] text-sage-400">
+            Available 24/7 · Runs entirely offline · Not a medical substitute
           </p>
         </div>
       </div>

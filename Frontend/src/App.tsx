@@ -1061,7 +1061,9 @@ export default function App() {
           }
           .suggestion-chip {
             transition: all 0.2s ease;
-            background-color: #ffffff;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            opacity: 1 !important;
           }
           .starter-card:hover {
             transform: translateY(-2px);
@@ -1070,6 +1072,9 @@ export default function App() {
           }
           .starter-card {
             transition: all 0.2s ease;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            opacity: 1 !important;
           }
           textarea:focus,
           textarea:focus-visible,
@@ -1488,10 +1493,9 @@ export default function App() {
                     <div
                       className="p-6 md:p-8 rounded-3xl text-center mb-6"
                       style={{
-                        background: 'rgba(255,255,255,0.7)',
-                        backdropFilter: 'blur(16px)',
-                        border: '1px solid rgba(90,127,90,0.12)',
-                        boxShadow: '0 8px 30px rgba(90,127,90,0.04)',
+                        background: '#ffffff',
+                        border: '1px solid rgba(90,127,90,0.18)',
+                        boxShadow: '0 8px 30px rgba(90,127,90,0.06)',
                       }}
                     >
                       <h3
@@ -1517,7 +1521,12 @@ export default function App() {
                             type="button"
                             onClick={() => void sendMessage(card.prompt)}
                             disabled={isSending}
-                            className="starter-card p-3.5 rounded-2xl text-left bg-white/80 border border-sage-900/10 shadow-sm"
+                            className="starter-card p-3.5 rounded-2xl text-left shadow-xs"
+                            style={{
+                              background: '#ffffff',
+                              border: '1.5px solid rgba(90,127,90,0.22)',
+                              boxShadow: '0 2px 8px rgba(90,127,90,0.06)',
+                            }}
                           >
                             <p className="text-xs font-semibold text-sage-800 mb-1">{card.title}</p>
                             <p className="text-[11px] text-sage-500 line-clamp-2 leading-snug">{card.prompt}</p>
@@ -1542,7 +1551,12 @@ export default function App() {
               </div>
 
               {/* Floating Bottom Composer Bar */}
-              <div className="px-4 md:px-8 pb-4 pt-2 flex-shrink-0">
+              <div
+                className="px-4 md:px-8 pb-4 pt-2 flex-shrink-0"
+                style={{
+                  background: 'linear-gradient(to top, #ffffff 80%, rgba(255,255,255,0) 100%)',
+                }}
+              >
                 <div className="max-w-3xl xl:max-w-4xl mx-auto w-full">
                   
                   {/* Suggestion Chips - Solid White */}
@@ -1556,9 +1570,11 @@ export default function App() {
                         className="text-[11px] text-sage-800 rounded-full px-3.5 py-1.5 whitespace-nowrap flex-shrink-0 suggestion-chip font-medium disabled:opacity-40"
                         style={{
                           backgroundColor: '#ffffff',
+                          background: '#ffffff',
                           border: '1.5px solid rgba(90,127,90,0.28)',
                           boxShadow: '0 2px 10px rgba(90,127,90,0.12), 0 1px 0 rgba(255,255,255,1) inset',
                           color: '#384f38',
+                          opacity: 1,
                         }}
                       >
                         {suggestion}

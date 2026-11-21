@@ -878,18 +878,6 @@ export default function App() {
     [cancelPending],
   )
 
-  const handleDeleteConversation = useCallback(
-    (id: string, e: ReactMouseEvent) => {
-      e.stopPropagation()
-      deleteConversationFromHistory(id)
-      setConversations(loadAllConversations())
-      if (sessionIdRef.current === id) {
-        handleNewChat()
-      }
-    },
-    [handleNewChat],
-  )
-
   const handleTabKeyDown = (
     event: ReactKeyboardEvent<HTMLButtonElement>,
   ) => {
@@ -932,6 +920,18 @@ export default function App() {
     setActiveTab('chat')
     setNotice('New conversation started.')
   }, [cancelPending])
+
+  const handleDeleteConversation = useCallback(
+    (id: string, e: ReactMouseEvent) => {
+      e.stopPropagation()
+      deleteConversationFromHistory(id)
+      setConversations(loadAllConversations())
+      if (sessionIdRef.current === id) {
+        handleNewChat()
+      }
+    },
+    [handleNewChat],
+  )
 
   const handleClearChat = useCallback(() => {
     cancelPending()

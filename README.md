@@ -16,7 +16,7 @@
 
 **TOM (Talk To Me)** is a lightweight, local-first mental health companion designed specifically for students and individuals seeking a safe, judgment-free space to unpack thoughts and emotions.
 
-While traditional conversational agents rely on third-party cloud APIs (posing privacy concerns for sensitive disclosures), **Local TOM runs entirely on your own machine**. It combines a **statistical Theory of Mind (ToM) mental state classifier** with **local LLM generation via Ollama** and a deterministic crisis interception pipeline.
+While traditional conversational agents rely on third-party cloud APIs (posing privacy concerns for sensitive disclosures), **Local TOM runs entirely on your own machine**. It combines a **statistical Theory of Mind (ToM) mental state classifier** with **local LLM generation via Ollama**, multi-session chat history, a dedicated mood tracking analytics dashboard, and a deterministic crisis interception pipeline.
 
 ---
 
@@ -24,11 +24,13 @@ While traditional conversational agents rely on third-party cloud APIs (posing p
 
 * 🧠 **Theory of Mind (ToM) State Inference**: Automatically detects underlying distress states (`exam_stress`, `family_pressure`, `loneliness`, `anxiety`, `sadness`) from code-mixed English and Hinglish text using character-level n-gram TF-IDF and Logistic Regression.
 * 🦙 **Local LLM Intelligence (Ollama)**: Dynamic, empathetic, context-aware student support powered locally by `llama3.2:3b`.
-* 🛡️ **Zero-Data-Leakage Architecture**: No messages, mood logs, or embeddings ever leave your device.
+* 📊 **Mood & Wellbeing Analytics Dashboard**: Dedicated visual dashboard tracking emotional distributions, most frequent distress patterns, active journaling streak days, and personalized self-care recommendations.
+* 💬 **Multi-Session Chat History**: Full sidebar navigation to switch between conversations, start fresh sessions, or delete individual chats with client-side persistence.
+* 🖥️ **Desktop-First PC Workspace**: Modern desktop layout with collapsible sidebar, auto-expanding composer (`Shift+Enter`), solid white bubbles, and distraction-free styling.
+* 🛡️ **Zero-Data-Leakage Architecture**: No messages, mood logs, or embeddings ever leave your device. Complete one-click data deletion and consent withdrawal.
 * 🚨 **Deterministic Crisis Guardrails**: Bypasses the LLM during self-harm or emergency disclosures, immediately surfacing verified regional helplines (**Tele-MANAS: 14416**, **KIRAN: 1800-599-0019**, **112**).
 * 🌿 **Instant Wellness & Grounding Modules**: Built-in deterministic guides for **Box Breathing (4-4-4-4)**, **5-4-3-2-1 Sensory Grounding**, **Mindful Minutes**, and coping toolkits.
 * 🗣️ **Native Hinglish & English Code-Switching**: Recognizes and responds to colloquial student expressions (e.g., *"syllabus khatam nahi hua"*, *"bahut tension ho rahi hai"*, *"ghar waale taane marte hain"*).
-* 🎨 **Glassmorphic React 19 Interface**: Calming, modern UI built with React, Vite, and Tailwind CSS v4, featuring mood trackers and interactive resources.
 
 ---
 
@@ -50,7 +52,7 @@ While traditional conversational agents rely on third-party cloud APIs (posing p
                  │
                  └──► [ 3. Theory of Mind Classifier (model.pkl) ]
                            │
-                           ├──► [ Log timestamped mood to mood_log.csv ]
+                           ├──► [ Append to local mood_log.csv ] ──► [ Mood Dashboard Analytics ]
                            │
                            ▼ (Inferred State Context)
                       [ 4. Dynamic Prompt Augmentation ]
@@ -59,7 +61,7 @@ While traditional conversational agents rely on third-party cloud APIs (posing p
                       [ 5. Local Ollama Engine (llama3.2:3b) ]
                            │
                            ▼
-                      [ 6. Glassmorphism Web App (Port 5173) ]
+                      [ 6. Glassmorphism Workspace (Port 5173) ]
 ```
 
 ---
@@ -72,19 +74,21 @@ Local TOM/
 ├── train.py               # ML Training script for Theory of Mind state classifier
 ├── data.csv               # Hinglish & English student distress dataset
 ├── model.pkl              # Serialized character n-gram TF-IDF + Logistic Regression pipeline
-├── mood_log.csv           # Local session mood history log
+├── mood_log.csv           # Local session mood history log (reset on data purge)
 ├── requirements.txt       # Python dependencies
 ├── README.md              # Project documentation
 │
 └── Frontend/              # React 19 + TypeScript + Vite 6 Web Application
     ├── src/
-    │   ├── App.tsx        # Main chat and wellbeing interface
-    │   ├── LandingPage.tsx# Welcoming glassmorphic landing hero
-    │   ├── api.ts         # Backend API client with offline recovery
-    │   ├── safety.ts      # Regional crisis helpline directory
-    │   └── types.ts       # TypeScript schemas and data models
-    ├── package.json       # Node.js dependencies
-    └── vite.config.ts     # Vite configuration with Tailwind CSS v4
+    │   ├── App.tsx            # Main desktop workspace, sidebar, & chat stream
+    │   ├── LandingPage.tsx    # Welcoming hero screen with symmetrical feature grid
+    │   ├── MoodDashboard.tsx  # Analytics dashboard with metric cards & distribution bars
+    │   ├── storage.ts         # Multi-session localStorage & sessionStorage manager
+    │   ├── api.ts             # Backend API client with health checks & offline recovery
+    │   ├── safety.ts          # Regional crisis helpline directory
+    │   └── types.ts           # TypeScript schemas and data models
+    ├── package.json           # Node.js dependencies
+    └── vite.config.ts         # Vite configuration with Tailwind CSS v4
 ```
 
 ---
@@ -146,7 +150,7 @@ npm install
 npm run dev
 ```
 
-Open your browser and navigate to **`http://localhost:5173`** to begin chatting with TOM.
+Open your browser and navigate to **`http://localhost:5173`** to access the TOM Desktop Workspace.
 
 ---
 
@@ -216,11 +220,33 @@ The Theory of Mind classifier translates colloquial and code-mixed student expre
   }
   ```
 
-### Reset Session
-`POST /api/session/reset`
+### Mood Analytics
+`GET /api/mood/stats`
 ```json
 {
-  "session_id": "session-123"
+  "total": 12,
+  "counts": { "exam_stress": 6, "anxiety": 4, "sadness": 2 },
+  "recent": [
+    { "time": "2026-11-21 12:00:00", "label": "exam_stress" }
+  ],
+  "top_emotion": "exam_stress",
+  "streak_days": 3
+}
+```
+
+### Reset Mood Analytics
+`POST /api/mood/reset` or `DELETE /api/mood/reset`
+```json
+{
+  "status": "deleted"
+}
+```
+
+### Delete Stored Data & Purge Session
+`DELETE /api/data`
+```json
+{
+  "status": "deleted"
 }
 ```
 

@@ -1,0 +1,6 @@
+ollama
+scikit-learn
+pandas
+joblib
+starlette
+uvicorn

@@ -577,7 +577,7 @@ export default function App() {
     const el = inputRef.current
     if (!el) return
     el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 220)}px`
+    el.style.height = `${Math.min(Math.max(el.scrollHeight, 36), 220)}px`
   }, [input])
 
   useEffect(() => {
@@ -1435,7 +1435,7 @@ export default function App() {
 
                   {/* Input Box */}
                   <div
-                    className="flex items-end gap-3 rounded-2xl md:rounded-3xl px-4 py-3"
+                    className="flex items-end gap-3 rounded-2xl md:rounded-3xl px-4 py-2"
                     style={{
                       background: 'rgba(255,255,255,0.95)',
                       backdropFilter: 'blur(24px) saturate(2)',
@@ -1453,9 +1453,9 @@ export default function App() {
                       maxLength={MAX_MESSAGE_LENGTH}
                       enterKeyHint="send"
                       aria-label="Message TOM"
-                      className="flex-1 bg-transparent text-sm text-sage-800 placeholder:text-sage-400 resize-none outline-none focus:outline-none focus:ring-0 leading-relaxed max-h-32 overflow-y-auto"
+                      className="flex-1 bg-transparent text-sm text-sage-800 placeholder:text-sage-400 resize-none outline-none focus:outline-none focus:ring-0 leading-normal max-h-48 overflow-y-auto py-2 m-0"
                       style={{
-                        minHeight: '24px',
+                        minHeight: '36px',
                         outline: 'none',
                         boxShadow: 'none',
                         border: 'none',
@@ -1467,7 +1467,7 @@ export default function App() {
                       onClick={() => void sendMessage(input)}
                       disabled={!input.trim() || isSending}
                       aria-label="Send message"
-                      className="w-9 h-9 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0 ios-press disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                      className="w-9 h-9 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0 ios-press disabled:opacity-30 disabled:cursor-not-allowed transition-all self-end"
                       style={{
                         background: input.trim()
                           ? 'linear-gradient(145deg, rgba(90,127,90,0.95) 0%, rgba(60,95,60,1) 100%)'

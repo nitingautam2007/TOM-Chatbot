@@ -1044,11 +1044,14 @@ export default function App() {
             transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
           }
           .suggestion-chip:hover {
-            box-shadow: 0 4px 14px rgba(90,127,90,0.14);
+            box-shadow: 0 4px 14px rgba(90,127,90,0.18);
             transform: translateY(-1px);
+            border-color: rgba(90,127,90,0.42) !important;
+            background-color: #f8fbf8 !important;
           }
           .suggestion-chip {
             transition: all 0.2s ease;
+            background-color: #ffffff;
           }
           .starter-card:hover {
             transform: translateY(-2px);
@@ -1543,8 +1546,9 @@ export default function App() {
                         className="text-[11px] text-sage-800 rounded-full px-3.5 py-1.5 whitespace-nowrap flex-shrink-0 suggestion-chip font-medium disabled:opacity-40"
                         style={{
                           backgroundColor: '#ffffff',
-                          border: '1px solid rgba(90,127,90,0.18)',
-                          boxShadow: '0 2px 8px rgba(90,127,90,0.06)',
+                          border: '1.5px solid rgba(90,127,90,0.28)',
+                          boxShadow: '0 2px 10px rgba(90,127,90,0.12), 0 1px 0 rgba(255,255,255,1) inset',
+                          color: '#384f38',
                         }}
                       >
                         {suggestion}

@@ -1,4 +1,4 @@
-# <img src="assets/logo.png" alt="TOM" width="36" height="36" style="vertical-align: middle; border-radius: 8px;" /> TOM — Talk To Me (Local Edition)
+# <img src="assets/logo.png" alt="TOM" width="34" height="34" align="center" /> TOM — Talk To Me (Local Edition)
 
 > **A 100% Offline, Privacy-Preserving AI Mental Health Companion powered by Ollama and Theory of Mind (ToM).**
 

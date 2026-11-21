@@ -990,6 +990,14 @@ export default function App() {
           .starter-card {
             transition: all 0.2s ease;
           }
+          textarea:focus,
+          textarea:focus-visible,
+          textarea:active {
+            outline: none !important;
+            box-shadow: none !important;
+            border: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
         `}</style>
 
         {/* Mobile Sidebar Backdrop Overlay */}
@@ -1387,7 +1395,7 @@ export default function App() {
               <div className="px-4 md:px-8 pb-4 pt-2 flex-shrink-0">
                 <div className="max-w-3xl xl:max-w-4xl mx-auto w-full">
                   
-                  {/* Suggestion Chips */}
+                  {/* Suggestion Chips - Solid White */}
                   <div className="flex gap-2 overflow-x-auto pb-2 mb-1 scrollbar-none">
                     {SUGGESTIONS.map((suggestion) => (
                       <button
@@ -1395,8 +1403,12 @@ export default function App() {
                         type="button"
                         onClick={() => void sendMessage(suggestion)}
                         disabled={isSending}
-                        className="text-[11px] text-sage-700 bg-white/70 hover:bg-white rounded-full px-3.5 py-1.5 whitespace-nowrap flex-shrink-0 suggestion-chip font-medium shadow-xs disabled:opacity-40"
-                        style={{ border: '1px solid rgba(90,127,90,0.14)' }}
+                        className="text-[11px] text-sage-800 rounded-full px-3.5 py-1.5 whitespace-nowrap flex-shrink-0 suggestion-chip font-medium disabled:opacity-40"
+                        style={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid rgba(90,127,90,0.18)',
+                          boxShadow: '0 2px 8px rgba(90,127,90,0.06)',
+                        }}
                       >
                         {suggestion}
                       </button>
@@ -1407,9 +1419,9 @@ export default function App() {
                   <div
                     className="flex items-center gap-3 rounded-2xl md:rounded-3xl px-4 py-3"
                     style={{
-                      background: 'rgba(255,255,255,0.9)',
+                      background: 'rgba(255,255,255,0.95)',
                       backdropFilter: 'blur(24px) saturate(2)',
-                      border: '1px solid rgba(90,127,90,0.18)',
+                      border: '1px solid rgba(90,127,90,0.22)',
                       boxShadow: '0 8px 30px rgba(90,127,90,0.08), 0 1px 0 rgba(255,255,255,1) inset',
                     }}
                   >
@@ -1418,13 +1430,18 @@ export default function App() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="Share what's on your mind... (English or Hinglish)"
+                      placeholder="Share what's on your mind…"
                       rows={1}
                       maxLength={MAX_MESSAGE_LENGTH}
                       enterKeyHint="send"
                       aria-label="Message TOM"
-                      className="flex-1 bg-transparent text-sm text-sage-800 placeholder:text-sage-400 resize-none outline-none leading-relaxed max-h-32 overflow-y-auto"
-                      style={{ minHeight: '24px' }}
+                      className="flex-1 bg-transparent text-sm text-sage-800 placeholder:text-sage-400 resize-none outline-none focus:outline-none focus:ring-0 leading-relaxed max-h-32 overflow-y-auto"
+                      style={{
+                        minHeight: '24px',
+                        outline: 'none',
+                        boxShadow: 'none',
+                        border: 'none',
+                      }}
                     />
 
                     <button

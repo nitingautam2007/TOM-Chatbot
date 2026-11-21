@@ -123,7 +123,7 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
               Meet TOM 👋
             </h1>
             <p className="text-sage-600 text-sm md:text-base leading-relaxed mb-6">
-              A private, judgment-free space built right on your computer. Talk freely about your feelings, thoughts, and college life in <strong>English or Hinglish</strong>.
+              A private, judgment-free space built right on your computer. Talk freely about your feelings, thoughts, and day-to-day life.
             </p>
 
             <div
@@ -145,7 +145,7 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
               {[
                 { emoji: '🤫', title: '100% On-Device', desc: 'No cloud, zero tracking' },
                 { emoji: '🦙', title: 'Ollama Engine', desc: 'Runs locally on CPU/GPU' },
-                { emoji: '💬', title: 'English & Hinglish', desc: 'Speaks your language' },
+                { emoji: '💬', title: 'Empathetic Companion', desc: 'Attentive & caring' },
                 { emoji: '🛡️', title: 'Theory of Mind', desc: 'Infers emotional context' },
               ].map(({ emoji, title, desc }) => (
                 <div

@@ -1,4 +1,4 @@
-# 💙 TOM — Talk To Me (Local Edition)
+# <img src="assets/logo.png" alt="TOM" width="36" height="36" style="vertical-align: middle; border-radius: 8px;" /> TOM — Talk To Me (Local Edition)
 
 > **A 100% Offline, Privacy-Preserving AI Mental Health Companion powered by Ollama and Theory of Mind (ToM).**
 
@@ -70,6 +70,8 @@ While traditional conversational agents rely on third-party cloud APIs (posing p
 
 ```
 Local TOM/
+├── assets/
+│   └── logo.png           # TOM project logo
 ├── server.py              # ASGI Backend API (Starlette + Uvicorn + Ollama bridge)
 ├── train.py               # ML Training script for Theory of Mind state classifier
 ├── data.csv               # Hinglish & English student distress dataset

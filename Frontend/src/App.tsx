@@ -5,6 +5,7 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
 } from 'react'
 import tomLogo from '@/imports/TOM_Bot.png'
 import LandingPage from './LandingPage'
@@ -517,7 +518,10 @@ function ChatMessage({
                   : 'text-sage-400'
           }`}
         >
-          {message.timestamp.toLocaleTimeString([], {
+          {(message.timestamp instanceof Date
+            ? message.timestamp
+            : new Date(message.timestamp)
+          ).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
           })}
@@ -875,7 +879,7 @@ export default function App() {
   )
 
   const handleDeleteConversation = useCallback(
-    (id: string, e: React.MouseEvent) => {
+    (id: string, e: ReactMouseEvent) => {
       e.stopPropagation()
       deleteConversationFromHistory(id)
       setConversations(loadAllConversations())

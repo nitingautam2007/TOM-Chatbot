@@ -184,7 +184,10 @@ export function saveStoredMessages(messages: Message[]): void {
     id: message.id,
     role: message.role,
     text: message.text,
-    timestamp: message.timestamp.toISOString(),
+    timestamp: (message.timestamp instanceof Date
+      ? message.timestamp
+      : new Date(message.timestamp)
+    ).toISOString(),
     riskLevel: message.riskLevel,
     intent: message.intent,
     confidence: message.confidence,

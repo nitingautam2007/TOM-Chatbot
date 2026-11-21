@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import tomLogo from '@/imports/TOM_Bot.png'
 
 const glass = {
@@ -8,7 +8,7 @@ const glass = {
     WebkitBackdropFilter: 'blur(24px) saturate(1.9)',
     border: '1px solid rgba(255,255,255,0.8)',
     boxShadow: '0 8px 32px rgba(90,127,90,0.10), 0 1.5px 0 rgba(255,255,255,0.95) inset',
-  } as React.CSSProperties,
+  } as CSSProperties,
 }
 
 interface LandingPageProps {

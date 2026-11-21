@@ -257,4 +257,19 @@ export function clearAllStoredData(): void {
   removeValue('local', SESSION_ID_KEY)
   removeValue('local', REGION_KEY)
   removeValue('local', CONVERSATIONS_KEY)
+  removeValue('session', MESSAGES_KEY)
+  removeValue('local', MESSAGES_KEY)
+  try {
+    if (typeof window !== 'undefined') {
+      window.sessionStorage?.clear()
+      const localKeys = Object.keys(window.localStorage || {})
+      for (const k of localKeys) {
+        if (k.startsWith('tom_')) {
+          window.localStorage.removeItem(k)
+        }
+      }
+    }
+  } catch {
+    // Ignore storage errors
+  }
 }

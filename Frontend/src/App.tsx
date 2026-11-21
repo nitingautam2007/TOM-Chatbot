@@ -839,7 +839,14 @@ export default function App() {
   const handleAcceptConsent = useCallback(() => {
     saveConsent()
     setConsentGranted(true)
-    sessionIdRef.current = getOrCreateSessionId()
+    // Always start a brand-new session on fresh consent — never reuse old data
+    sessionIdRef.current = resetSessionId()
+    clearStoredChat()
+    setMessages([createGreeting()])
+    setConversations(loadAllConversations())
+    setMoodSubmitted(false)
+    setSelectedMood(null)
+    setShowMoodSelector(true)
     setShowConsent(false)
     setShowLanding(false)
     setActiveTab('chat')
@@ -953,6 +960,7 @@ export default function App() {
     sessionIdRef.current = null
     setConsentGranted(false)
     setMessages([createGreeting()])
+    setConversations([])
     setRegion(DEFAULT_REGION)
     setMoodSubmitted(false)
     setSelectedMood(null)

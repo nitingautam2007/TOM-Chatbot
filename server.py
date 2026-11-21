@@ -267,12 +267,27 @@ async def reset_session(request):
     return JSONResponse({"status": "cleared"})
 
 
+async def delete_all_data(request):
+    try:
+        data = await request.json()
+        session_id = str(data.get("session_id") or "")
+        sessions.pop(session_id, None)
+    except Exception:
+        pass
+    try:
+        with open("mood_log.csv", "w", encoding="utf-8") as f:
+            f.write("time,label\n")
+    except Exception:
+        pass
+    return JSONResponse({"status": "deleted"})
+
+
 routes = [
     Route("/api/health", health, methods=["GET"]),
     Route("/api/chat", chat, methods=["POST"]),
     Route("/api/mood/stats", mood_stats, methods=["GET"]),
     Route("/api/session/reset", reset_session, methods=["POST"]),
-    Route("/api/data", reset_session, methods=["DELETE"]),
+    Route("/api/data", delete_all_data, methods=["DELETE"]),
 ]
 
 middleware = [

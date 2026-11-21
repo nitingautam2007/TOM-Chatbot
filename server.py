@@ -208,6 +208,55 @@ async def chat(request):
     )
 
 
+async def mood_stats(request):
+    if not os.path.exists("mood_log.csv"):
+        return JSONResponse({
+            "total": 0,
+            "counts": {},
+            "recent": [],
+            "top_emotion": "None",
+            "streak_days": 0,
+        })
+
+    try:
+        df = pd.read_csv("mood_log.csv")
+        if df.empty or "label" not in df.columns:
+            return JSONResponse({
+                "total": 0,
+                "counts": {},
+                "recent": [],
+                "top_emotion": "None",
+                "streak_days": 0,
+            })
+
+        counts = df["label"].value_counts().to_dict()
+        top_emotion = str(df["label"].mode()[0]) if not df["label"].empty else "None"
+
+        recent = []
+        for _, row in df.tail(30).iloc[::-1].iterrows():
+            recent.append({
+                "time": str(row.get("time", ""))[:19],
+                "label": str(row.get("label", "")),
+            })
+
+        days = set()
+        for t in df["time"]:
+            try:
+                days.add(str(t)[:10])
+            except Exception:
+                pass
+
+        return JSONResponse({
+            "total": len(df),
+            "counts": counts,
+            "recent": recent,
+            "top_emotion": top_emotion,
+            "streak_days": len(days),
+        })
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
 async def reset_session(request):
     try:
         data = await request.json()
@@ -221,6 +270,7 @@ async def reset_session(request):
 routes = [
     Route("/api/health", health, methods=["GET"]),
     Route("/api/chat", chat, methods=["POST"]),
+    Route("/api/mood/stats", mood_stats, methods=["GET"]),
     Route("/api/session/reset", reset_session, methods=["POST"]),
     Route("/api/data", reset_session, methods=["DELETE"]),
 ]

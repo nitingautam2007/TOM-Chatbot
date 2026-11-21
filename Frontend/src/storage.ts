@@ -201,9 +201,57 @@ export function clearStoredChat(): void {
   removeValue('session', MESSAGES_KEY)
 }
 
+export interface SavedConversation {
+  id: string
+  title: string
+  updatedAt: string
+  messages: Message[]
+}
+
+const CONVERSATIONS_KEY = 'tom_conversations_v2'
+
+export function loadAllConversations(): SavedConversation[] {
+  const raw = readValue('local', CONVERSATIONS_KEY)
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    if (!Array.isArray(parsed)) return []
+    return parsed
+      .map((item) => {
+        const c = item as Record<string, unknown>
+        const msgs = Array.isArray(c.messages)
+          ? c.messages
+              .map(parseStoredMessage)
+              .filter((m): m is Message => m !== null)
+          : []
+        return {
+          id: String(c.id || ''),
+          title: String(c.title || 'Conversation'),
+          updatedAt: String(c.updatedAt || new Date().toISOString()),
+          messages: msgs,
+        }
+      })
+      .filter((c) => c.id && c.messages.length > 0)
+  } catch {
+    return []
+  }
+}
+
+export function saveConversationToHistory(conversation: SavedConversation): void {
+  const all = loadAllConversations().filter((c) => c.id !== conversation.id)
+  all.unshift(conversation)
+  writeValue('local', CONVERSATIONS_KEY, JSON.stringify(all.slice(0, 50)))
+}
+
+export function deleteConversationFromHistory(id: string): void {
+  const all = loadAllConversations().filter((c) => c.id !== id)
+  writeValue('local', CONVERSATIONS_KEY, JSON.stringify(all))
+}
+
 export function clearAllStoredData(): void {
   clearStoredChat()
   clearConsent()
   removeValue('local', SESSION_ID_KEY)
   removeValue('local', REGION_KEY)
+  removeValue('local', CONVERSATIONS_KEY)
 }

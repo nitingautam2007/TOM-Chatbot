@@ -11,6 +11,7 @@ import LandingPage from './LandingPage'
 import CrisisResources from './CrisisResources'
 import ConsentGate from './ConsentGate'
 import PrivacyPanel from './PrivacyPanel'
+import MoodDashboard from './MoodDashboard'
 import {
   ChatApiError,
   checkBackendHealth,
@@ -25,14 +26,18 @@ import {
   clearAllStoredData,
   clearStoredChat,
   createId,
+  deleteConversationFromHistory,
   getOrCreateSessionId,
   getStoredRegion,
   hasConsent,
+  loadAllConversations,
   loadStoredMessages,
   resetSessionId,
   saveConsent,
+  saveConversationToHistory,
   saveStoredMessages,
   setStoredRegion,
+  type SavedConversation,
 } from './storage'
 import type { Message, Mood, SupportResource } from './types'
 
@@ -531,7 +536,7 @@ export default function App() {
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null)
   const [moodSubmitted, setMoodSubmitted] = useState(false)
   const [showMoodSelector, setShowMoodSelector] = useState(true)
-  const [activeTab, setActiveTab] = useState<'chat' | 'resources'>('chat')
+  const [activeTab, setActiveTab] = useState<'chat' | 'dashboard' | 'resources'>('chat')
   const [region, setRegion] = useState<Region>(getStoredRegion)
   const [isOffline, setIsOffline] = useState(false)
   const [consentGranted, setConsentGranted] = useState<boolean>(hasConsent)
@@ -539,6 +544,7 @@ export default function App() {
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const [conversations, setConversations] = useState<SavedConversation[]>(loadAllConversations)
 
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -583,6 +589,23 @@ export default function App() {
   useEffect(() => {
     if (!consentGranted) return
     saveStoredMessages(messages)
+
+    // Persist into multi-conversation history when user interacts
+    const firstUserMsg = messages.find((m) => m.role === 'user')
+    if (firstUserMsg && sessionIdRef.current) {
+      const title =
+        firstUserMsg.text.length > 26
+          ? `${firstUserMsg.text.slice(0, 26)}…`
+          : firstUserMsg.text
+      const convo: SavedConversation = {
+        id: sessionIdRef.current,
+        title,
+        updatedAt: new Date().toISOString(),
+        messages,
+      }
+      saveConversationToHistory(convo)
+      setConversations(loadAllConversations())
+    }
   }, [messages, consentGranted])
 
   useEffect(() => {
@@ -830,7 +853,7 @@ export default function App() {
   }, [])
 
   const handleTabChange = useCallback(
-    (tab: 'chat' | 'resources') => {
+    (tab: 'chat' | 'dashboard' | 'resources') => {
       if (tab === 'chat' && !consentGranted) {
         setShowConsent(true)
         return
@@ -838,6 +861,29 @@ export default function App() {
       setActiveTab(tab)
     },
     [consentGranted],
+  )
+
+  const handleSelectConversation = useCallback(
+    (conv: SavedConversation) => {
+      cancelPending()
+      sessionIdRef.current = conv.id
+      setMessages(conv.messages)
+      setActiveTab('chat')
+      setMobileSidebarOpen(false)
+    },
+    [cancelPending],
+  )
+
+  const handleDeleteConversation = useCallback(
+    (id: string, e: React.MouseEvent) => {
+      e.stopPropagation()
+      deleteConversationFromHistory(id)
+      setConversations(loadAllConversations())
+      if (sessionIdRef.current === id) {
+        handleNewChat()
+      }
+    },
+    [handleNewChat],
   )
 
   const handleTabKeyDown = (
@@ -1079,7 +1125,7 @@ export default function App() {
           </div>
 
           {/* New Conversation Button */}
-          <div className="p-4 pb-2">
+          <div className="p-4 pb-1">
             <button
               type="button"
               onClick={() => {
@@ -1101,7 +1147,58 @@ export default function App() {
             </button>
           </div>
 
-          {/* Tab Switcher */}
+          {/* Chat History List */}
+          <div className="px-4 py-2 flex flex-col min-h-0 border-b border-sage-900/10">
+            <div className="flex items-center justify-between mb-1.5 px-1">
+              <span className="text-[10px] font-semibold text-sage-600 uppercase tracking-wider">
+                Chat History
+              </span>
+              {conversations.length > 0 && (
+                <span className="text-[10px] text-sage-400 font-medium">
+                  {conversations.length}
+                </span>
+              )}
+            </div>
+
+            <div className="space-y-1 max-h-36 overflow-y-auto scrollbar-none pr-0.5">
+              {conversations.length === 0 ? (
+                <p className="text-[11px] text-sage-400 px-2 py-1 italic">
+                  Past conversations will appear here
+                </p>
+              ) : (
+                conversations.map((conv) => {
+                  const isActive = conv.id === sessionIdRef.current
+                  return (
+                    <div
+                      key={conv.id}
+                      onClick={() => handleSelectConversation(conv)}
+                      className={`group flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs cursor-pointer transition-all ${
+                        isActive
+                          ? 'bg-sage-600/15 text-sage-900 font-semibold border border-sage-600/25 shadow-2xs'
+                          : 'text-sage-600 hover:bg-white/80 hover:text-sage-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="text-xs flex-shrink-0">💬</span>
+                        <span className="truncate text-[11px]">{conv.title}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteConversation(conv.id, e)}
+                        className="opacity-0 group-hover:opacity-100 hover:text-red-600 p-1 rounded-md text-[10px] transition-all ml-1"
+                        title="Delete chat"
+                        aria-label="Delete chat"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          </div>
+
+          {/* 3-Tab Switcher */}
           <div className="px-4 py-2">
             <div
               role="tablist"
@@ -1117,7 +1214,7 @@ export default function App() {
                   handleTabChange('chat')
                   setMobileSidebarOpen(false)
                 }}
-                className={`flex-1 text-xs font-medium py-1.5 rounded-xl transition-all ${
+                className={`flex-1 text-[11px] font-medium py-1.5 rounded-xl transition-all ${
                   activeTab === 'chat'
                     ? 'glass-tab-active text-sage-800'
                     : 'text-sage-400 hover:text-sage-700'
@@ -1128,16 +1225,30 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => {
+                  handleTabChange('dashboard')
+                  setMobileSidebarOpen(false)
+                }}
+                className={`flex-1 text-[11px] font-medium py-1.5 rounded-xl transition-all ${
+                  activeTab === 'dashboard'
+                    ? 'glass-tab-active text-sage-800'
+                    : 'text-sage-400 hover:text-sage-700'
+                }`}
+              >
+                📊 Mood
+              </button>
+              <button
+                type="button"
+                onClick={() => {
                   handleTabChange('resources')
                   setMobileSidebarOpen(false)
                 }}
-                className={`flex-1 text-xs font-medium py-1.5 rounded-xl transition-all ${
+                className={`flex-1 text-[11px] font-medium py-1.5 rounded-xl transition-all ${
                   activeTab === 'resources'
                     ? 'glass-tab-active text-sage-800'
                     : 'text-sage-400 hover:text-sage-700'
                 }`}
               >
-                🌿 Self-Care
+                🌿 Relief
               </button>
             </div>
           </div>
@@ -1281,7 +1392,11 @@ export default function App() {
                   className="text-sage-800 text-sm font-semibold tracking-tight"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  {activeTab === 'chat' ? 'Conversation Workspace' : 'Self-Care & Resources'}
+                  {activeTab === 'chat'
+                    ? 'Conversation Workspace'
+                    : activeTab === 'dashboard'
+                      ? 'Mood & Wellbeing Analytics'
+                      : 'Self-Care & Resources'}
                 </h2>
               </div>
             </div>
@@ -1491,6 +1606,16 @@ export default function App() {
               </div>
 
             </div>
+          )}
+
+          {/* ── TAB CONTENT: MOOD DASHBOARD ── */}
+          {activeTab === 'dashboard' && (
+            <MoodDashboard
+              onNavigateChat={(prompt) => {
+                setActiveTab('chat')
+                if (prompt) void sendMessage(prompt)
+              }}
+            />
           )}
 
           {/* ── TAB CONTENT: RESOURCES ── */}

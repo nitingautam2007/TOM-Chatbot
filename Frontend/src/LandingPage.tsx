@@ -31,9 +31,10 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
     <div
       className="tom-screen flex flex-col items-center justify-center"
       style={{
-        backgroundColor: '#f4f7f4',
+        backgroundColor: '#ffffff',
         backgroundImage:
-          'radial-gradient(circle at 20% 20%, rgba(90,127,90,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(61,122,142,0.07) 0%, transparent 50%)',
+          'linear-gradient(rgba(90,127,90,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(90,127,90,0.07) 1px, transparent 1px)',
+        backgroundSize: '32px 32px',
         minHeight: '100vh',
       }}
     >

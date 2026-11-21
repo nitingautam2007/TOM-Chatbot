@@ -287,7 +287,7 @@ function TypingIndicator() {
     >
       <div
         className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
-        style={{ background: '#0d0d12', ...glass.pill }}
+        style={{ background: '#ffffff', border: '1px solid rgba(90,127,90,0.15)', ...glass.pill }}
       >
         <img src={tomLogo} alt="TOM" className="w-full h-full object-contain" />
       </div>
@@ -455,7 +455,7 @@ function ChatMessage({
       {!isUser && (
         <div
           className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
-          style={{ background: '#0d0d12', ...glass.pill }}
+          style={{ background: '#ffffff', border: '1px solid rgba(90,127,90,0.15)', ...glass.pill }}
         >
           <img src={tomLogo} alt="TOM" className="w-full h-full object-contain" />
         </div>
@@ -1098,7 +1098,7 @@ export default function App() {
             <div className="flex items-center gap-3">
               <div
                 className="w-10 h-10 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0"
-                style={{ background: '#0d0d12' }}
+                style={{ background: '#ffffff', border: '1px solid rgba(90,127,90,0.15)' }}
               >
                 <img src={tomLogo} alt="TOM logo" className="w-full h-full object-contain" />
               </div>

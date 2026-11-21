@@ -76,7 +76,7 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 rounded-2xl flex items-center justify-center overflow-hidden"
-              style={{ background: '#0d0d12' }}
+              style={{ background: '#ffffff', border: '1px solid rgba(90,127,90,0.15)' }}
             >
               <img src={tomLogo} alt="TOM" className="w-full h-full object-contain" />
             </div>
@@ -108,7 +108,8 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
               <div
                 className="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] flex items-center justify-center overflow-hidden"
                 style={{
-                  background: 'linear-gradient(135deg, #2e3f2e 0%, #0d0d12 100%)',
+                  background: 'linear-gradient(135deg, #ffffff 0%, #f0f4f0 100%)',
+                  border: '1px solid rgba(90,127,90,0.15)',
                   boxShadow: '0 20px 50px rgba(46,63,46,0.28), 0 2px 0 rgba(255,255,255,0.15) inset',
                 }}
               >

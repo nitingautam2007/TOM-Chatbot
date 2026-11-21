@@ -128,21 +128,22 @@ export default function LandingPage({ onStartChat, onGetHelp }: LandingPageProps
             </p>
           </div>
 
-          {/* Feature pills */}
-          <div className="flex flex-wrap gap-2 justify-center mb-6 fade-in-2">
+          {/* Feature pills - Symmetric 2x2 Grid */}
+          <div className="grid grid-cols-2 gap-2.5 w-full mb-6 fade-in-2">
             {[
-              { emoji: '🤫', label: 'Runs on your PC' },
-              { emoji: '🧠', label: 'Powered by Ollama' },
-              { emoji: '💬', label: 'English + Hinglish' },
-              { emoji: '🛡️', label: 'No data leaves device' },
+              { emoji: '🤫', label: '100% On-Device' },
+              { emoji: '🦙', label: 'Ollama Engine' },
+              { emoji: '💬', label: 'English & Hinglish' },
+              { emoji: '🛡️', label: 'Zero Data Shared' },
             ].map(({ emoji, label }) => (
-              <span
+              <div
                 key={label}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-sage-700"
+                className="flex items-center justify-center gap-2 py-2 px-3 rounded-full text-xs font-medium text-sage-700 text-center"
                 style={glass.base}
               >
-                <span>{emoji}</span> {label}
-              </span>
+                <span className="text-sm">{emoji}</span>
+                <span className="whitespace-nowrap">{label}</span>
+              </div>
             ))}
           </div>
 

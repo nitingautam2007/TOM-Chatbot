@@ -101,11 +101,39 @@ QUICK_REPLIES: dict[str, str] = {
 clf = joblib.load("model.pkl") if os.path.exists("model.pkl") else None
 sessions: dict[str, list[dict]] = {}
 
+MOOD_MAPPINGS = {
+    "great": "great",
+    "good": "good",
+    "okay": "okay",
+    "low": "low",
+    "struggling": "struggling",
+}
+
+POSITIVE_WORDS = {
+    "great", "good", "happy", "awesome", "wonderful", "fine",
+    "cool", "better", "cheerful", "excited", "fantastic", "peaceful", "calm", "well"
+}
+
 
 def classify_message(text: str) -> tuple[str, float]:
     clean = text.lower().strip("!.,? ")
-    if clean in GREETING_WORDS or (len(clean.split()) <= 2 and any(w in clean.split() for w in GREETING_WORDS)):
+    words = clean.split()
+
+    if clean in GREETING_WORDS or (len(words) <= 2 and any(w in words for w in GREETING_WORDS)):
         return "greeting", 1.0
+
+    # Explicit mood check-ins (e.g., "I'm feeling great today (😊)", "feeling good", "mood: okay", etc.)
+    for mood_key in ("struggling", "low", "okay", "good", "great"):
+        if f"feeling {mood_key}" in clean or f"feels {mood_key}" in clean or clean == mood_key:
+            return mood_key, 1.0
+
+    # Guard against positive text being forced into distress classes
+    has_positive = any(pw in words for pw in POSITIVE_WORDS)
+    has_negation = any(neg in clean for neg in ["not ", "nhi ", "nahi ", "no ", "don't ", "dont "])
+    if has_positive and not has_negation:
+        if "great" in words or "awesome" in words or "fantastic" in words:
+            return "great", 1.0
+        return "good", 1.0
 
     if not clf:
         return "general", 0.5
@@ -113,7 +141,7 @@ def classify_message(text: str) -> tuple[str, float]:
     probs = clf.predict_proba([text])[0]
     max_p = max(probs)
     # 0.25 is well above the random 0.20 baseline for 5 classes
-    if max_p >= 0.25 and not any(neg in clean for neg in ["not ", "nhi ", "nahi "]):
+    if max_p >= 0.25 and not has_negation:
         return clf.classes_[probs.argmax()], round(float(max_p), 2)
     return "general", round(float(max_p), 2)
 
@@ -130,6 +158,7 @@ async def chat(request):
 
     user_msg = (data.get("message") or "").strip()
     session_id = str(data.get("session_id") or "default")
+    mood_label = (data.get("mood_label") or "").strip().lower()
 
     if not user_msg:
         return JSONResponse({"response": "Please tell me what's on your mind."}, status_code=400)
@@ -166,18 +195,38 @@ async def chat(request):
         })
 
     # 3. State classification & Mood Logging
-    label, confidence = classify_message(user_msg)
+    if mood_label in MOOD_MAPPINGS:
+        label = MOOD_MAPPINGS[mood_label]
+        confidence = 1.0
+    else:
+        label, confidence = classify_message(user_msg)
+
     if label not in ("greeting", "general"):
         pd.DataFrame([[datetime.datetime.now(), label]], columns=["time", "label"]).to_csv(
             "mood_log.csv", mode="a", index=False, header=not os.path.exists("mood_log.csv")
         )
 
-    # 3. Dynamic Prompting with Ollama
+    # 4. Dynamic Prompting with Ollama
     history = sessions.setdefault(session_id, [])
     history.append({"role": "user", "content": user_msg})
     recent_msgs = history[-8:]
 
-    if label not in ("greeting", "general"):
+    if label in ("great", "good"):
+        prompt_system = (
+            f"{SYSTEM} Context clue: The user is in a positive, upbeat mood ({label}). "
+            f"Celebrate their good energy, be warm and encouraging, and ask what brought them joy today."
+        )
+    elif label == "okay":
+        prompt_system = (
+            f"{SYSTEM} Context clue: The user checked in as feeling 'okay' or neutral. "
+            f"Acknowledge it warmly and ask if there's anything on their mind they want to talk through."
+        )
+    elif label in ("low", "struggling"):
+        prompt_system = (
+            f"{SYSTEM} Context clue: The user checked in as feeling '{label}'. "
+            f"Be exceptionally gentle, validating, and supportive. Let them know you're here with them."
+        )
+    elif label not in ("greeting", "general"):
         prompt_system = f"{SYSTEM} Context clue: The user may be discussing {label.replace('_', ' ')}."
     else:
         prompt_system = SYSTEM

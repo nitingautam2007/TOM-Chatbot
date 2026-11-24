@@ -656,7 +656,10 @@ export default function App() {
   }, [])
 
   const sendMessage = useCallback(
-    async (rawText: string, options: { appendUser?: boolean } = {}) => {
+    async (
+      rawText: string,
+      options: { appendUser?: boolean; moodLabel?: string } = {},
+    ) => {
       const trimmed = rawText.trim()
       if (!trimmed || pendingRef.current) return
       if (!consentGranted) {
@@ -704,6 +707,7 @@ export default function App() {
             crisisMessage || isOffline ? OFFLINE_TIMEOUT_MS : NORMAL_TIMEOUT_MS,
           retries: crisisMessage || isOffline ? 0 : 1,
           signal: abortController.signal,
+          moodLabel: options.moodLabel,
         })
         if (token !== requestTokenRef.current) return
 
@@ -797,14 +801,18 @@ export default function App() {
     [sendMessage],
   )
 
-  const handleMoodSubmit = () => {
-    if (!selectedMood || isSending) return
-    const mood = MOODS.find((item) => item.value === selectedMood)
+  const handleMoodSubmit = (moodValue?: Mood) => {
+    const val = moodValue ?? selectedMood
+    if (!val || isSending) return
+    const mood = MOODS.find((item) => item.value === val)
     if (!mood) return
+    setSelectedMood(mood.value)
     setMoodSubmitted(true)
     setShowMoodSelector(false)
+    const moodKey = mood.label.toLowerCase()
     void sendMessage(
-      `I'm feeling ${mood.label.toLowerCase()} today (${mood.emoji})`,
+      `I'm feeling ${moodKey} today (${mood.emoji})`,
+      { moodLabel: moodKey },
     )
   }
 
@@ -1299,8 +1307,7 @@ export default function App() {
                     key={mood.value}
                     type="button"
                     onClick={() => {
-                      setSelectedMood(mood.value)
-                      void handleMoodSubmit()
+                      void handleMoodSubmit(mood.value)
                     }}
                     className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition-all ${
                       selectedMood === mood.value

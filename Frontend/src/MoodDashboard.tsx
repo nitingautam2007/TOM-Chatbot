@@ -296,7 +296,11 @@ export default function MoodDashboard({
                   ? 'Your check-ins show stress or anxiety as a frequent theme. Consider scheduling 5-minute breathing pauses between study sessions.'
                   : topEmotion.includes('loneliness')
                     ? 'Feelings of isolation can be heavy. Even small steps, like sharing a moment with a peer or journaling, can bring comfort.'
-                    : 'Remember that emotions fluctuate naturally. Taking time to check in with yourself is a powerful step towards wellbeing.'}
+                    : topEmotion.includes('great') || topEmotion.includes('good')
+                      ? 'You have been having positive days lately! Keep embracing what brings you joy and savor these uplifting moments.'
+                      : topEmotion.includes('okay')
+                        ? 'Feeling balanced and steady is great ground. Take it one step at a time and stay attuned to your needs.'
+                        : 'Remember that emotions fluctuate naturally. Taking time to check in with yourself is a powerful step towards wellbeing.'}
               </p>
               
               <div className="mt-3 flex flex-wrap gap-2">

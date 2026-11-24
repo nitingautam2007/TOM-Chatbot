@@ -17,5 +17,6 @@ Frontend/.env
 .vscode/
 .idea/
 
-# Logs
+# Logs & Local User Data
 *.log
+mood_log.csv

@@ -106,6 +106,7 @@ async function requestChatOnce(
   region: Region,
   timeoutMs: number,
   callerSignal?: AbortSignal,
+  moodLabel?: string,
 ): Promise<BotReply> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
@@ -125,6 +126,7 @@ async function requestChatOnce(
         message,
         session_id: sessionId,
         region,
+        mood_label: moodLabel,
       }),
       signal: controller.signal,
     })
@@ -201,6 +203,7 @@ export async function sendChatMessage(
     timeoutMs?: number
     retries?: number
     signal?: AbortSignal
+    moodLabel?: string
   } = {},
 ): Promise<BotReply> {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS
@@ -219,6 +222,7 @@ export async function sendChatMessage(
         region,
         timeoutMs,
         options.signal,
+        options.moodLabel,
       )
     } catch (error) {
       lastError = toChatApiError(error)

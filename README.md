@@ -1,281 +1,200 @@
-# <img src="assets/logo.png" alt="TOM" width="22" height="22" /> TOM — Talk To Me (Local Edition)
+# <img src="assets/logo.png" alt="TOM Logo" width="22" height="22" /> TOM — Talk To Me (Local Edition)
 
-> **A 100% Offline, Privacy-Preserving AI Mental Health Companion powered by Ollama and Theory of Mind (ToM).**
+> **A 100% offline, privacy-first AI mental health companion powered by Ollama and Theory of Mind (ToM) state classification.**
 
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Ollama](https://img.shields.io/badge/Ollama-llama3.2%3A3b-black?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.ai)
-[![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Vite 6](https://img.shields.io/badge/Vite-6.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
-[![TailwindCSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Privacy First](https://img.shields.io/badge/Privacy-100%25_Local-success?style=for-the-badge&logo=shield&logoColor=white)](#-privacy--safety)
-
----
-
-## 🎯 About Local TOM
-
-**TOM (Talk To Me)** is a lightweight, local-first mental health companion designed specifically for students and individuals seeking a safe, judgment-free space to unpack thoughts and emotions.
-
-While traditional conversational agents rely on third-party cloud APIs (posing privacy concerns for sensitive disclosures), **Local TOM runs entirely on your own machine**. It combines a **statistical Theory of Mind (ToM) mental state classifier** with **local LLM generation via Ollama**, multi-session chat history, a dedicated mood tracking analytics dashboard, and a deterministic crisis interception pipeline.
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![Ollama](https://img.shields.io/badge/Ollama-llama3.2%3A3b-black?style=flat-square&logo=ollama&logoColor=white)](https://ollama.ai)
+[![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vite 6](https://img.shields.io/badge/Vite-6.2-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Privacy 100% Local](https://img.shields.io/badge/Privacy-100%25_Offline-2ea44f?style=flat-square&logo=shield&logoColor=white)](#-safety--ethical-disclaimer)
 
 ---
 
-## 🌟 Key Features
+## 💡 Overview
 
-* 🧠 **Theory of Mind (ToM) State Inference**: Automatically detects underlying distress states (`exam_stress`, `family_pressure`, `loneliness`, `anxiety`, `sadness`) from code-mixed English and Hinglish text using character-level n-gram TF-IDF and Logistic Regression.
-* 🦙 **Local LLM Intelligence (Ollama)**: Dynamic, empathetic, context-aware student support powered locally by `llama3.2:3b`.
-* 📊 **Mood & Wellbeing Analytics Dashboard**: Dedicated visual dashboard tracking emotional distributions, most frequent distress patterns, active journaling streak days, and personalized self-care recommendations.
-* 💬 **Multi-Session Chat History**: Full sidebar navigation to switch between conversations, start fresh sessions, or delete individual chats with client-side persistence.
-* 🖥️ **Desktop-First PC Workspace**: Modern desktop layout with collapsible sidebar, auto-expanding composer (`Shift+Enter`), solid white bubbles, and distraction-free styling.
-* 🛡️ **Zero-Data-Leakage Architecture**: No messages, mood logs, or embeddings ever leave your device. Complete one-click data deletion and consent withdrawal.
-* 🚨 **Deterministic Crisis Guardrails**: Bypasses the LLM during self-harm or emergency disclosures, immediately surfacing verified regional helplines (**Tele-MANAS: 14416**, **KIRAN: 1800-599-0019**, **112**).
-* 🌿 **Instant Wellness & Grounding Modules**: Built-in deterministic guides for **Box Breathing (4-4-4-4)**, **5-4-3-2-1 Sensory Grounding**, **Mindful Minutes**, and coping toolkits.
-* 🗣️ **Native Hinglish & English Code-Switching**: Recognizes and responds to colloquial student expressions (e.g., *"syllabus khatam nahi hua"*, *"bahut tension ho rahi hai"*, *"ghar waale taane marte hain"*).
+University and daily student life often come with high academic stress, loneliness, and pressure from family or peers. While speaking with someone helps, many students hesitate to share personal thoughts due to privacy concerns, judgment, or social stigma.
+
+**TOM (Talk To Me)** is a lightweight, local-first companion created to offer a safe, supportive space right on your computer.
+
+- **100% Offline & Private:** No messages, chats, or personal mood logs ever leave your machine.
+- **Theory of Mind (ToM) Inferred Context:** Detects subtle emotional states (`exam_stress`, `family_pressure`, `loneliness`, `anxiety`, `sadness`) from English and Hinglish expressions.
+- **Empathetic Local Intelligence:** Powered by `llama3.2:3b` running entirely via Ollama on your device.
+- **Built-in Safety Guardrails:** Instant deterministic routing for crisis disclosures, connecting users directly with verified regional support lines.
 
 ---
 
-## 🏗️ System Architecture
+## ✨ Features
 
-```
-[ User Input (English / Hinglish) ]
-                 │
-                 ├──► [ 1. Crisis Interceptor (Regex Engine) ]
-                 │         │ (Matched)
-                 │         ▼
-                 │    [ Immediate Verified Helpline Card ]
-                 │    (Tele-MANAS 14416 / KIRAN / 112)
-                 │
-                 ├──► [ 2. Deterministic Wellness Triggers ]
-                 │         │ (e.g., "breathing exercise", "5-4-3-2-1")
-                 │         ▼
-                 │    [ Instant Grounding Guidance (0ms Latency) ]
-                 │
-                 └──► [ 3. Theory of Mind Classifier (model.pkl) ]
-                           │
-                           ├──► [ Append to local mood_log.csv ] ──► [ Mood Dashboard Analytics ]
-                           │
-                           ▼ (Inferred State Context)
-                      [ 4. Dynamic Prompt Augmentation ]
-                           │
-                           ▼
-                      [ 5. Local Ollama Engine (llama3.2:3b) ]
-                           │
-                           ▼
-                      [ 6. Glassmorphism Workspace (Port 5173) ]
+- **🧠 State Classification (ToM):** Character-level n-gram TF-IDF + Logistic Regression trained on code-mixed student conversations.
+- **🦙 Local LLM Generation:** Warm, concise, and non-judgmental conversational responses via Ollama.
+- **📊 Mood Analytics Dashboard:** Interactive breakdown of daily emotional check-ins, trends, and self-care recommendations.
+- **💬 Multi-Session Chat:** Start fresh topics, switch sessions seamlessly, or delete your data with one click.
+- **🌿 Instant Grounding Tools:** Instant guides for Box Breathing (4-4-4-4), 5-4-3-2-1 Sensory Grounding, and Mindful Minutes.
+- **🗣️ Natural English & Hinglish:** Understands conversational phrasing (e.g., *"syllabus nahi ho raha"*, *"feeling left out"*, *"ghar wale expect kar rahe hain"*).
+- **🚨 Verified Safety Fallback:** Bypasses LLM generation during crisis disclosures, immediately displaying verified crisis helplines.
+
+---
+
+## 🛠️ How It Works
+
+```text
+User Message (English / Hinglish)
+   │
+   ├─► [1] Crisis Regex Filter ──► Verified Emergency Helplines (Immediate)
+   │
+   ├─► [2] Grounding Triggers   ──► Instant Guided Breathing / Grounding
+   │
+   └─► [3] Theory of Mind ML    ──► Updates Local Mood Stats
+            │
+            ▼ (Inferred Context Clue)
+       [4] Local Ollama Engine (llama3.2:3b)
+            │
+            ▼
+       [5] Friendly Response in React 19 UI
 ```
 
 ---
 
-## 📁 Repository Structure
+## 📁 Project Structure
 
-```
+```text
 Local TOM/
 ├── assets/
-│   └── logo.png           # TOM project logo
-├── server.py              # ASGI Backend API (Starlette + Uvicorn + Ollama bridge)
-├── train.py               # ML Training script for Theory of Mind state classifier
-├── data.csv               # Hinglish & English student distress dataset
-├── model.pkl              # Serialized character n-gram TF-IDF + Logistic Regression pipeline
-├── mood_log.csv           # Local session mood history log (reset on data purge)
-├── requirements.txt       # Python dependencies
-├── README.md              # Project documentation
-│
-└── Frontend/              # React 19 + TypeScript + Vite 6 Web Application
-    ├── src/
-    │   ├── App.tsx            # Main desktop workspace, sidebar, & chat stream
-    │   ├── LandingPage.tsx    # Welcoming hero screen with symmetrical feature grid
-    │   ├── MoodDashboard.tsx  # Analytics dashboard with metric cards & distribution bars
-    │   ├── storage.ts         # Multi-session localStorage & sessionStorage manager
-    │   ├── api.ts             # Backend API client with health checks & offline recovery
-    │   ├── safety.ts          # Regional crisis helpline directory
-    │   └── types.ts           # TypeScript schemas and data models
-    ├── package.json           # Node.js dependencies
-    └── vite.config.ts         # Vite configuration with Tailwind CSS v4
+│   └── logo.png              # Project logo & icon
+├── backend/                  # Local ASGI API & Machine Learning
+│   ├── server.py             # Starlette server + Ollama & ML bridge
+│   ├── train.py              # ML retraining script
+│   ├── data.csv              # Student distress training dataset
+│   ├── model.pkl             # Serialized classifier pipeline
+│   ├── mood_log.csv          # Local private mood logs (git-ignored)
+│   └── requirements.txt      # Python dependencies
+├── frontend/                 # Modern React 19 + TypeScript web app
+│   ├── src/
+│   │   ├── App.tsx           # Chat layout, sidebar, & session manager
+│   │   ├── MoodDashboard.tsx # Wellbeing analytics dashboard
+│   │   ├── LandingPage.tsx   # Welcome screen
+│   │   ├── api.ts            # Local backend client & health monitor
+│   │   └── types.ts          # Shared TypeScript definitions
+│   ├── package.json          # Frontend dependencies
+│   └── vite.config.ts        # Vite configuration
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Getting Started
 
 ### Prerequisites
-* **Python**: 3.11+
-* **Node.js**: 20.0+ (`npm` included)
-* **Ollama**: [Download & install Ollama](https://ollama.ai)
+
+- **Python 3.11+**
+- **Node.js 20+** & **npm**
+- **Ollama**: [Download Ollama](https://ollama.ai)
 
 ---
 
-### Step 1: Start Ollama & Download the Model
+### Step 1: Start Ollama
 
-Open your terminal and ensure the Ollama daemon is running:
+Open a terminal and start the Ollama service:
 
 ```bash
-# 1. Start Ollama service (if not already running)
 ollama serve
+```
 
-# 2. Pull the lightweight 3B model (one-time download, ~2.0 GB)
+In a separate terminal, pull the 3B model (one-time download, ~2.0 GB):
+
+```bash
 ollama pull llama3.2:3b
 ```
 
 ---
 
-### Step 2: Start the Local Backend Server
+### Step 2: Start the Backend
+
+```bash
+cd backend
+pip install -r requirements.txt
+python3 server.py
+```
+
+The backend starts at `http://127.0.0.1:8000`.  
+*(Tip: You can also start it directly from the project root using `python3 backend/server.py`).*
+
+---
+
+### Step 3: Start the Frontend
 
 In a new terminal window:
 
 ```bash
-# 1. Navigate to the project root
-cd "/home/nitin/Projects/Local TOM"
-
-# 2. Install Python dependencies
-pip install -r requirements.txt
-
-# 3. Start the backend server
-python3 server.py
-```
-
-The backend server will spin up on **`http://127.0.0.1:8000`** with live connection to Ollama.
-
----
-
-### Step 3: Start the React Frontend
-
-In another terminal window:
-
-```bash
-# 1. Navigate to the Frontend directory
-cd "/home/nitin/Projects/Local TOM/Frontend"
-
-# 2. Install frontend dependencies
+cd frontend
 npm install
-
-# 3. Run the Vite development server
 npm run dev
 ```
 
-Open your browser and navigate to **`http://localhost:5173`** to access the TOM Desktop Workspace.
+Open your browser at **`http://localhost:5173`**.
 
 ---
 
-## 🧘 Instant Wellness Triggers
+## 🧘 Quick Wellness Triggers
 
-TOM includes built-in instant triggers that deliver pre-calibrated grounding techniques without LLM latency:
+Type any of these commands in the chat for immediate, zero-latency grounding:
 
-| What You Type | Delivered Technique |
+| Phrase | Action |
 | :--- | :--- |
-| `Breathing exercise` | Guided **Box Breathing (4-4-4-4)** sequence |
-| `Grounding technique` or `5-4-3-2-1` | **5-4-3-2-1 Sensory Grounding** technique |
-| `Meditation` | 60-Second **Mindful Minute** breath focus |
-| `Coping strategies` | Practical multi-step self-care action steps |
+| `Breathing exercise` | Guided Box Breathing (4-4-4-4) |
+| `Grounding technique` or `5-4-3-2-1` | 5-4-3-2-1 Sensory Grounding exercise |
+| `Meditation` | 60-Second Mindful Minute |
+| `Coping strategies` | Practical everyday wellbeing steps |
 
 ---
 
-## 🧠 Retraining the Mental State Classifier
+## 🧠 Retraining the State Classifier
 
-The Theory of Mind classifier translates colloquial and code-mixed student expressions into structured emotional contexts.
+To customize or expand the mental state dataset:
 
-1. Open [`data.csv`](data.csv) and add your custom phrases:
+1. Add your phrases to `backend/data.csv`:
    ```csv
    text,label
    aaj padhai mein man nahi lag raha,exam_stress
-   parents compare me with my peers,family_pressure
-   lagta hai mera koi dost nahi,loneliness
+   feeling so disconnected from everyone,loneliness
    ```
 2. Run the training script:
    ```bash
+   cd backend
    python3 train.py
    ```
-3. A new [`model.pkl`](model.pkl) will be evaluated and exported automatically.
+   A refreshed `backend/model.pkl` will be exported with an updated classification report.
 
 ---
 
 ## 🔌 API Reference
 
-### Health Check
-`GET /api/health`
-```json
-{
-  "status": "ok",
-  "model": "llama3.2:3b"
-}
-```
-
-### Chat Completion
-`POST /api/chat`
-* **Request:**
-  ```json
-  {
-    "message": "Exams are near and I feel overwhelmed",
-    "session_id": "session-123",
-    "region": "IN"
-  }
-  ```
-* **Response:**
-  ```json
-  {
-    "response": "I hear you. Exam stress can feel heavy. Let's take it one step at a time...",
-    "intent": "exam_stress",
-    "risk_level": "low",
-    "resources": [],
-    "session_id": "session-123",
-    "confidence": 0.88,
-    "source": "ollama"
-  }
-  ```
-
-### Mood Analytics
-`GET /api/mood/stats`
-```json
-{
-  "total": 12,
-  "counts": { "exam_stress": 6, "anxiety": 4, "sadness": 2 },
-  "recent": [
-    { "time": "2026-11-21 12:00:00", "label": "exam_stress" }
-  ],
-  "top_emotion": "exam_stress",
-  "streak_days": 3
-}
-```
-
-### Reset Mood Analytics
-`POST /api/mood/reset` or `DELETE /api/mood/reset`
-```json
-{
-  "status": "deleted"
-}
-```
-
-### Delete Stored Data & Purge Session
-`DELETE /api/data`
-```json
-{
-  "status": "deleted"
-}
-```
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Health status and loaded Ollama model |
+| `POST` | `/api/chat` | Send user message (`{ message, session_id, mood_label? }`) |
+| `GET` | `/api/mood/stats` | Retrieve local check-in statistics and top emotion |
+| `POST` | `/api/mood/reset` | Clear stored mood check-ins |
 
 ---
 
 ## ⚠️ Safety & Ethical Disclaimer
 
-> **TOM is an educational AI wellbeing companion and is NOT a licensed healthcare professional, therapist, or emergency medical service.**
-> It cannot provide medical diagnoses, clinical treatment, or prescriptions.
+> **TOM is an educational AI wellbeing companion and is NOT a medical device, therapist, or emergency helpline.**  
+> It does not diagnose, treat, or replace professional mental health care.
 
-If you or someone you know is going through a crisis or experiencing suicidal ideation, please reach out to professional emergency resources immediately:
+If you or someone you know is in distress or having thoughts of self-harm, please reach out to trusted people or professional emergency support:
 
-* 🇮🇳 **India**:
-  * **Tele-MANAS**: `14416` (Toll-Free, 24/7)
-  * **KIRAN Helpline**: `1800-599-0019`
-  * **National Emergency**: `112`
-* 🇺🇸 **United States / Canada**:
-  * **Suicide & Crisis Lifeline**: Call or text `988`
-  * **Crisis Text Line**: Text `HOME` to `741741`
-* 🇬🇧 **United Kingdom**:
-  * **Samaritans**: `116 123`
-  * **Shout**: Text `SHOUT` to `85258`
-* 🌍 **International**:
-  * Find resources in your country at [findahelpline.com](https://findahelpline.com) or [befrienders.org](https://www.befrienders.org).
+- 🇮🇳 **India:** Tele-MANAS (`14416` — 24/7 Toll-Free) | KIRAN (`1800-599-0019`) | National Emergency (`112`)
+- 🇺🇸 / 🇨🇦 **US & Canada:** Suicide & Crisis Lifeline (`988`) | Crisis Text Line (Text `HOME` to `741741`)
+- 🇬🇧 **UK:** Samaritans (`116 123`) | Shout (Text `SHOUT` to `85258`)
+- 🌍 **International:** [findahelpline.com](https://findahelpline.com) or [befrienders.org](https://www.befrienders.org)
 
 ---
 
 ## 📄 License
 
-This project is open-source and intended for educational, research, and personal wellbeing purposes.
+Open-source under the MIT License for educational and personal wellbeing use.

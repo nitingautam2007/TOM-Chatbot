@@ -12,6 +12,8 @@ SYSTEM = (
     "Listen attentively and meet the student where they are. Do NOT assume or project emotions "
     "(like anxiety, loneliness, or depression) onto the user unless they explicitly share them. "
     "If the user says 'hi', 'hello', or casual remarks, greet them naturally and warmly, asking how their day is going. "
+    "Express warmth and feelings naturally: when emotionally fitting, use 1 or 2 heartfelt emojis "
+    "(such as 💛, 🌿, ✨, 😊, 🫂, ☕) to connect and feel friendly, but do not force emojis into every single message or overdo them. "
     "Reply in the same language the student uses (English or Hinglish). Keep responses concise (under 60 words). "
     "You are a supportive friend, not a doctor; never diagnose."
 )
@@ -98,7 +100,11 @@ QUICK_REPLIES: dict[str, str] = {
     ),
 }
 
-clf = joblib.load("model.pkl") if os.path.exists("model.pkl") else None
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "model.pkl")
+MOOD_LOG_PATH = os.path.join(BASE_DIR, "mood_log.csv")
+
+clf = joblib.load(MODEL_PATH) if os.path.exists(MODEL_PATH) else None
 sessions: dict[str, list[dict]] = {}
 
 MOOD_MAPPINGS = {
@@ -203,7 +209,7 @@ async def chat(request):
 
     if label not in ("greeting", "general"):
         pd.DataFrame([[datetime.datetime.now(), label]], columns=["time", "label"]).to_csv(
-            "mood_log.csv", mode="a", index=False, header=not os.path.exists("mood_log.csv")
+            MOOD_LOG_PATH, mode="a", index=False, header=not os.path.exists(MOOD_LOG_PATH)
         )
 
     # 4. Dynamic Prompting with Ollama
@@ -214,7 +220,7 @@ async def chat(request):
     if label in ("great", "good"):
         prompt_system = (
             f"{SYSTEM} Context clue: The user is in a positive, upbeat mood ({label}). "
-            f"Celebrate their good energy, be warm and encouraging, and ask what brought them joy today."
+            f"Celebrate their good energy with warm, vibrant emotion (e.g. ✨, 😊), and ask what brought them joy today."
         )
     elif label == "okay":
         prompt_system = (
@@ -224,7 +230,7 @@ async def chat(request):
     elif label in ("low", "struggling"):
         prompt_system = (
             f"{SYSTEM} Context clue: The user checked in as feeling '{label}'. "
-            f"Be exceptionally gentle, validating, and supportive. Let them know you're here with them."
+            f"Be exceptionally gentle, validating, and supportive (e.g. 💛, 🫂). Let them know you're right here with them."
         )
     elif label not in ("greeting", "general"):
         prompt_system = f"{SYSTEM} Context clue: The user may be discussing {label.replace('_', ' ')}."
@@ -258,7 +264,7 @@ async def chat(request):
 
 
 async def mood_stats(request):
-    if not os.path.exists("mood_log.csv"):
+    if not os.path.exists(MOOD_LOG_PATH):
         return JSONResponse({
             "total": 0,
             "counts": {},
@@ -268,7 +274,7 @@ async def mood_stats(request):
         })
 
     try:
-        df = pd.read_csv("mood_log.csv")
+        df = pd.read_csv(MOOD_LOG_PATH)
         if df.empty or "label" not in df.columns:
             return JSONResponse({
                 "total": 0,
@@ -324,7 +330,7 @@ async def delete_all_data(request):
     except Exception:
         pass
     try:
-        with open("mood_log.csv", "w", encoding="utf-8") as f:
+        with open(MOOD_LOG_PATH, "w", encoding="utf-8") as f:
             f.write("time,label\n")
     except Exception:
         pass

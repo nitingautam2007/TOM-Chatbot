@@ -1,4 +1,4 @@
-# Python
+# Python & Backend
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,8 +6,15 @@ __pycache__/
 venv/
 .venv/
 env/
+backend/__pycache__/
+backend/mood_log.csv
+mood_log.csv
+*.log
 
 # Node & Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
 Frontend/node_modules/
 Frontend/dist/
 Frontend/.env
@@ -16,7 +23,3 @@ Frontend/.env
 # IDE
 .vscode/
 .idea/
-
-# Logs & Local User Data
-*.log
-mood_log.csv
